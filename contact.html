@@ -211,6 +211,45 @@
 	}
 	.ct-textarea { resize: none; min-height: 110px; line-height: 1.85; }
 
+	/* Two-column name row */
+	.ct-name-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 14px;
+	}
+
+	/* Phone row: country code + number */
+	.ct-phone-wrap {
+		display: flex;
+		align-items: stretch;
+	}
+	.ct-country-code {
+		flex: 0 0 auto;
+		width: 88px;
+		background: var(--ct-inp-bg);
+		border: none;
+		border-bottom: 1px solid rgba(148,163,184,0.22);
+		border-right: 1px solid rgba(148,163,184,0.1);
+		color: #D9DDE5;
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 13px;
+		letter-spacing: 0.04em;
+		padding: 11px 22px 11px 12px;
+		outline: none;
+		appearance: none;
+		-webkit-appearance: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%2394a3b8' stroke-width='1.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right 7px center;
+		cursor: pointer;
+		transition: border-color 0.2s ease;
+	}
+	.ct-country-code:hover { border-bottom-color: rgba(148,163,184,0.42); }
+	.ct-country-code:focus { border-bottom-color: var(--ct-green); outline: none; }
+	.ct-country-code option { background: #0c1018; color: #D9DDE5; }
+
+	.ct-phone-input { flex: 1; }
+
 	/* Checkboxes / radios */
 	.ct-options { display: flex; flex-direction: column; }
 	.ct-option {
@@ -250,8 +289,8 @@
 		display: inline-flex; align-items: center;
 		background: none; border: none; padding: 0; cursor: pointer;
 		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(22px, 2.4vw, 38px);
-		letter-spacing: 0.2em;
+		font-size: clamp(18px, 1.8vw, 26px);
+		letter-spacing: 0.22em;
 		color: rgba(148,163,184,0.4);
 		transition: color 0.2s;
 	}
@@ -259,6 +298,11 @@
 	.ct-submit:hover { color: rgba(255,255,255,0.65); }
 	.ct-submit:hover .ct-submit-text { color: #ffffff; }
 	.ct-submit:disabled { opacity: 0.35; cursor: not-allowed; }
+
+	.ct-submit-note {
+		font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+		color: rgba(148,163,184,0.35); margin: 0.5rem 0 0;
+	}
 
 	.ct-submit-line {
 		position: relative; height: 1px;
@@ -360,9 +404,11 @@
 	@media (max-width: 600px) {
 		.ct-page { padding-top: 64px; }
 		.ct-h1 { font-size: 52px; }
-		.ct-submit { font-size: 24px; }
+		.ct-submit { font-size: 20px; }
 		.ct-main { padding: 0 1.25rem; }
 		.ct-hero { padding-left: 1.25rem; padding-right: 1.25rem; }
+		.ct-name-row { grid-template-columns: 1fr; }
+		.ct-country-code { width: 80px; }
 	}
 	</style>
 </head>
@@ -406,13 +452,22 @@
 
 			<form class="ct-form" id="ctForm" name="aanvraag" method="POST" novalidate>
 
+				<!-- Honeypot — hidden from humans, filled by bots -->
+				<div style="position:absolute;left:-9999px;top:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
+					<label for="ct_hp">Website</label>
+					<input type="text" id="ct_hp" name="website_url" tabindex="-1" autocomplete="off">
+				</div>
+
 				<!-- 01 Naam -->
 				<div class="ct-group">
 					<div class="ct-group-label">
 						<span class="ct-group-num">01</span>
 						<span class="ct-group-name">Naam</span>
 					</div>
-					<input class="ct-input" type="text" name="naam" placeholder="Jouw naam" autocomplete="name" required>
+					<div class="ct-name-row">
+						<input class="ct-input" type="text" name="voornaam" placeholder="Voornaam" autocomplete="given-name" required>
+						<input class="ct-input" type="text" name="achternaam" placeholder="Achternaam" autocomplete="family-name" required>
+					</div>
 				</div>
 
 				<!-- 02 E-mail -->
@@ -424,20 +479,61 @@
 					<input class="ct-input" type="email" name="email" placeholder="jouw@email.com" autocomplete="email" required>
 				</div>
 
-				<!-- 03 Bedrijf -->
+				<!-- 03 Telefoonnummer -->
 				<div class="ct-group">
 					<div class="ct-group-label">
 						<span class="ct-group-num">03</span>
+						<span class="ct-group-name">Telefoonnummer</span>
+						<span class="ct-group-opt">Optioneel</span>
+					</div>
+					<div class="ct-phone-wrap">
+						<select class="ct-country-code" name="landcode" autocomplete="tel-country-code">
+							<option value="+31" selected>+31</option>
+							<option value="+32">+32</option>
+							<option value="+49">+49</option>
+							<option value="+33">+33</option>
+							<option value="+44">+44</option>
+							<option value="+353">+353</option>
+							<option value="+34">+34</option>
+							<option value="+39">+39</option>
+							<option value="+351">+351</option>
+							<option value="+41">+41</option>
+							<option value="+43">+43</option>
+							<option value="+352">+352</option>
+							<option value="+46">+46</option>
+							<option value="+45">+45</option>
+							<option value="+47">+47</option>
+							<option value="+358">+358</option>
+							<option value="+354">+354</option>
+							<option value="+48">+48</option>
+							<option value="+420">+420</option>
+							<option value="+421">+421</option>
+							<option value="+36">+36</option>
+							<option value="+40">+40</option>
+							<option value="+359">+359</option>
+							<option value="+385">+385</option>
+							<option value="+386">+386</option>
+							<option value="+30">+30</option>
+							<option value="+1">+1</option>
+						</select>
+						<input class="ct-input ct-phone-input" type="tel" name="telefoon" placeholder="06 12 34 56 78" autocomplete="tel-national">
+					</div>
+				</div>
+
+				<!-- 04 Bedrijf -->
+				<div class="ct-group">
+					<div class="ct-group-label">
+						<span class="ct-group-num">04</span>
 						<span class="ct-group-name">Bedrijf</span>
 						<span class="ct-group-opt">Optioneel</span>
 					</div>
 					<input class="ct-input" type="text" name="bedrijf" placeholder="Bedrijfs- of merknaam" autocomplete="organization">
 				</div>
 
-				<!-- 04 Wat heb je nodig? -->
+				<!-- 05 Wat heb je nodig? -->
 				<div class="ct-group">
 					<div class="ct-group-label">
-						<span class="ct-group-num">04</span>
+						<span class="ct-group-num">05</span>
 						<span class="ct-group-name">Wat heb je nodig?</span>
 					</div>
 					<div class="ct-options">
@@ -469,19 +565,50 @@
 					</div>
 				</div>
 
-				<!-- 05 Vertel me over je project -->
+				<!-- 06 Aantal pagina's -->
 				<div class="ct-group">
 					<div class="ct-group-label">
-						<span class="ct-group-num">05</span>
+						<span class="ct-group-num">06</span>
+						<span class="ct-group-name">Hoeveel pagina's heb je nodig?</span>
+						<span class="ct-group-opt">Schatting</span>
+					</div>
+					<div class="ct-options">
+						<label class="ct-option">
+							<input type="radio" name="paginas" value="1-3">
+							<span class="ct-mark ct-mark-radio"></span>
+							<span class="ct-opt-text">1 – 3 pagina's</span>
+						</label>
+						<label class="ct-option">
+							<input type="radio" name="paginas" value="4-7">
+							<span class="ct-mark ct-mark-radio"></span>
+							<span class="ct-opt-text">4 – 7 pagina's</span>
+						</label>
+						<label class="ct-option">
+							<input type="radio" name="paginas" value="8+">
+							<span class="ct-mark ct-mark-radio"></span>
+							<span class="ct-opt-text">8 of meer</span>
+						</label>
+						<label class="ct-option">
+							<input type="radio" name="paginas" value="weet-niet">
+							<span class="ct-mark ct-mark-radio"></span>
+							<span class="ct-opt-text">Weet ik nog niet</span>
+						</label>
+					</div>
+				</div>
+
+				<!-- 07 Vertel me over je project -->
+				<div class="ct-group">
+					<div class="ct-group-label">
+						<span class="ct-group-num">07</span>
 						<span class="ct-group-name">Vertel me over je project</span>
 					</div>
 					<textarea class="ct-textarea" name="project" placeholder="Wat wil je bereiken? Wanneer wil je live? Referenties, specifieke wensen — alles wat helpt." rows="5"></textarea>
 				</div>
 
-				<!-- 06 Budget -->
+				<!-- 08 Budget -->
 				<div class="ct-group">
 					<div class="ct-group-label">
-						<span class="ct-group-num">06</span>
+						<span class="ct-group-num">08</span>
 						<span class="ct-group-name">Budget</span>
 					</div>
 					<div class="ct-options">
@@ -506,22 +633,13 @@
 				<!-- Submit -->
 				<div class="ct-submit-wrap">
 					<button type="submit" class="ct-submit" id="ctSubmit">
-						<span>[ </span><span class="ct-submit-text">START AANVRAAG &rarr;</span><span> ]</span>
+						<span>[ </span><span class="ct-submit-text">VERSTUUR AANVRAAG &rarr;</span><span> ]</span>
 					</button>
+					<p class="ct-submit-note">Je aanvraag wordt direct verstuurd · reactie binnen 48 uur</p>
 					<div class="ct-submit-line"></div>
 				</div>
 
 			</form>
-
-			<!-- Success state -->
-			<div class="ct-success" id="ctSuccess">
-				<p class="ct-success-label">/ AANVRAAG ONTVANGEN</p>
-				<h2 class="ct-success-h">BEDANKT.<br>WE NEMEN<br>CONTACT OP.</h2>
-				<p class="ct-success-body">
-					Je aanvraag is goed ontvangen. Je krijgt binnen 24–48 uur een persoonlijk bericht van mij.
-				</p>
-				<a class="ct-success-back" href="./index.html">[ <span>TERUG NAAR HOME &rarr;</span> ]</a>
-			</div>
 
 		</div>
 
@@ -563,6 +681,9 @@
 <script>
 'use strict';
 
+var PAGE_READY  = Date.now();
+var MIN_ON_PAGE = 5000;
+
 /* ── Focus / fill state on ct-group ── */
 (function() {
 	var groups = Array.from(document.querySelectorAll('.ct-group'));
@@ -587,27 +708,38 @@
 
 /* ── Form submit ── */
 (function() {
-	var form    = document.getElementById('ctForm');
-	var success = document.getElementById('ctSuccess');
-	var btn     = document.getElementById('ctSubmit');
+	var form = document.getElementById('ctForm');
+	var btn  = document.getElementById('ctSubmit');
 
 	if (!form) return;
 
 	form.addEventListener('submit', function(e) {
 		e.preventDefault();
 
-		var naam  = form.querySelector('[name="naam"]');
-		var email = form.querySelector('[name="email"]');
-		if (!naam.value.trim() || !email.value.trim()) { naam.focus(); return; }
+		/* Honeypot — bots fill this, humans don't */
+		var hp = form.querySelector('[name="website_url"]');
+		if (hp && hp.value.trim() !== '') {
+			/* Fake success for bots — redirect silently */
+			window.location.href = './success.html';
+			return;
+		}
+
+		/* Required fields */
+		var voornaam = form.querySelector('[name="voornaam"]');
+		var email    = form.querySelector('[name="email"]');
+		if (!voornaam || !voornaam.value.trim()) { if (voornaam) voornaam.focus(); return; }
+		if (!email    || !email.value.trim())    { email.focus(); return; }
 
 		btn.disabled = true;
 		btn.querySelector('.ct-submit-text').textContent = 'VERZENDEN...';
 
+		/* Enforce minimum time on page to deter automated submissions */
+		var elapsed = Date.now() - PAGE_READY;
+		var delay   = Math.max(600, MIN_ON_PAGE - elapsed + 200);
+
 		setTimeout(function() {
-			form.style.display = 'none';
-			success.classList.add('is-visible');
-			window.scrollTo({ top: 0, behavior: 'smooth' });
-		}, 600);
+			window.location.href = './success.html';
+		}, delay);
 	});
 })();
 </script>
