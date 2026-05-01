@@ -21,7 +21,7 @@
 		window.scrollTo(0, 0);
 		(function() {
 			function fitMobile() {
-				const w = window.innerWidth;
+				var w = window.innerWidth;
 				if (w <= 600) { document.documentElement.style.zoom = Math.min(w, 430) / 430; }
 				else { document.documentElement.style.zoom = ''; }
 			}
@@ -35,89 +35,142 @@
 	* { box-sizing: border-box; }
 	body { margin: 0; background: #07090d; color: #d9d9d9; line-height: normal; font-family: 'JetBrains Mono', ui-monospace, monospace; }
 
-	/* ══ Page layout ══ */
-	.proj-page {
-		min-height: 100dvh;
-		padding-top: 84px; /* header height */
-	}
+	.proj-page { min-height: 100dvh; padding-top: 84px; }
 
-	/* ══ Hero ══ */
+	/* ═══════════════════════════
+	   HERO
+	═══════════════════════════ */
 	.pj-hero {
 		position: relative;
 		overflow: hidden;
-		padding: clamp(4rem, 10vh, 8rem) clamp(1.5rem, 7vw, 7rem) clamp(3rem, 6vh, 5rem);
+		padding: clamp(3.5rem, 9vh, 7rem) clamp(1.5rem, 7vw, 7rem) clamp(3rem, 6vh, 5rem);
 		border-bottom: 1px solid rgba(148,163,184,0.12);
 	}
 	.pj-hero::before {
 		content: '';
-		position: absolute;
-		inset: 0;
+		position: absolute; inset: 0;
 		background-image:
 			linear-gradient(rgba(255,255,255,0.014) 1px, transparent 1px),
 			linear-gradient(90deg, rgba(255,255,255,0.014) 1px, transparent 1px);
 		background-size: 72px 72px;
-		pointer-events: none;
+		pointer-events: none; z-index: 0;
 	}
 	.pj-hero::after {
 		content: '';
-		position: absolute;
-		inset: 0;
+		position: absolute; inset: 0;
 		background: var(--pj-bg, linear-gradient(160deg,#090d1a 0%,#07090d 100%));
-		opacity: 0.55;
-		pointer-events: none;
+		opacity: 0.52;
+		pointer-events: none; z-index: 0;
 	}
 	.pj-hero-inner {
-		position: relative;
-		z-index: 1;
-		max-width: 1200px;
+		position: relative; z-index: 1;
+		max-width: 1100px;
 	}
+
+	/* ── Back link ── */
 	.pj-back {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
+		display: inline-flex; align-items: center; gap: 10px;
 		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 10px;
-		letter-spacing: 0.32em;
-		text-transform: uppercase;
-		color: rgba(148,163,184,0.6);
-		text-decoration: none;
+		font-size: 9px; letter-spacing: 0.38em; text-transform: uppercase;
+		color: rgba(148,163,184,0.5); text-decoration: none;
 		margin-bottom: clamp(2rem, 4vh, 3.5rem);
 		transition: color 0.2s ease;
 	}
-	.pj-back:hover { color: #9be36a; }
-	.pj-back-arrow { display: inline-block; transform: scaleX(-1); }
+	.pj-back:hover { color: var(--pj-accent-color, #9be36a); }
+	.pj-back-arr { display: inline-block; transform: scaleX(-1); font-size: 11px; }
+
+	.pj-meta {
+		display: flex; align-items: center; gap: 14px;
+		margin-bottom: 0.5rem;
+	}
 	.pj-num {
 		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 10px;
-		letter-spacing: 0.38em;
-		color: rgba(148,163,184,0.45);
-		text-transform: uppercase;
-		margin-bottom: 0.75rem;
+		font-size: 9px; letter-spacing: 0.38em;
+		color: rgba(148,163,184,0.4); text-transform: uppercase;
 	}
-	.pj-title {
+	.pj-num-sep { width: 20px; height: 1px; background: rgba(148,163,184,0.22); }
+
+	.pj-h1 {
 		font-family: 'Bebas Neue', ui-sans-serif, sans-serif;
-		font-size: clamp(64px, 9vw, 130px);
-		letter-spacing: 0.06em;
-		color: #d9d9d9;
-		line-height: 0.9;
-		margin: 0 0 0.5rem;
+		font-size: clamp(68px, 9vw, 132px);
+		letter-spacing: 0.05em; color: #d9d9d9;
+		line-height: 0.9; margin: 0;
 	}
 	.pj-type {
 		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: clamp(10px, 1vw, 12px);
-		letter-spacing: 0.32em;
-		color: rgba(148,163,184,0.55);
-		text-transform: uppercase;
-		margin-top: 1rem;
-	}
-	.pj-accent-bar {
-		width: 48px;
-		height: 2px;
-		background: var(--pj-accent-color, #9be36a);
-		margin: 1.5rem 0 0;
+		font-size: clamp(9px, 0.9vw, 11px); letter-spacing: 0.34em;
+		color: rgba(148,163,184,0.5); text-transform: uppercase;
+		margin-top: 1.25rem;
 	}
 
-	/* ══ Body ══ */
+	/* Accent bar */
+	.pj-accent-bar {
+		width: 0; height: 2px;
+		background: var(--pj-accent-color, #9be36a);
+		margin-top: 1.5rem;
+		animation: pj-bar-grow 0.9s cubic-bezier(0.65,0,0.35,1) 0.3s forwards;
+	}
+
+	/* ═══════════════════════════
+	   SVG DRAWING ANIMATION
+	═══════════════════════════ */
+	@keyframes pj-draw {
+		from { stroke-dashoffset: var(--dash-len, 200); }
+		to   { stroke-dashoffset: 0; }
+	}
+	@keyframes pj-bar-grow { to { width: 56px; } }
+	@keyframes pj-scan {
+		from { transform: scaleX(0); }
+		to   { transform: scaleX(1); }
+	}
+
+	/* Corner SVGs positioned inside hero/mockup */
+	.pj-corners { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+	.pj-corner-svg {
+		position: absolute;
+		pointer-events: none;
+	}
+	.pj-corner-svg path {
+		fill: none;
+		stroke: rgba(148,163,184,0.2);
+		stroke-width: 1;
+		stroke-dasharray: var(--dash-len, 90);
+		stroke-dashoffset: var(--dash-len, 90);
+		animation: pj-draw var(--dur, 0.6s) cubic-bezier(0.65,0,0.35,1) var(--del, 0s) forwards;
+	}
+	.pj-corner-svg--accent path {
+		stroke: var(--pj-accent-color, rgba(155,227,106,0.45));
+		opacity: 0.5;
+	}
+
+	/* Scan line across hero */
+	.pj-scan {
+		position: absolute; z-index: 1; pointer-events: none;
+		left: 0; right: 0;
+		height: 1px;
+		background: rgba(148,163,184,0.06);
+		top: 50%;
+		transform-origin: left;
+		transform: scaleX(0);
+		animation: pj-scan 1.4s cubic-bezier(0.65,0,0.35,1) 0.5s forwards;
+	}
+	.pj-scan::before, .pj-scan::after {
+		content: '';
+		position: absolute; top: -2px;
+		width: 5px; height: 5px;
+		border-radius: 50%;
+		background: var(--pj-accent-color, #9be36a);
+		opacity: 0.45;
+		animation: pj-dot-appear 0.3s ease forwards;
+		animation-fill-mode: both;
+	}
+	.pj-scan::before { left: 0; animation-delay: 0.5s; }
+	.pj-scan::after  { right: 0; animation-delay: 1.9s; }
+	@keyframes pj-dot-appear { from { opacity: 0; transform: scale(0); } to { opacity: 0.45; transform: scale(1); } }
+
+	/* ═══════════════════════════
+	   BODY
+	═══════════════════════════ */
 	.pj-body {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -127,332 +180,375 @@
 		align-items: start;
 	}
 
-	/* ══ Left: description ══ */
-	.pj-desc-section { display: flex; flex-direction: column; gap: 2.5rem; }
-	.pj-section-label {
+	.pj-info { display: flex; flex-direction: column; gap: 0; }
+
+	.pj-section {
+		padding: clamp(1.75rem, 3vh, 2.5rem) 0;
+		border-bottom: 1px solid rgba(148,163,184,0.1);
+		position: relative;
+	}
+	.pj-section:first-child { padding-top: 0; }
+
+	/* Accent draw-in on the section divider line */
+	.pj-section::after {
+		content: '';
+		position: absolute; bottom: -1px; left: 0;
+		height: 1px; width: 0;
+		background: var(--pj-accent-color, #9be36a);
+		opacity: 0.45;
+	}
+	.pj-section.is-visible::after {
+		animation: pj-bar-grow 0.9s cubic-bezier(0.65,0,0.35,1) 0.1s forwards;
+	}
+
+	.pj-label {
 		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 9px;
-		letter-spacing: 0.38em;
-		text-transform: uppercase;
-		color: rgba(148,163,184,0.45);
-		margin-bottom: 0.75rem;
+		font-size: 9px; letter-spacing: 0.38em; text-transform: uppercase;
+		color: rgba(148,163,184,0.4); margin: 0 0 0.85rem;
 	}
 	.pj-desc {
 		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: clamp(13px, 1.1vw, 15px);
-		line-height: 1.8;
-		color: rgba(217,217,217,0.78);
-		margin: 0;
+		font-size: clamp(12px, 1vw, 14px); line-height: 1.9;
+		color: rgba(217,217,217,0.72); margin: 0;
 	}
 
 	/* Tags */
 	.pj-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		list-style: none;
-		margin: 0; padding: 0;
+		display: flex; flex-wrap: wrap; gap: 7px;
+		list-style: none; margin: 0; padding: 0;
 	}
 	.pj-tags li {
 		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 9px;
-		letter-spacing: 0.28em;
-		text-transform: uppercase;
-		color: rgba(148,163,184,0.7);
-		border: 1px solid rgba(148,163,184,0.18);
-		padding: 6px 12px;
+		font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase;
+		color: rgba(148,163,184,0.65);
+		border: 1px solid rgba(148,163,184,0.15);
+		padding: 6px 11px;
+		transition: border-color 0.2s, color 0.2s;
+	}
+	.pj-tags li:hover {
+		border-color: var(--pj-accent-color, #9be36a);
+		color: rgba(217,217,217,0.9);
 	}
 
-	/* URL chip */
-	.pj-url {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 11px;
-		letter-spacing: 0.2em;
-		color: rgba(148,163,184,0.55);
-		border: 1px solid rgba(148,163,184,0.18);
-		padding: 10px 16px;
-		width: fit-content;
+	/* ── CTA: [ Text → ] Bebas Neue style ── */
+	.pj-cta-section { padding-top: clamp(1.75rem, 3vh, 2.5rem); }
+
+	.pj-btns { display: flex; flex-direction: column; gap: 0; }
+
+	.pj-btn {
+		display: inline-flex; align-items: center; gap: 0;
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(22px, 2vw, 30px);
+		letter-spacing: 0.2em; text-decoration: none;
+		padding: 11px 0;
+		border-bottom: 1px solid rgba(148,163,184,0.1);
+		transition: padding-left 0.22s cubic-bezier(0.22,0.61,0.36,1);
+		white-space: nowrap;
 	}
-	.pj-url-dot {
-		width: 5px; height: 5px; border-radius: 50%;
+	.pj-btn:first-child { border-top: 1px solid rgba(148,163,184,0.1); }
+	.pj-btn:hover { padding-left: 8px; }
+
+	.pj-br { color: rgba(148,163,184,0.4); transition: color 0.2s; }
+	.pj-bt { color: #d9d9d9; margin: 0 0.1em; transition: color 0.2s; }
+
+	.pj-btn--primary:hover .pj-bt  { color: var(--pj-accent-color, #9be36a); }
+	.pj-btn--primary:hover .pj-br  { color: rgba(148,163,184,0.65); }
+	.pj-btn--secondary:hover .pj-bt { color: #ffffff; }
+	.pj-btn--secondary:hover .pj-br { color: rgba(255,255,255,0.4); }
+
+	/* Underline that draws after the buttons */
+	.pj-btn-underline {
+		position: relative; margin-top: 1.75rem;
+		height: 1px;
+	}
+	.pj-btn-underline::before {
+		content: ''; position: absolute; inset: 0;
+		background: rgba(148,163,184,0.12);
+	}
+	.pj-btn-underline::after {
+		content: ''; position: absolute; left: 0; top: 0;
+		height: 100%; width: 0;
 		background: var(--pj-accent-color, #9be36a);
-		flex-shrink: 0;
+		opacity: 0.55;
+		animation: pj-bar-grow 1.2s cubic-bezier(0.65,0,0.35,1) 0.8s forwards;
 	}
 
-	/* CTA */
-	.pj-cta-row {
-		display: flex;
-		gap: 1rem;
-		flex-wrap: wrap;
-	}
-	.pj-cta-btn {
-		display: inline-flex;
-		align-items: center;
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 11px;
-		letter-spacing: 0.22em;
-		color: #d9d9d9;
-		text-decoration: none;
-		border: 1px solid rgba(148,163,184,0.28);
-		padding: 16px 22px;
-		transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-		position: relative;
-		overflow: hidden;
-	}
-	.pj-cta-btn::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: var(--pj-accent-color, #9be36a);
-		transform: scaleX(0);
-		transform-origin: left;
-		transition: transform 0.35s cubic-bezier(0.85, 0.05, 0.3, 1);
-	}
-	.pj-cta-btn:hover { color: #07090d; border-color: var(--pj-accent-color, #9be36a); }
-	.pj-cta-btn:hover::before { transform: scaleX(1); }
-	.pj-cta-btn span { position: relative; z-index: 1; }
-
-	/* ══ Right: visual mockup ══ */
+	/* ── Right: mockup visual ── */
 	.pj-visual { position: sticky; top: 104px; }
+
 	.pj-mockup {
 		background: var(--pj-bg, linear-gradient(148deg,#091628 0%,#06101e 100%));
 		border: 1px solid rgba(148,163,184,0.1);
 		aspect-ratio: 16 / 10;
-		position: relative;
-		overflow: hidden;
+		position: relative; overflow: hidden;
 	}
 	.pj-mockup::before {
 		content: '';
-		position: absolute;
-		inset: 0;
+		position: absolute; inset: 0;
 		background-image:
-			linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-		background-size: 48px 48px;
+			linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+		background-size: 44px 44px;
 	}
 	.pj-mockup-inner {
-		position: absolute;
-		inset: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 16px;
+		position: absolute; inset: 0;
+		display: flex; flex-direction: column;
+		align-items: center; justify-content: center; gap: 14px;
 	}
-	.pj-mockup-title {
+	.pj-mockup-name {
 		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(28px, 4vw, 56px);
-		letter-spacing: 0.12em;
-		color: rgba(255,255,255,0.12);
+		font-size: clamp(24px, 3.5vw, 52px); letter-spacing: 0.14em;
+		color: rgba(255,255,255,0.1);
 	}
-	.pj-mockup-url {
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 10px;
-		letter-spacing: 0.3em;
-		color: rgba(148,163,184,0.3);
-		text-transform: uppercase;
-	}
-	.pj-mockup-accent {
-		width: 32px; height: 2px;
+	.pj-mockup-bar {
+		width: 0; height: 1.5px;
 		background: var(--pj-accent-color, rgba(155,227,106,0.4));
-		margin-top: 4px;
+		animation: pj-bar-grow 1s cubic-bezier(0.65,0,0.35,1) 0.7s forwards;
 	}
 
-	/* ══ Divider ══ */
-	.pj-divider {
-		height: 1px;
-		background: rgba(148,163,184,0.1);
-		margin: 0 clamp(1.5rem, 7vw, 7rem);
-	}
-
-	/* ══ Not found ══ */
+	/* ── 404 ── */
 	.pj-notfound {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		min-height: 60vh;
-		gap: 1rem;
-		text-align: center;
-		padding: 2rem;
+		display: flex; flex-direction: column; align-items: center;
+		justify-content: center; min-height: 60vh;
+		gap: 1.5rem; text-align: center; padding: 2rem;
 	}
-	.pj-notfound h1 {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: 80px;
-		color: rgba(217,217,217,0.3);
-		margin: 0;
-	}
-	.pj-notfound p {
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 11px;
-		letter-spacing: 0.28em;
-		color: rgba(148,163,184,0.5);
-		text-transform: uppercase;
-	}
+	.pj-notfound h1 { font-family: 'Bebas Neue', sans-serif; font-size: 80px; color: rgba(217,217,217,0.25); margin: 0; }
+	.pj-notfound p  { font-size: 9px; letter-spacing: 0.38em; text-transform: uppercase; color: rgba(148,163,184,0.45); }
 
-	/* ══ Responsive ══ */
+	/* ═══════════════════════════
+	   RESPONSIVE
+	═══════════════════════════ */
 	@media (max-width: 900px) {
-		.pj-body { grid-template-columns: 1fr; gap: 2.5rem; }
+		.pj-body { grid-template-columns: 1fr; gap: 2rem; }
 		.pj-visual { position: static; }
 	}
 	@media (max-width: 600px) {
 		.proj-page { padding-top: 64px; }
-		.pj-title { font-size: 52px; }
+		.pj-h1 { font-size: 52px; }
 		.pj-body { padding: 2.5rem 1.25rem; }
-		.pj-hero { padding: 3rem 1.25rem 2rem; }
+		.pj-hero { padding: 3rem 1.25rem 2.5rem; }
+		.pj-btn { font-size: 22px; }
 	}
 	</style>
 </head>
 <body>
 
-<div class="proj-page" id="projPage">
-	<!-- Populated by JS below -->
-</div>
+<div class="proj-page" id="projPage"><!-- populated by JS --></div>
 
 <script>
 'use strict';
 
 const PROJECTS = [
 	{
-		num:    '/ 01',
-		title:  'HELI-FLIGHTS',
-		type:   '3D CONCEPT PAGE / IMMERSIVE BRAND EXPERIENCE',
-		desc:   '3D conceptpagina met motion en diepte, ontworpen om Heli-Flights digitaal meer beleving en onderscheid te geven. Visuele identiteit vertaald naar een immersive digitale omgeving die bezoekers direct raakt.',
-		tags:   ['Custom design', 'Motion & interaction', 'Front-end development', 'Brand-aligned system', 'Responsive build', '3D visual integration'],
-		url:    'heli-flights.be',
-		bg:     'linear-gradient(170deg,#091628 0%,#060f1e 55%,#0d1c38 100%)',
-		accent: '100,148,255',
-		slug:   'heli-flights',
+		num:   '/ 01',
+		title: 'HELI-FLIGHTS',
+		type:  '3D CONCEPT PAGE / IMMERSIVE BRAND EXPERIENCE',
+		desc:  '3D conceptpagina met motion en diepte, ontworpen om Heli-Flights digitaal meer beleving en onderscheid te geven. Visuele identiteit vertaald naar een immersive digitale omgeving die bezoekers direct raakt.',
+		tags:  ['Custom design', 'Motion & interaction', 'Front-end development', 'Brand-aligned system', 'Responsive build', '3D visual integration'],
+		url:   'heli-flights.be',
+		link:  'https://heli-flights.be',
+		bg:    'linear-gradient(170deg,#091628 0%,#060f1e 55%,#0d1c38 100%)',
+		accent:'100,148,255',
+		slug:  'heli-flights',
 	},
 	{
-		num:    '/ 02',
-		title:  'RELOVATION',
-		type:   'EDITORIAL DESIGN / LIVE JAZZ BRAND',
-		desc:   'Branding en website voor Relovation, een live jazz band. Editorial typografie in EB Garamond, een geanimeerde concert-programme navigatie en een warme, organische kleurpalette geven de band een eigen digitale identiteit.',
-		tags:   ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Live music positioning'],
-		url:    'relovation.be',
-		bg:     'linear-gradient(170deg,#0b1810 0%,#132015 55%,#0d1a12 100%)',
-		accent: '76,106,87',
-		slug:   'relovation',
+		num:   '/ 02',
+		title: 'RELOVATION',
+		type:  'EDITORIAL DESIGN / LIVE JAZZ BRAND',
+		desc:  'Branding en website voor Relovation, een live jazz band. Editorial typografie in EB Garamond, een geanimeerde concert-programme navigatie en een warme, organische kleurpalette geven de band een eigen digitale identiteit.',
+		tags:  ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Live music positioning'],
+		url:   'relovation.be',
+		link:  'https://relovation.be',
+		bg:    'linear-gradient(170deg,#0b1810 0%,#132015 55%,#0d1a12 100%)',
+		accent:'76,106,87',
+		slug:  'relovation',
 	},
 	{
-		num:    '/ 03',
-		title:  'SCHRIJFSTIJN',
-		type:   'EDITORIAL DESIGN / DIGITAL PRESENCE',
-		desc:   'Editorial websiteconcept dat sfeer, identiteit en muzikale creativiteit vertaalt naar een verfijnde digitale presentatie die de artiest echt weerspiegelt.',
-		tags:   ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Digital positioning'],
-		url:    'schrijfstijn.be',
-		bg:     'linear-gradient(170deg,#150d06 0%,#201306 55%,#170e05 100%)',
-		accent: '210,148,70',
-		slug:   'schrijfstijn',
+		num:   '/ 03',
+		title: 'SCHRIJFSTIJN',
+		type:  'EDITORIAL DESIGN / DIGITAL PRESENCE',
+		desc:  'Editorial websiteconcept dat sfeer, identiteit en muzikale creativiteit vertaalt naar een verfijnde digitale presentatie die de artiest echt weerspiegelt.',
+		tags:  ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Digital positioning'],
+		url:   'schrijfstijn.be',
+		link:  'https://schrijfstijn.be',
+		bg:    'linear-gradient(170deg,#150d06 0%,#201306 55%,#170e05 100%)',
+		accent:'210,148,70',
+		slug:  'schrijfstijn',
 	},
 	{
-		num:    '/ 04',
-		title:  'RENAULT CLIO',
-		type:   'CONCEPT PAGE / AUTOMOTIVE BRAND EXPERIENCE',
-		desc:   'Conceptpagina voor de Renault Clio met een live 3D configurator gebouwd via Three.js — het 3D model is eerst opgebouwd in Blender en daarna verwerkt in een immersive scroll experience met custom animaties. Beweging, snelheid en stijl vertaald naar een digitale productbeleving.',
-		tags:   ['Three.js / WebGL', 'Blender 3D model', 'Live 3D configurator', 'Immersive scroll', 'Automotive design', 'Brand experience'],
-		url:    'renaultclio.concept',
-		bg:     'linear-gradient(170deg,#1a0507 0%,#240a0c 55%,#1c0608 100%)',
-		accent: '220,42,32',
-		slug:   'renault-clio',
+		num:   '/ 04',
+		title: 'RENAULT CLIO',
+		type:  'CONCEPT PAGE / AUTOMOTIVE BRAND EXPERIENCE',
+		desc:  'Conceptpagina voor de Renault Clio met een live 3D configurator gebouwd via Three.js — het 3D model is eerst opgebouwd in Blender en daarna verwerkt in een immersive scroll experience met custom animaties. Beweging, snelheid en stijl vertaald naar een digitale productbeleving.',
+		tags:  ['Three.js / WebGL', 'Blender 3D model', 'Live 3D configurator', 'Immersive scroll', 'Automotive design', 'Brand experience'],
+		url:   'renaultclio.concept',
+		link:  null,
+		bg:    'linear-gradient(170deg,#1a0507 0%,#240a0c 55%,#1c0608 100%)',
+		accent:'220,42,32',
+		slug:  'renault-clio',
 	},
 ];
 
-function render(p) {
-	const accentRGB  = p.accent;
-	const accentCSS  = `rgb(${accentRGB})`;
-	const page = document.getElementById('projPage');
+/* ── Draw corner brackets as small absolute SVGs ── */
+function cornerBrackets(container, strokeColor, size, inset, baseDelay) {
+	size   = size   || 18;
+	inset  = inset  || 14;
+	baseDelay = baseDelay || 0.15;
+	strokeColor = strokeColor || 'rgba(148,163,184,0.22)';
 
-	// Set page title
+	/* Corners: [top, left, pathD, dashLen] */
+	const W = size + 4, H = size + 4;
+	const defs = [
+		{ t: inset, l: inset,           d:`M${size} 0 L 0 0 L 0 ${size}`,  len: size*2, del: baseDelay      },
+		{ t: inset, r: inset,           d:`M 0 0 L${size} 0 L${size} ${size}`, len: size*2, del: baseDelay+0.1 },
+		{ b: inset, l: inset,           d:`M 0 0 L 0 ${size} L${size} ${size}`, len: size*2, del: baseDelay+0.2 },
+		{ b: inset, r: inset,           d:`M${size} 0 L${size} ${size} L 0 ${size}`, len: size*2, del: baseDelay+0.3 },
+	];
+
+	const ns = 'http://www.w3.org/2000/svg';
+	defs.forEach(function(def) {
+		var svg = document.createElementNS(ns, 'svg');
+		svg.setAttribute('width',  W);
+		svg.setAttribute('height', H);
+		svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+		svg.setAttribute('aria-hidden', 'true');
+		svg.setAttribute('class', 'pj-corner-svg');
+
+		var s = Object.assign(svg.style, { position:'absolute', pointerEvents:'none', zIndex:'2' });
+		if (def.t !== undefined) svg.style.top    = def.t + 'px';
+		if (def.b !== undefined) svg.style.bottom = def.b + 'px';
+		if (def.l !== undefined) svg.style.left   = def.l + 'px';
+		if (def.r !== undefined) svg.style.right  = def.r + 'px';
+
+		var path = document.createElementNS(ns, 'path');
+		path.setAttribute('d', def.d);
+		path.setAttribute('fill', 'none');
+		path.setAttribute('stroke', strokeColor);
+		path.setAttribute('stroke-width', '1');
+		/* Use vector-effect for non-distorted stroke */
+		path.setAttribute('vector-effect', 'non-scaling-stroke');
+		var len = def.len;
+		path.style.cssText = (
+			'stroke-dasharray:' + len + ';' +
+			'stroke-dashoffset:' + len + ';' +
+			'animation:pj-draw 0.55s cubic-bezier(0.65,0,0.35,1) ' + def.del + 's forwards'
+		);
+
+		svg.appendChild(path);
+		container.appendChild(svg);
+	});
+}
+
+/* ── Intersection observer ── */
+function observeSections() {
+	if (!('IntersectionObserver' in window)) {
+		document.querySelectorAll('.pj-section').forEach(function(el){ el.classList.add('is-visible'); });
+		return;
+	}
+	var io = new IntersectionObserver(function(entries) {
+		entries.forEach(function(e) {
+			if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+		});
+	}, { threshold: 0.2 });
+	document.querySelectorAll('.pj-section').forEach(function(el){ io.observe(el); });
+}
+
+/* ── Render ── */
+function render(p) {
 	document.title = p.title + ' · JDCreations';
 
-	// Set CSS vars on root
+	var accentCSS = 'rgb(' + p.accent + ')';
 	document.documentElement.style.setProperty('--pj-bg', p.bg);
 	document.documentElement.style.setProperty('--pj-accent-color', accentCSS);
 
-	page.innerHTML = `
-		<div class="pj-hero">
-			<div class="pj-hero-inner">
-				<a class="pj-back" href="./projects.html">
-					<span class="pj-back-arrow" aria-hidden="true">&#8594;</span>
-					<span>TERUG NAAR PROJECTS</span>
-				</a>
-				<p class="pj-num" aria-hidden="true">${p.num}</p>
-				<h1 class="pj-title">${p.title}</h1>
-				<p class="pj-type">${p.type}</p>
-				<div class="pj-accent-bar" aria-hidden="true"></div>
-			</div>
-		</div>
+	var visitBtn = p.link
+		? '<a class="pj-btn pj-btn--primary" href="' + p.link + '" target="_blank" rel="noopener noreferrer">' +
+		  '<span class="pj-br">[ </span><span class="pj-bt">VISIT LIVE WEBSITE &rarr;</span><span class="pj-br"> ]</span>' +
+		  '</a>'
+		: '';
 
-		<div class="pj-body">
-			<div class="pj-desc-section">
-				<div>
-					<p class="pj-section-label">Over het project</p>
-					<p class="pj-desc">${p.desc}</p>
-				</div>
+	var page = document.getElementById('projPage');
+	page.innerHTML =
+		'<div class="pj-hero">' +
+			'<div class="pj-scan" aria-hidden="true"></div>' +
+			'<div class="pj-hero-inner">' +
+				'<a class="pj-back" href="./projects.html">' +
+					'<span class="pj-back-arr" aria-hidden="true">&#8594;</span>' +
+					'<span>TERUG NAAR PROJECTS</span>' +
+				'</a>' +
+				'<div class="pj-meta">' +
+					'<span class="pj-num">' + p.num + '</span>' +
+					'<span class="pj-num-sep" aria-hidden="true"></span>' +
+				'</div>' +
+				'<h1 class="pj-h1">' + p.title + '</h1>' +
+				'<p class="pj-type">' + p.type + '</p>' +
+				'<div class="pj-accent-bar" aria-hidden="true"></div>' +
+			'</div>' +
+		'</div>' +
 
-				<div>
-					<p class="pj-section-label">Technologieën &amp; aanpak</p>
-					<ul class="pj-tags">${p.tags.map(t => `<li>${t}</li>`).join('')}</ul>
-				</div>
+		'<div class="pj-body">' +
+			'<div class="pj-info">' +
+				'<div class="pj-section">' +
+					'<p class="pj-label">Over het project</p>' +
+					'<p class="pj-desc">' + p.desc + '</p>' +
+				'</div>' +
+				'<div class="pj-section">' +
+					'<p class="pj-label">Technologi&euml;en &amp; aanpak</p>' +
+					'<ul class="pj-tags">' + p.tags.map(function(t){ return '<li>' + t + '</li>'; }).join('') + '</ul>' +
+				'</div>' +
+				'<div class="pj-cta-section">' +
+					'<div class="pj-btns">' +
+						visitBtn +
+						'<a class="pj-btn pj-btn--secondary" href="./contact.html">' +
+							'<span class="pj-br">[ </span><span class="pj-bt">START PROJECT &rarr;</span><span class="pj-br"> ]</span>' +
+						'</a>' +
+					'</div>' +
+					'<div class="pj-btn-underline" aria-hidden="true"></div>' +
+				'</div>' +
+			'</div>' +
 
-				<div class="pj-url" aria-label="Live URL: ${p.url}">
-					<span class="pj-url-dot" aria-hidden="true"></span>
-					${p.url}
-				</div>
+			'<div class="pj-visual" aria-hidden="true">' +
+				'<div class="pj-mockup">' +
+					'<div class="pj-mockup-inner">' +
+						'<div class="pj-mockup-name">' + p.title + '</div>' +
+						'<div class="pj-mockup-bar"></div>' +
+					'</div>' +
+				'</div>' +
+			'</div>' +
+		'</div>';
 
-				<div class="pj-cta-row">
-					<a class="pj-cta-btn" href="./contact.html">
-						<span>START SOORTGELIJK PROJECT &#8594;</span>
-					</a>
-					<a class="pj-cta-btn" href="./projects.html">
-						<span>&#8592; MEER PROJECTEN</span>
-					</a>
-				</div>
-			</div>
+	/* Hero corner brackets */
+	var hero = page.querySelector('.pj-hero');
+	cornerBrackets(hero, 'rgba(148,163,184,0.18)', 20, 16, 0.15);
 
-			<div class="pj-visual" aria-hidden="true">
-				<div class="pj-mockup">
-					<div class="pj-mockup-inner">
-						<div class="pj-mockup-title">${p.title}</div>
-						<div class="pj-mockup-url">${p.url}</div>
-						<div class="pj-mockup-accent"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	`;
+	/* Mockup corner brackets using accent colour */
+	var mockup = page.querySelector('.pj-mockup');
+	cornerBrackets(mockup, accentCSS.replace('rgb(', 'rgba(').replace(')', ',0.3)'), 14, 10, 0.65);
 
-	document.documentElement.classList.remove('scroll-locked');
-	document.body.classList.add('loader-gone');
+	requestAnimationFrame(function() {
+		observeSections();
+		document.documentElement.classList.remove('scroll-locked');
+		document.body.classList.add('loader-gone');
+	});
 }
 
 function renderNotFound() {
-	const page = document.getElementById('projPage');
-	page.innerHTML = `
-		<div class="pj-notfound">
-			<h1>404</h1>
-			<p>Project niet gevonden</p>
-			<a class="pj-cta-btn" href="./projects.html" style="margin-top:1.5rem">
-				<span>&#8592; TERUG NAAR PROJECTS</span>
-			</a>
-		</div>
-	`;
+	var page = document.getElementById('projPage');
+	page.innerHTML =
+		'<div class="pj-notfound">' +
+			'<h1>404</h1>' +
+			'<p>Project niet gevonden</p>' +
+			'<a class="pj-btn pj-btn--secondary" href="./projects.html" style="margin-top:1rem">' +
+				'<span class="pj-br">[ </span><span class="pj-bt">&larr; TERUG NAAR PROJECTS</span><span class="pj-br"> ]</span>' +
+			'</a>' +
+		'</div>';
 	document.documentElement.classList.remove('scroll-locked');
 }
 
 (function init() {
-	const slug = new URLSearchParams(location.search).get('p') || '';
-	const project = PROJECTS.find(p => p.slug === slug);
-	if (project) {
-		render(project);
-	} else {
-		renderNotFound();
-	}
+	var slug = new URLSearchParams(location.search).get('p') || '';
+	var project = PROJECTS.find(function(p){ return p.slug === slug; });
+	if (project) render(project); else renderNotFound();
 })();
 </script>
 
