@@ -199,15 +199,15 @@
 .jdc-header__link:hover::after,
 .jdc-header__link.is-active::after  { margin-left: 0.3em; }
 
-.jdc-header__link.is-active { color: var(--jdc-h-led); }
+.jdc-header__link.is-active { color: #ffffff; }
 .jdc-header__link.is-active::before,
-.jdc-header__link.is-active::after { color: var(--jdc-h-led); }
+.jdc-header__link.is-active::after { color: rgba(255,255,255,0.28); }
 
-/* bottom tick under active link */
+/* Thin white underline on active link */
 .jdc-header__link.is-active::marker { content: ""; }
 .jdc-header__link.is-active {
   background:
-    linear-gradient(var(--jdc-h-led), var(--jdc-h-led)) left 2px bottom 0/18px 1.5px no-repeat;
+    linear-gradient(#ffffff, #ffffff) left 2px bottom 0/100% 1px no-repeat;
 }
 
 /* ==== cta ================================================================ */
@@ -289,35 +289,45 @@
 .jdc-header.is-open .jdc-header__toggle-bars::after       { top: 0; background: var(--jdc-h-accent); transform: rotate(-45deg); }
 
 /* ==== desktop layout =====================================================
-   Three-zone layout via flex + absolute-centered nav. The nav is taken
-   OUT of flex flow and pinned to the viewport center with
-   `left: 50%; transform: translateX(-50%)`, so its position is 100%
-   independent of the logo's and CTA's widths — they can be any size and
-   the menu stays mathematically centered on the header. The remaining
-   two flex items (brand, CTA) get `justify-content: space-between`
-   treatment: brand anchors left, CTA anchors right. This pattern is
-   stable at every desktop width (961 → 3840+) with no per-breakpoint
-   nudges. Works the same under the site's html { zoom } stack because
-   50% of the header is always viewport center. */
+   Three-column grid: brand left | nav centered | cta right.
+   The middle column is `auto` so it only takes what the nav needs;
+   the two outer `1fr` columns absorb the remaining space equally,
+   keeping brand flush-left and CTA flush-right while the nav sits
+   at the true mathematical center of the bar — independent of logo
+   or button widths. No absolute positioning needed, no z-index fights.
+   Works identically under html { zoom } because grid percentages and
+   `fr` units operate in the same layout-space coordinate as the rest
+   of the page. */
 @media (min-width: 961px) {
   .jdc-header {
-    display: flex;
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto;
     align-items: center;
-    justify-content: space-between;
-    grid-template-columns: none;
+    justify-content: unset;
   }
-  .jdc-header__brand   { flex: 0 0 auto; order: 1; }
-  .jdc-header__cta     { flex: 0 0 auto; order: 3; }
+  .jdc-header__brand {
+    grid-column: 1 / 2;
+    justify-self: start;
+    order: unset; flex: unset;
+  }
   .jdc-header__nav {
-    order: 2;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    margin: 0;
+    grid-column: 2 / 3;
+    display: inline-flex !important;
+    position: static !important;
+    left: auto !important; top: auto !important;
+    transform: none !important;
+    order: unset; margin: 0;
+  }
+  .jdc-header__cta {
+    grid-column: 3 / 4;
+    justify-self: end;
+    display: inline-flex !important;
+    visibility: visible !important;
+    order: unset; flex: unset;
   }
   .jdc-header__toggle,
-  .jdc-header__drawer { display: none; }
+  .jdc-header__drawer { display: none !important; }
 }
 
 /* ==== mobile drawer ====================================================== */
@@ -367,8 +377,8 @@
   z-index: 1;
 }
 .jdc-header__drawer-row:hover { color: var(--jdc-h-accent); }
-.jdc-header__drawer-row.is-active { color: var(--jdc-h-led); }
-.jdc-header__drawer-row.is-active::before { content: "> "; color: var(--jdc-h-led); }
+.jdc-header__drawer-row.is-active { color: #ffffff; }
+.jdc-header__drawer-row.is-active::before { content: "> "; color: rgba(255,255,255,0.35); }
 .jdc-header__drawer-row-num {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
