@@ -216,13 +216,14 @@
   			<span>/</span><span class="previous-projects-sep">&nbsp;</span><span>Eerdere </span><span class="previous-projects-word">Projecten</span>
   		</div>
   		<div class="pp-carousel" id="pp-carousel">
-  			<div class="pp-slide is-active" data-index="0" style="background-image:url('./pp-schrijfstijn.png')">
+  			<div class="pp-slide is-active" data-index="0" style="background-image:url('./pp-renault-clio.png')">
   				<div class="pp-slide-gradient"></div>
   				<div class="pp-slide-label">
   					<div class="pp-slide-icon">01</div>
   					<div class="pp-slide-info">
-  						<div class="pp-slide-title">Schrijfstijn</div>
-  						<div class="pp-slide-desc">Website voor songwriter &amp; muzikant HanzKazan — donker editorial design met animaties</div>
+  						<div class="pp-slide-title">Renault Clio</div>
+  						<div class="pp-slide-desc">Live 3D configurator via Three.js — model opgebouwd in Blender, immersive scroll experience met custom animaties</div>
+  						<a class="pp-slide-link" href="/projects">[ Bekijk dit project &rarr;]</a>
   					</div>
   				</div>
   			</div>
@@ -233,42 +234,46 @@
   					<div class="pp-slide-info">
   						<div class="pp-slide-title">Relovation</div>
   						<div class="pp-slide-desc">Branding &amp; website voor live jazz band — editorial typografie, geanimeerde navigatie</div>
+  						<a class="pp-slide-link" href="/projects">[ Bekijk dit project &rarr;]</a>
   					</div>
   				</div>
   			</div>
-  			<div class="pp-slide" data-index="2" style="background-image:url('./pp-heli-flights.png')">
+  			<div class="pp-slide" data-index="2" style="background-image:url('./pp-sunclassy.png')">
   				<div class="pp-slide-gradient"></div>
   				<div class="pp-slide-label">
   					<div class="pp-slide-icon">03</div>
   					<div class="pp-slide-info">
-  						<div class="pp-slide-title">Heli-Flights</div>
-  						<div class="pp-slide-desc">Immersieve 3D WebGL experience met R44 helicopter en scroll-driven cinematische animatie</div>
+  						<div class="pp-slide-title">SUNCLASSY</div>
+  						<div class="pp-slide-desc">Brand identity &amp; website voor een zonnebrillen merk — strak, zomers design</div>
+  						<a class="pp-slide-link" href="/projects">[ Bekijk dit project &rarr;]</a>
   					</div>
   				</div>
   			</div>
-  			<div class="pp-slide" data-index="3" style="background-image:url('./pp-renault-clio.png')">
+  			<div class="pp-slide" data-index="3" style="background-image:url('./pp-schrijfstijn.png')">
   				<div class="pp-slide-gradient"></div>
   				<div class="pp-slide-label">
   					<div class="pp-slide-icon">04</div>
   					<div class="pp-slide-info">
-  						<div class="pp-slide-title">Renault Clio</div>
-  						<div class="pp-slide-desc">Automotive website voor een tweedehands Renault Clio — strak design met aandacht voor detail</div>
+  						<div class="pp-slide-title">Schrijfstijn</div>
+  						<div class="pp-slide-desc">Website voor songwriter &amp; muzikant HanzKazan — donker editorial design met animaties</div>
+  						<a class="pp-slide-link" href="/projects">[ Bekijk dit project &rarr;]</a>
   					</div>
   				</div>
   			</div>
-  			<div class="pp-slide" data-index="4" style="background-image:url('./pp-sunclassy.png')">
+  			<div class="pp-slide" data-index="4" style="background-image:url('./pp-heli-flights.png')">
   				<div class="pp-slide-gradient"></div>
   				<div class="pp-slide-label">
   					<div class="pp-slide-icon">05</div>
   					<div class="pp-slide-info">
-  						<div class="pp-slide-title">SUNCLASSY</div>
-  						<div class="pp-slide-desc">Brand identity &amp; digitale aanwezigheid voor een sun accessories merk</div>
+  						<div class="pp-slide-title">Heli-Flights</div>
+  						<div class="pp-slide-desc">Immersieve 3D WebGL experience met R44 helicopter en scroll-driven cinematische animatie</div>
+  						<a class="pp-slide-link" href="/projects">[ Bekijk dit project &rarr;]</a>
   					</div>
   				</div>
   			</div>
   		</div>
-  		<a class="previous-projects-cta blur-fade" href="/aanvraag" data-line-gated>
-  			<span>[ </span><span class="previous-projects-cta-label">Ontdek Meer&rarr;</span><span>]</span>
+  		<a class="previous-projects-cta blur-fade" href="/projects" data-line-gated>
+  			<span>[ </span><span class="previous-projects-cta-label">Meer Projecten&rarr;</span><span>]</span>
   		</a>
   		<img class="pp-cta-line" src="./line-43.svg" alt="" data-scroll-draw data-reveal=".previous-projects-cta">
   		<p class="previous-projects-body blur-fade">Geen massa-aanpak, maar gerichte projecten waarin design, structuur en digitale opvolging samenkomen.</p>
@@ -1807,6 +1812,23 @@ body.loader-gone .over-ons-tline {
   	color: #94a3b8;
   	margin-top: 4px;
 }
+.pp-slide-link {
+  	display: inline-block;
+  	margin-top: 8px;
+  	font-family: 'Inter', sans-serif;
+  	font-size: 11px;
+  	letter-spacing: 0.10em;
+  	color: #d9d9d9;
+  	text-decoration: none;
+  	pointer-events: none;
+  	opacity: 0;
+  	transition: color 0.2s, opacity 0.3s 0.2s;
+}
+.pp-slide.is-active .pp-slide-link {
+  	pointer-events: auto;
+  	opacity: 1;
+}
+.pp-slide-link:hover { color: #ffffff; }
 
 /* Inactive slide affordance — icon pulse + hover lift so it's obvious they're clickable */
 .pp-slide:not(.is-active):hover {
