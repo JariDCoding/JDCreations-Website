@@ -165,7 +165,7 @@
 	/* ── Project card ── */
 	.proj-card {
 		position: absolute;
-		width: 416px;
+		width: 390px;
 		cursor: pointer;
 		z-index: 2;
 		transform-style: preserve-3d;
@@ -174,9 +174,10 @@
 	}
 
 	/* Positions */
-	.proj-card[data-project="0"] { left: 100px;  top: 96px;  }
-	.proj-card[data-project="1"] { left: 656px;  top: 42px;  }
-	.proj-card[data-project="2"] { left: 1232px; top: 112px; }
+	.proj-card[data-project="0"] { left: 42px;   top: 88px;  }
+	.proj-card[data-project="1"] { left: 468px;  top: 36px;  }
+	.proj-card[data-project="2"] { left: 890px;  top: 105px; }
+	.proj-card[data-project="3"] { left: 1306px; top: 52px;  }
 
 	/* Float — uses CSS individual `translate` property so it composes with
 	   the JS `transform` (parallax) without conflict */
@@ -194,9 +195,15 @@
 		0%,100% { translate: 0 -8px;  }
 		54%     { translate: 0  18px; }
 	}
+	@keyframes float-d {
+		0%,100% { translate: 0 -20px; }
+		38%     { translate: 0   6px; }
+		70%     { translate: 0 -10px; }
+	}
 	.proj-card[data-project="0"] { animation: float-a  7.2s ease-in-out infinite; }
 	.proj-card[data-project="1"] { animation: float-b  9.8s ease-in-out infinite 1.9s; }
 	.proj-card[data-project="2"] { animation: float-c  8.4s ease-in-out infinite 3.4s; }
+	.proj-card[data-project="3"] { animation: float-d  8.8s ease-in-out infinite 5.2s; }
 
 	/* Card shell */
 	.card-shell {
@@ -211,6 +218,7 @@
 	.proj-card[data-project="0"] .card-shell { transform: rotate(-3.8deg); }
 	.proj-card[data-project="1"] .card-shell { transform: rotate( 2.0deg); }
 	.proj-card[data-project="2"] .card-shell { transform: rotate(-1.6deg); }
+	.proj-card[data-project="3"] .card-shell { transform: rotate( 2.8deg); }
 
 	.proj-card:hover .card-shell,
 	.proj-card:focus-visible .card-shell {
@@ -234,8 +242,9 @@
 	}
 	.card-preview-bg { width: 100%; height: 100%; display: block; }
 	.proj-card[data-project="0"] .card-preview-bg { background: linear-gradient(148deg, #091628 0%, #06101e 52%, #0e1d36 100%); }
-	.proj-card[data-project="1"] .card-preview-bg { background: linear-gradient(148deg, #0b0718 0%, #150c26 52%, #09091500 100%); background: linear-gradient(148deg, #0b0718 0%, #150c26 52%, #0a0915 100%); }
+	.proj-card[data-project="1"] .card-preview-bg { background: linear-gradient(148deg, #0b0718 0%, #150c26 52%, #0a0915 100%); }
 	.proj-card[data-project="2"] .card-preview-bg { background: linear-gradient(148deg, #150e06 0%, #201306 52%, #170f05 100%); }
+	.proj-card[data-project="3"] .card-preview-bg { background: linear-gradient(148deg, #1a0608 0%, #240b0e 52%, #1c0709 100%); }
 
 	/* CSS website UI in preview */
 	.card-ui {
@@ -359,19 +368,42 @@
 
 	.modal-close {
 		position: fixed;
-		top: 42px; right: 60px;
+		top: 40px; right: 56px;
 		z-index: 902;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		background: rgba(7,9,13,0.75);
+		border: 1px solid rgba(255,255,255,0.14);
+		color: rgba(217,217,217,0.62);
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 10px;
+		letter-spacing: 0.2em;
+		padding: 11px 20px;
+		cursor: pointer;
+		transition: color 0.25s, border-color 0.25s, background 0.25s;
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+	}
+	.modal-close:hover { color: #d9d9d9; border-color: rgba(255,255,255,0.32); background: rgba(20,24,32,0.9); }
+	.modal-close-x { font-size: 14px; line-height: 1; }
+
+	/* Bottom close (mobile only) */
+	.modal-close-bottom {
+		display: none;
+		margin-top: 32px;
+		align-self: flex-start;
 		background: transparent;
 		border: 1px solid rgba(255,255,255,0.13);
-		color: rgba(217,217,217,0.55);
+		color: rgba(217,217,217,0.5);
 		font-family: 'JetBrains Mono', monospace;
-		font-size: 11px;
-		letter-spacing: 0.16em;
-		padding: 10px 20px;
+		font-size: 10px;
+		letter-spacing: 0.2em;
+		padding: 11px 20px;
 		cursor: pointer;
 		transition: color 0.25s, border-color 0.25s;
 	}
-	.modal-close:hover { color: #d9d9d9; border-color: rgba(255,255,255,0.32); }
+	.modal-close-bottom:hover { color: #d9d9d9; border-color: rgba(255,255,255,0.3); }
 
 	.modal-wrap {
 		position: relative;
@@ -441,16 +473,35 @@
 		color: rgba(148,163,184,0.5);
 	}
 	.modal-tags li::before { content: '— '; color: #94a3b8; }
-	.modal-cta {
+
+	/* Modal CTAs */
+	.modal-actions { display: flex; flex-direction: column; gap: 14px; }
+	.modal-btn-start {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		align-self: flex-start;
 		font-family: 'Bebas Neue', sans-serif;
-		font-size: 22px;
+		font-size: 20px;
+		letter-spacing: 0.24em;
+		color: #07090d;
+		background: #d9d9d9;
+		text-decoration: none;
+		padding: 13px 30px;
+		transition: background 0.25s;
+		white-space: nowrap;
+	}
+	.modal-btn-start:hover { background: #fff; }
+	.modal-btn-discuss {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 18px;
 		letter-spacing: 0.22em;
 		color: #94a3b8;
 		text-decoration: none;
 		transition: color 0.25s;
 	}
-	.modal-cta .ml { color: #d9d9d9; }
-	.modal-cta:hover, .modal-cta:hover .ml { color: #fff; }
+	.modal-btn-discuss .ml { color: #d9d9d9; }
+	.modal-btn-discuss:hover, .modal-btn-discuss:hover .ml { color: #fff; }
 
 	/* Devices column */
 	.modal-devices {
@@ -592,7 +643,7 @@
 			flex: 1;
 			padding: 100px 40px 80px;
 			display: grid;
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: repeat(2, 1fr);
 			gap: 24px;
 			align-items: start;
 			perspective: none;
@@ -604,15 +655,16 @@
 		}
 		.proj-card[data-project="0"] .card-shell,
 		.proj-card[data-project="1"] .card-shell,
-		.proj-card[data-project="2"] .card-shell { transform: none; }
+		.proj-card[data-project="2"] .card-shell,
+		.proj-card[data-project="3"] .card-shell { transform: none; }
 		.ghost-num    { display: none; }
 		.constellation { display: none; }
 		.port-strip   { left: 40px; right: 40px; }
 		.port-bottom  { position: relative; bottom: auto; left: auto; right: auto; padding: 0 40px 40px; }
-		.modal-wrap   { grid-template-columns: 1fr; gap: 40px; }
+		.modal-wrap   { grid-template-columns: 1fr; gap: 40px; width: min(720px, 94vw); }
 		.modal-info   { padding: 24px 0; }
 		.modal-devices { padding: 0 0 40px; }
-		.modal-title  { font-size: clamp(56px, 8vw, 90px); }
+		.modal-title  { font-size: clamp(52px, 8vw, 90px); }
 		.modal-close  { top: 20px; right: 20px; }
 		.dev-mobile   { right: -18px; bottom: -10px; width: 100px; }
 	}
@@ -638,17 +690,20 @@
 		}
 		.proj-card[data-project="0"] .card-shell,
 		.proj-card[data-project="1"] .card-shell,
-		.proj-card[data-project="2"] .card-shell { transform: none; }
+		.proj-card[data-project="2"] .card-shell,
+		.proj-card[data-project="3"] .card-shell { transform: none; }
 		.ghost-num    { display: none; }
 		.constellation { display: none; }
 		.port-strip   { left: 26px; right: 26px; top: 38px; }
 		.port-bottom  { display: none; }
 		.modal-wrap   { grid-template-columns: 1fr; gap: 0; width: 100%; max-height: 94vh; padding: 0; }
-		.modal-info   { padding: 60px 24px 20px; }
+		.modal-info   { padding: 56px 24px 24px; }
 		.modal-devices { padding: 0 24px 40px; }
-		.modal-title  { font-size: 52px; }
+		.modal-title  { font-size: clamp(42px, 12vw, 64px); }
 		.modal-desc   { font-size: 15px; }
 		.modal-close  { top: 12px; right: 12px; padding: 8px 14px; font-size: 10px; }
+		.modal-close-bottom { display: inline-block; }
+		.modal-btn-start { align-self: stretch; justify-content: center; }
 		.dev-mobile   { display: none; }
 	}
 
@@ -670,7 +725,7 @@
 
 	<div class="port-strip" aria-hidden="true">
 		<span class="port-strip-l">/ JDCREATIONS &mdash; SELECTED WORK</span>
-		<span class="port-strip-r">03 PROJECTS</span>
+		<span class="port-strip-r">04 PROJECTS</span>
 	</div>
 
 	<div class="cards-field" id="cardsField">
@@ -679,12 +734,14 @@
 		<svg class="constellation" aria-hidden="true" id="constellationSvg">
 			<line id="cline-0"></line>
 			<line id="cline-1"></line>
+			<line id="cline-2"></line>
 		</svg>
 
 		<!-- Ghost numbers -->
-		<span class="ghost-num" style="left:30px;top:310px;"  aria-hidden="true">01</span>
-		<span class="ghost-num" style="left:596px;top:255px;" aria-hidden="true">02</span>
-		<span class="ghost-num" style="left:1170px;top:325px;" aria-hidden="true">03</span>
+		<span class="ghost-num" style="left:0px;top:305px;"    aria-hidden="true">01</span>
+		<span class="ghost-num" style="left:420px;top:248px;"  aria-hidden="true">02</span>
+		<span class="ghost-num" style="left:842px;top:320px;"  aria-hidden="true">03</span>
+		<span class="ghost-num" style="left:1258px;top:265px;" aria-hidden="true">04</span>
 
 		<!-- Project 01 -->
 		<div class="proj-card" data-project="0" role="button" tabindex="0" aria-label="Open project: Heli-Flights">
@@ -776,6 +833,36 @@
 			</div>
 		</div>
 
+		<!-- Project 04 -->
+		<div class="proj-card" data-project="3" role="button" tabindex="0" aria-label="Open project: Renault Clio Concept">
+			<div class="card-shell">
+				<div class="cc cc-tl" aria-hidden="true"></div>
+				<div class="cc cc-tr" aria-hidden="true"></div>
+				<div class="cc cc-bl" aria-hidden="true"></div>
+				<div class="cc cc-br" aria-hidden="true"></div>
+				<div class="card-preview">
+					<div class="card-preview-bg"></div>
+					<div class="card-ui" aria-hidden="true">
+						<div class="cu-nav" style="width:50%"></div>
+						<div class="cu-hero"></div>
+						<div class="cu-lines">
+							<div class="cu-line w90"></div>
+							<div class="cu-line w72"></div>
+							<div class="cu-line w52"></div>
+						</div>
+					</div>
+					<div class="card-overlay" aria-hidden="true">
+						<span class="card-open-lbl">[ OPEN &rarr;]</span>
+					</div>
+				</div>
+				<div class="card-info">
+					<p class="card-num">/ 04</p>
+					<h2 class="card-name">RENAULT CLIO</h2>
+					<p class="card-type">CONCEPT PAGE / AUTOMOTIVE EXPERIENCE</p>
+				</div>
+			</div>
+		</div>
+
 	</div>
 
 	<div class="port-bottom" aria-hidden="true">
@@ -790,7 +877,10 @@
 ══════════════════════════════════════════ -->
 <div class="proj-modal" id="projModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
 	<div class="modal-backdrop" id="modalBackdrop"></div>
-	<button class="modal-close" id="modalClose" aria-label="Sluit project">[ ESC &rarr;]</button>
+	<button class="modal-close" id="modalClose" aria-label="Sluit project">
+		<span class="modal-close-x" aria-hidden="true">✕</span>
+		<span>CLOSE</span>
+	</button>
 
 	<div class="modal-wrap">
 
@@ -801,9 +891,13 @@
 			<p  class="modal-type"  id="mType"></p>
 			<p  class="modal-desc"  id="mDesc"></p>
 			<ul class="modal-tags"  id="mTags"></ul>
-			<a  class="modal-cta"   href="/aanvraag">
-				<span>[ </span><span class="ml">DISCUSS SIMILAR</span><span> &rarr;]</span>
-			</a>
+			<div class="modal-actions">
+				<a class="modal-btn-start" href="/aanvraag">[ START PROJECT &rarr;]</a>
+				<a class="modal-btn-discuss" href="/aanvraag">
+					<span>[ </span><span class="ml">DISCUSS SIMILAR</span><span> &rarr;]</span>
+				</a>
+			</div>
+			<button class="modal-close-bottom" id="modalCloseBottom" aria-label="Sluit project">✕ &nbsp;CLOSE</button>
 		</div>
 
 		<!-- Right: devices -->
@@ -889,6 +983,16 @@ const PROJECTS = [
 		bg:     'linear-gradient(170deg,#150d06 0%,#201306 55%,#170e05 100%)',
 		accent: '210,148,70',
 	},
+	{
+		num:    '/ 04',
+		title:  'RENAULT CLIO',
+		type:   'CONCEPT PAGE / AUTOMOTIVE BRAND EXPERIENCE',
+		desc:   'Immersief conceptpagina voor de Renault Clio — gebouwd rond beweging, snelheid en stijl. Een visuele productervaring die de energie van het merk en het rijplezier van de wagen tot leven brengt.',
+		tags:   ['Automotive design', '3D visualisation', 'Motion concept', 'Product storytelling', 'Front-end development', 'Brand experience'],
+		url:    'renaultclio.concept',
+		bg:     'linear-gradient(170deg,#1a0507 0%,#240a0c 55%,#1c0608 100%)',
+		accent: '220,42,32',
+	},
 ];
 
 /* ── DOM refs ── */
@@ -934,14 +1038,16 @@ document.querySelectorAll('.proj-card').forEach(card => {
 });
 closeBtn.addEventListener('click',  closeModal);
 backdrop.addEventListener('click',  closeModal);
+document.getElementById('modalCloseBottom').addEventListener('click', closeModal);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
 
 /* ── Mouse parallax ── */
 (function () {
 	const cards  = Array.from(document.querySelectorAll('.proj-card'));
-	const depths = { '0': 1.0, '1': 0.62, '2': 1.45 };
+	const depths = { '0': 1.0, '1': 0.62, '2': 1.45, '3': 0.85 };
 	const line0  = document.getElementById('cline-0');
 	const line1  = document.getElementById('cline-1');
+	const line2  = document.getElementById('cline-2');
 	const field  = document.getElementById('cardsField');
 
 	let mx = 0, my = 0, cx = 0, cy = 0, raf = null, touch = false;
@@ -961,13 +1067,15 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.clas
 	}
 
 	function drawConstellation() {
-		if (!line0 || !line1) return;
+		if (!line0 || !line1 || !line2) return;
 		const c = cards.map(cardCenter);
-		if (c.length < 3) return;
+		if (c.length < 4) return;
 		line0.setAttribute('x1', c[0].x); line0.setAttribute('y1', c[0].y);
 		line0.setAttribute('x2', c[1].x); line0.setAttribute('y2', c[1].y);
 		line1.setAttribute('x1', c[1].x); line1.setAttribute('y1', c[1].y);
 		line1.setAttribute('x2', c[2].x); line1.setAttribute('y2', c[2].y);
+		line2.setAttribute('x1', c[2].x); line2.setAttribute('y1', c[2].y);
+		line2.setAttribute('x2', c[3].x); line2.setAttribute('y2', c[3].y);
 	}
 
 	function tick() {
