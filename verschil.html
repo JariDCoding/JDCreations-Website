@@ -41,7 +41,6 @@
 		--vr-rule:  rgba(148,163,184,0.1);
 		--vr-dim:   rgba(148,163,184,0.55);
 		--vr-faint: rgba(148,163,184,0.28);
-		--vr-green: #9be36a;
 		--vr-text:  #D9DDE5;
 	}
 
@@ -275,7 +274,7 @@
 		content: '';
 		position: absolute; left: 0; top: 0;
 		width: 2px; height: 0;
-		background: var(--vr-green);
+		background: rgba(255,255,255,0.45);
 		transition: height 0.5s cubic-bezier(0.22,0.61,0.36,1);
 	}
 	.vr-pillar.is-visible::before { height: 100%; }
@@ -294,7 +293,7 @@
 
 	.vr-pillar-label {
 		font-size: 10px; letter-spacing: 0.38em; text-transform: uppercase;
-		color: var(--vr-green); margin: 0 0 0.7rem;
+		color: rgba(255,255,255,0.45); margin: 0 0 0.7rem;
 		opacity: 0; transition: opacity 0.4s ease 0.2s;
 	}
 	.vr-pillar.is-visible .vr-pillar-label { opacity: 1; }
@@ -357,8 +356,8 @@
 	.vr-cth:not(:first-child) { padding-left: 16px; text-align: center; }
 	.vr-cth--jdc {
 		color: var(--vr-text);
-		border-left: 1px solid rgba(155,227,106,0.25);
-		background: rgba(155,227,106,0.03);
+		border-left: 1px solid rgba(255,255,255,0.12);
+		background: rgba(255,255,255,0.02);
 	}
 
 	/* Data rows */
@@ -383,10 +382,10 @@
 		gap: 5px;
 	}
 	.vr-ctd--jdc {
-		border-left: 1px solid rgba(155,227,106,0.25);
-		background: rgba(155,227,106,0.03);
+		border-left: 1px solid rgba(255,255,255,0.12);
+		background: rgba(255,255,255,0.02);
 	}
-	.vr-ctd--jdc:hover { background: rgba(155,227,106,0.05) !important; }
+	.vr-ctd--jdc:hover { background: rgba(255,255,255,0.04) !important; }
 
 	.vr-ctd-feat {
 		font-size: clamp(11px, 0.9vw, 13px); letter-spacing: 0.12em;
@@ -407,10 +406,10 @@
 		font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
 		display: block;
 	}
-	.vr-mark--yes   { color: var(--vr-green); }
+	.vr-mark--yes   { color: rgba(255,255,255,0.45); }
 	.vr-mark--no    { color: rgba(148,163,184,0.22); }
 	.vr-mark--part  { color: rgba(148,163,184,0.45); }
-	.vr-mark--yes .vr-mark-sub   { color: rgba(155,227,106,0.55); }
+	.vr-mark--yes .vr-mark-sub   { color: rgba(255,255,255,0.35); }
 	.vr-mark--no .vr-mark-sub    { color: rgba(148,163,184,0.22); }
 	.vr-mark--part .vr-mark-sub  { color: rgba(148,163,184,0.35); }
 
@@ -466,7 +465,7 @@
 	.vr-price-item-sym {
 		font-family: 'Bebas Neue', sans-serif;
 		font-size: 28px; letter-spacing: 0.05em;
-		color: var(--vr-green);
+		color: rgba(255,255,255,0.45);
 		flex-shrink: 0; min-width: 28px;
 		padding-top: 2px;
 	}
@@ -537,7 +536,7 @@
 	.vr-project-card::after {
 		content: '';
 		position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-		background: var(--vr-green);
+		background: rgba(255,255,255,0.45);
 		transform: scaleX(0); transform-origin: left;
 		transition: transform 0.35s cubic-bezier(0.22,0.61,0.36,1);
 	}
@@ -622,7 +621,7 @@
 	}
 	.vr-cta-meta::before {
 		content: ''; display: block; width: 18px; height: 1px;
-		background: rgba(155,227,106,0.5); flex-shrink: 0;
+		background: rgba(255,255,255,0.25); flex-shrink: 0;
 	}
 
 	/* ── RESPONSIVE ────────────────────────────────────────── */
@@ -656,8 +655,8 @@
 		margin-bottom: 12px;
 	}
 	.vr-cmc-col--jdc {
-		border-color: rgba(155,227,106,0.3);
-		background: rgba(155,227,106,0.02);
+		border-color: rgba(255,255,255,0.15);
+		background: rgba(255,255,255,0.015);
 	}
 	.vr-cmc-head {
 		padding: 14px 16px;
@@ -715,9 +714,8 @@
 			<div class="vr-hero-right">
 				<p class="vr-hero-tagline">
 					Geen templates. Geen bureau-overhead.<br>
-					Geen maandelijkse kosten. Geen junior<br>
-					die het werk doet terwijl jij betaalt voor<br>
-					een senior — gewoon het echte werk.
+					Geen maandkosten. Jij praat altijd<br>
+					direct met de bouwer.
 				</p>
 				<p class="vr-hero-meta">7 concrete redenen</p>
 			</div>
@@ -738,9 +736,8 @@
 				<strong>GEEN.</strong>
 			</h2>
 			<p class="vr-manifesto-body vr-fade">
-				Templates zijn gebouwd voor iedereen — en werken perfect voor niemand.
-				Elke pixel, elke regel code, elke interactie bij JDC is ontworpen
-				voor jouw business. Niet voor de volgende klant.
+				Templates zijn gebouwd voor iedereen — en werken voor niemand perfect.<br>
+				Alles bij JDC is ontworpen voor jouw business. Niet voor de volgende klant.
 			</p>
 		</div>
 	</section>
@@ -768,10 +765,8 @@
 				<p class="vr-pillar-label">Custom Design</p>
 				<h3 class="vr-pillar-title">VOLLEDIG CUSTOM.<br>GEEN TEMPLATE, NOOIT.</h3>
 				<p class="vr-pillar-body">
-					Elke regel code is geschreven voor jou. Geen drag-and-drop blokken,
-					geen platform-beperkingen, geen compromissen die de builder oplegt.
-					Er bestaat geen andere website die er hetzelfde uitziet — dat is geen
-					toeval, dat is opzet.
+					Elke regel code geschreven voor jou. Geen platform-beperkingen, geen shortcuts.<br>
+					Er bestaat geen andere site die er hetzelfde uitziet — dat is opzet.
 				</p>
 			</div>
 		</div>
@@ -783,10 +778,8 @@
 				<p class="vr-pillar-label">Geen Overhead</p>
 				<h3 class="vr-pillar-title">GEEN BUREAU-<br>OVERHEAD.</h3>
 				<p class="vr-pillar-body">
-					Bij een bureau doe jij de briefing met een accountmanager, die
-					het doorgeeft aan een senior, die het delegeert aan een junior.
-					Jij betaalt voor alle lagen. Bij JDC praat je altijd rechtstreeks
-					met de persoon die het bouwt. Geen tussenschakel. Nooit.
+					Briefing → accountmanager → senior → junior. Jij betaalt voor alle lagen.<br>
+					Bij JDC praat je altijd rechtstreeks met de persoon die het bouwt.
 				</p>
 			</div>
 		</div>
@@ -798,10 +791,8 @@
 				<p class="vr-pillar-label">Eigendom</p>
 				<h3 class="vr-pillar-title">JIJ BEZIT<br>DE CODE.</h3>
 				<p class="vr-pillar-body">
-					Bij Squarespace, Webflow en Wix huur je je eigen website.
-					Stop met betalen en alles verdwijnt. Bij JDC krijg je de volledige
-					broncode. Geen platform-lock-in, geen abonnement dat jaar na jaar
-					stijgt, geen afhankelijkheid van een derde partij.
+					Bij een platform huur je je site. Stop met betalen en alles verdwijnt.<br>
+					JDC levert de volledige broncode — van jou, voor altijd.
 				</p>
 			</div>
 		</div>
@@ -813,10 +804,8 @@
 				<p class="vr-pillar-label">Geen Maandkosten</p>
 				<h3 class="vr-pillar-title">EENMALIG.<br>VOOR ALTIJD JOUW.</h3>
 				<p class="vr-pillar-body">
-					Squarespace kost €23/maand. Webflow €36/maand. Na drie jaar
-					heb je betaald wat een JDC-project kost — en je bezit nog steeds
-					niets. JDC is een investering, geen abonnement. Je betaalt één keer
-					voor iets dat permanent van jou is.
+					Squarespace €23/maand. Webflow €36/maand. Na 3 jaar betaald wat een JDC-project kost.<br>
+					Verschil: bij JDC bezit je iets.
 				</p>
 			</div>
 		</div>
@@ -828,10 +817,8 @@
 				<p class="vr-pillar-label">Performance</p>
 				<h3 class="vr-pillar-title">RAZENDSNEL.<br>LIGHTHOUSE 95+.</h3>
 				<p class="vr-pillar-body">
-					Handgeschreven HTML, CSS en JavaScript — geen framework-bloat,
-					geen ongebruikte JavaScript-bundels, geen WordPress-plugin-stapel
-					die de laadtijd vernietigt. Snelheid is SEO. Snelheid is conversie.
-					Gemiddelde Squarespace-score: 40–60. JDC-score: 95–100.
+					Geen framework-bloat, geen plugin-stapel. Handgeschreven code.<br>
+					Gemiddelde template-score: 40–65. JDC-score: 95–100. Snelheid = SEO = conversie.
 				</p>
 			</div>
 		</div>
@@ -843,9 +830,8 @@
 				<p class="vr-pillar-label">Snelheid</p>
 				<h3 class="vr-pillar-title">2 TOT 4 WEKEN.<br>GEEN WACHTRIJ.</h3>
 				<p class="vr-pillar-body">
-					Geen briefing-rondes, geen goedkeuringslagen, geen kwartaalplanning
-					waar jij klant #47 bent. Wat een bureau in tien weken doet, lever
-					JDC in twee tot vier. Directe communicatie = directe uitvoering.
+					Geen briefing-rondes, geen kwartaalplanning, geen wachtrij.<br>
+					Wat een bureau in 10 weken doet, levert JDC in 2 tot 4.
 				</p>
 			</div>
 		</div>
@@ -857,10 +843,8 @@
 				<p class="vr-pillar-label">Automatisering</p>
 				<h3 class="vr-pillar-title">SITES DIE WERKEN<br>TERWIJL JIJ SLAAPT.</h3>
 				<p class="vr-pillar-body">
-					CRM-koppelingen, lead capture flows, e-mail triggers, notificaties —
-					geen losse plugins maar schone integraties ingebakken in de site.
-					Jouw website is geen digitale brochure, het is een systeem dat
-					actief bijdraagt aan je business.
+					CRM-koppelingen, lead flows, e-mail triggers — ingebakken, geen losse plugins.<br>
+					Jouw site doet actief werk terwijl jij slaapt.
 				</p>
 			</div>
 		</div>
