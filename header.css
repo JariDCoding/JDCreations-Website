@@ -175,6 +175,10 @@
   white-space: nowrap;
   padding: 6px 2px;
   transition: color .2s ease, opacity .2s ease;
+  opacity: 0.42;
+}
+.jdc-header__link:hover {
+  opacity: 0.82;
 }
 
 .jdc-header__link::before,
@@ -199,16 +203,13 @@
 .jdc-header__link:hover::after,
 .jdc-header__link.is-active::after  { margin-left: 0.3em; }
 
-.jdc-header__link.is-active { color: #ffffff; }
+.jdc-header__link.is-active {
+  color: #ffffff;
+  opacity: 1;
+  background: linear-gradient(#ffffff, #ffffff) left 2px bottom 0/100% 1px no-repeat;
+}
 .jdc-header__link.is-active::before,
 .jdc-header__link.is-active::after { color: rgba(255,255,255,0.28); }
-
-/* Thin white underline on active link */
-.jdc-header__link.is-active::marker { content: ""; }
-.jdc-header__link.is-active {
-  background:
-    linear-gradient(#ffffff, #ffffff) left 2px bottom 0/100% 1px no-repeat;
-}
 
 /* ==== cta ================================================================ */
 .jdc-header__cta {
@@ -522,8 +523,8 @@
   }
   .jdc-header__logo-dot { display: none; }
   .jdc-header__meta,
-  .jdc-header__nav,
-  .jdc-header__cta { display: none !important; }
+  .jdc-header__nav { display: none !important; }
+  .jdc-header__cta { display: none; }
   .jdc-header__toggle {
     flex: 0 0 auto;
     margin-left: auto;
@@ -543,5 +544,19 @@ html.jdc-menu-open body {
   .jdc-header, .jdc-header *, .jdc-header__drawer, .jdc-header__drawer * {
     transition: none !important;
     animation: none !important;
+  }
+}
+
+/* ==== CTA final-authority rule (must be last in file) ====================
+   This rule beats everything above it in the cascade, including the
+   mobile flex block. Because CSS `zoom` on <html> can shift the layout
+   viewport, we reinforce at both min-width values to cover all Chrome
+   zoom steps. The !important here pairs with the identical inline style
+   set by pinHeader() in header.js for a double-layer guarantee. */
+@media (min-width: 961px) {
+  .jdc-header > .jdc-header__cta {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 }
