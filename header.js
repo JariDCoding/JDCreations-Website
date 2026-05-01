@@ -75,7 +75,9 @@
   });
 
   const desktopMQ = window.matchMedia('(min-width: 961px)');
-  desktopMQ.addEventListener('change', (e) => { if (e.matches) setOpen(false); });
+  desktopMQ.addEventListener('change', (e) => {
+    if (e.matches) setOpen(false);
+  });
 
   let ticking = false;
   const onScroll = () => {
@@ -89,47 +91,37 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Width pin — the host page applies `html { zoom: X }` at several
-  // breakpoints. Under zoom, innerWidth/clientWidth report the viewport
-  // in CSS pixels (pre-zoom), so we divide by the active zoom factor to
-  // recover the layout-space width that renders at full viewport.
+  // Full-width pin for position:fixed header under html{zoom}.
+  // Previous approach (width = innerWidth / zoom) broke when Chrome started
+  // returning innerWidth already zoom-adjusted — dividing twice made the
+  // header wider than the screen and pushed the CTA off the right edge.
+  // Solution: anchor with left:0 + right:0 (browser stretches to viewport
+  // automatically) and use matchMedia for CTA visibility (mirrors the CSS
+  // rule exactly, immune to zoom-adjusted viewport measurements).
   let pinRAF = 0;
-  let lastW = 0;
   const cta    = header.querySelector('.jdc-header__cta');
   const drawer = header.querySelector('.jdc-header__drawer');
+  const mqlDesktop = window.matchMedia('(min-width: 961px)');
 
   const pinHeader = () => {
     if (pinRAF) return;
     pinRAF = requestAnimationFrame(() => {
       pinRAF = 0;
-      const vw = Math.max(
-        document.documentElement.clientWidth || 0,
-        window.innerWidth || 0
-      );
-      const zoom = parseFloat(getComputedStyle(document.documentElement).zoom);
-      const factor = (isFinite(zoom) && zoom > 0) ? zoom : 1;
-      const w = vw / factor;
-      if (w === lastW) return;
-      lastW = w;
 
-      const px = w + 'px';
-      header.style.setProperty('width',  px,     'important');
       header.style.setProperty('left',   '0',    'important');
-      header.style.setProperty('right',  'auto', 'important');
+      header.style.setProperty('right',  '0',    'important');
+      header.style.setProperty('width',  'auto', 'important');
       header.style.setProperty('margin', '0',    'important');
       if (drawer) {
-        drawer.style.setProperty('width', px,  'important');
-        drawer.style.setProperty('left',  '0', 'important');
+        drawer.style.setProperty('left',  '0',    'important');
+        drawer.style.setProperty('right', '0',    'important');
+        drawer.style.setProperty('width', 'auto', 'important');
       }
 
-      // CSS zoom on <html> can cause the mobile media query (max-width:960px)
-      // to fire incorrectly at large physical viewports because the browser
-      // evaluates queries against the zoomed layout viewport. Enforce CTA
-      // visibility via inline style so it beats any !important CSS rule.
       if (cta) {
-        if (w >= 961) {
-          cta.style.setProperty('display', 'inline-flex', 'important');
-          cta.style.setProperty('visibility', 'visible', 'important');
+        if (mqlDesktop.matches) {
+          cta.style.setProperty('display',    'inline-flex', 'important');
+          cta.style.setProperty('visibility', 'visible',     'important');
         } else {
           cta.style.removeProperty('display');
           cta.style.removeProperty('visibility');
@@ -137,6 +129,8 @@
       }
     });
   };
+
+  mqlDesktop.addEventListener('change', pinHeader);
   pinHeader();
   window.addEventListener('resize', pinHeader, { passive: true });
   window.addEventListener('orientationchange', pinHeader, { passive: true });
