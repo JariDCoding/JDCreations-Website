@@ -3,10 +3,10 @@
   const current = path === '' ? 'index.html' : path;
 
   const LINKS = [
-    { label: 'HOME',     href: './index.html', match: ['index.html'] },
-    { label: 'OVER JDC', href: './over.html',  match: ['over.html'] },
+    { label: 'HOME',     href: './index.html',    match: ['index.html'] },
+    { label: 'OVER JDC', href: './over.html',     match: ['over.html'] },
     { label: 'PROJECTS', href: './projects.html', match: ['projects.html'] },
-    { label: 'CONTACT',  href: '#contact',     match: [] },
+    { label: 'CONTACT',  href: './contact.html',  match: ['contact.html'] },
   ];
 
   const isActive = (l) => l.match.includes(current);
@@ -36,7 +36,7 @@
       ${LINKS.map(navLink).join('')}
     </nav>
 
-    <a class="jdc-header__cta" href="/aanvraag">
+    <a class="jdc-header__cta" href="./contact.html">
       <span class="jdc-header__cta-dot" aria-hidden="true"></span>
       <span>START&nbsp;NU</span>
       <span class="jdc-header__cta-arrow" aria-hidden="true">&rarr;</span>

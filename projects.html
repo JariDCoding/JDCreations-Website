@@ -19,9 +19,6 @@
 
 	<script>
 		try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(e){}
-		/* Save hash for deep-linking BEFORE clearing it to prevent scroll-jump */
-		var _initProjectSlug = '';
-		try { _initProjectSlug = location.hash.slice(1); } catch(e){}
 		try { if (location.hash) history.replaceState(null, '', location.pathname + location.search); } catch(e){}
 		window.scrollTo(0, 0);
 		document.documentElement.classList.add('scroll-locked');
@@ -1054,7 +1051,6 @@ function openModal(idx) {
 		s.style.setProperty('--sc-accent', p.accent);
 	});
 
-	if (p.slug) history.replaceState(null, '', '#' + p.slug);
 	modal.classList.add('is-ready');
 	wrap.scrollTop = 0;
 	document.body.style.overflow = 'hidden';
@@ -1062,7 +1058,6 @@ function openModal(idx) {
 }
 
 function closeModal() {
-	history.replaceState(null, '', location.pathname + location.search);
 	modal.classList.remove('is-open');
 	document.body.style.overflow = '';
 	setTimeout(() => modal.classList.remove('is-ready'), 460);
@@ -1078,11 +1073,6 @@ closeBtn.addEventListener('click',  closeModal);
 backdrop.addEventListener('click',  closeModal);
 document.getElementById('modalCloseBottom').addEventListener('click', closeModal);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
-const initSlug = (typeof _initProjectSlug !== 'undefined') ? _initProjectSlug : location.hash.slice(1);
-if (initSlug) {
-	const initIdx = PROJECTS.findIndex(p => p.slug === initSlug);
-	if (initIdx !== -1) requestAnimationFrame(() => openModal(initIdx));
-}
 
 /* ── Mouse parallax ── */
 (function () {
