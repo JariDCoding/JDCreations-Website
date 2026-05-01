@@ -5,6 +5,7 @@
   const LINKS = [
     { label: 'HOME',     href: './index.html',    match: ['index.html'] },
     { label: 'OVER JDC', href: './over.html',     match: ['over.html'] },
+    { label: 'VERSCHIL', href: './verschil.html', match: ['verschil.html'] },
     { label: 'PROJECTS', href: './projects.html', match: ['projects.html'] },
     { label: 'CONTACT',  href: './contact.html',  match: ['contact.html'] },
   ];

@@ -18,11 +18,14 @@
         <a class="jdc-footer__nav-link" href="./over.html">
           <span class="jdc-footer__nav-num" aria-hidden="true">02</span>OVER JDC
         </a>
+        <a class="jdc-footer__nav-link" href="./verschil.html">
+          <span class="jdc-footer__nav-num" aria-hidden="true">03</span>VERSCHIL
+        </a>
         <a class="jdc-footer__nav-link" href="./projects.html">
-          <span class="jdc-footer__nav-num" aria-hidden="true">03</span>PROJECTS
+          <span class="jdc-footer__nav-num" aria-hidden="true">04</span>PROJECTS
         </a>
         <a class="jdc-footer__nav-link jdc-footer__nav-link--cta" href="./contact.html">
-          <span class="jdc-footer__nav-num" aria-hidden="true">04</span>CONTACT
+          <span class="jdc-footer__nav-num" aria-hidden="true">05</span>CONTACT
           <span class="jdc-footer__nav-arrow" aria-hidden="true">&#8594;</span>
         </a>
       </nav>

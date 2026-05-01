@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, width=device-width">
+	<title>Verschil · JDCreations</title>
+	<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&display=swap" />
+	<link rel="stylesheet" href="./base.css" />
+	<link rel="stylesheet" href="./header.css" />
+	<link rel="stylesheet" href="./transitions.css" />
+	<link rel="stylesheet" href="./footer.css" />
+	<script src="./transitions.js"></script>
+	<script src="./header.js" defer></script>
+	<script src="./footer.js" defer></script>
+
+	<script>
+		try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(e){}
+		window.scrollTo(0, 0);
+		(function() {
+			function fitMobile() {
+				var w = window.innerWidth;
+				if (w <= 600) { document.documentElement.style.zoom = Math.min(w, 430) / 430; }
+				else { document.documentElement.style.zoom = ''; }
+			}
+			fitMobile();
+			window.addEventListener('resize', fitMobile);
+		})();
+	</script>
+
+	<style>
+	html { -webkit-text-size-adjust: 100%; }
+	* { box-sizing: border-box; }
+	body { margin: 0; background: #07090d; color: #D9DDE5; font-family: 'JetBrains Mono', ui-monospace, monospace; line-height: normal; }
+
+	:root {
+		--vr-pad:   clamp(1.5rem, 6vw, 7rem);
+		--vr-rule:  rgba(148,163,184,0.1);
+		--vr-dim:   rgba(148,163,184,0.55);
+		--vr-faint: rgba(148,163,184,0.28);
+		--vr-green: #9be36a;
+		--vr-text:  #D9DDE5;
+	}
+
+	/* ── SCROLL-REVEAL BASE ───────────────────────────────── */
+	.vr-fade {
+		opacity: 0;
+		transform: translateY(18px);
+		transition: opacity 0.7s cubic-bezier(0.22,0.61,0.36,1), transform 0.7s cubic-bezier(0.22,0.61,0.36,1);
+	}
+	.vr-fade.is-visible { opacity: 1; transform: none; }
+
+	.vr-line-h {
+		width: 0;
+		transition: width 1.1s cubic-bezier(0.22,0.61,0.36,1);
+	}
+	.vr-line-h.is-drawn { width: 100%; }
+
+	.vr-line-v {
+		height: 0;
+		transition: height 1s cubic-bezier(0.22,0.61,0.36,1);
+	}
+	.vr-line-v.is-drawn { height: 100%; }
+
+	/* ── SHARED GRID OVERLAY ──────────────────────────────── */
+	.vr-grid::before {
+		content: '';
+		position: absolute; inset: 0;
+		background-image:
+			linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+		background-size: 72px 72px;
+		pointer-events: none;
+	}
+
+	/* ── SHARED SECTION EYEBROW ───────────────────────────── */
+	.vr-eyebrow {
+		font-size: 11px; letter-spacing: 0.38em; text-transform: uppercase;
+		color: var(--vr-faint); margin: 0 0 1.5rem;
+	}
+
+	/* ── PAGE ─────────────────────────────────────────────── */
+	.vr-page { padding-top: 84px; }
+
+	/* ════════════════════════════════════════════════════════
+	   01  HERO
+	════════════════════════════════════════════════════════ */
+	.vr-hero {
+		position: relative; overflow: hidden;
+		padding: clamp(4rem,10vh,7rem) var(--vr-pad) clamp(3rem,6vh,5rem);
+		border-bottom: 1px solid var(--vr-rule);
+	}
+
+	.vr-hero-inner {
+		position: relative; z-index: 1;
+		display: grid;
+		grid-template-columns: 1fr minmax(auto,420px);
+		gap: clamp(2rem,5vw,8rem);
+		align-items: end;
+	}
+
+	.vr-h1 {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(52px, 6.2vw, 96px);
+		letter-spacing: 0.06em; line-height: 0.88;
+		color: var(--vr-text); margin: 0;
+	}
+	.vr-h1-dim  { color: rgba(148,163,184,0.18); }
+	.vr-h1-row  { display: flex; align-items: baseline; }
+
+	.vr-hero-sub {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(18px, 2vw, 28px); letter-spacing: 0.22em;
+		color: rgba(148,163,184,0.38); margin: 1.25rem 0 0;
+	}
+	.vr-hero-sub em {
+		font-style: normal;
+		color: var(--vr-text);
+	}
+
+	/* Right column */
+	.vr-hero-right {
+		display: flex; flex-direction: column; gap: 1.5rem;
+		padding-bottom: 4px;
+	}
+	.vr-hero-tagline {
+		font-size: clamp(12px, 0.95vw, 14px); letter-spacing: 0.1em; line-height: 2;
+		color: rgba(148,163,184,0.68);
+	}
+	.vr-hero-meta {
+		font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+		color: var(--vr-faint);
+		display: flex; align-items: center; gap: 12px;
+	}
+	.vr-hero-meta::before {
+		content: ''; display: block; width: 24px; height: 1px;
+		background: rgba(148,163,184,0.2); flex-shrink: 0;
+	}
+
+	/* Structural lines */
+	.vr-hero-hline {
+		position: absolute; bottom: 0; left: 0; right: 0;
+		height: 1px; overflow: hidden;
+		background: rgba(255,255,255,0.04);
+	}
+	.vr-hero-hline::after {
+		content: '';
+		position: absolute; left: 0; top: 0; height: 100%; width: 100%;
+		background: rgba(255,255,255,0.55);
+		transform: scaleX(0); transform-origin: left;
+		transition: transform 1.1s cubic-bezier(0.22,0.61,0.36,1) 0.15s;
+	}
+	body.loader-gone .vr-hero-hline::after { transform: scaleX(1); }
+
+	.vr-hero-vline {
+		position: absolute; top: 0; bottom: 0;
+		right: calc(var(--vr-pad) * 2.6);
+		width: 1px; overflow: hidden;
+		background: rgba(255,255,255,0.05);
+	}
+	.vr-hero-vline::after {
+		content: '';
+		position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+		background: rgba(255,255,255,0.5);
+		transform: scaleY(0); transform-origin: top;
+		transition: transform 1s cubic-bezier(0.22,0.61,0.36,1) 0.4s;
+	}
+	body.loader-gone .vr-hero-vline::after { transform: scaleY(1); }
+
+	/* ════════════════════════════════════════════════════════
+	   02  MANIFESTO STRIP
+	════════════════════════════════════════════════════════ */
+	.vr-manifesto {
+		position: relative;
+		padding: clamp(4.5rem,10vh,8rem) var(--vr-pad);
+		text-align: center;
+		border-bottom: 1px solid var(--vr-rule);
+		overflow: hidden;
+	}
+
+	/* Subtle diagonal lines */
+	.vr-manifesto::after {
+		content: '';
+		position: absolute; inset: 0;
+		background:
+			repeating-linear-gradient(
+				-55deg,
+				transparent,
+				transparent 180px,
+				rgba(255,255,255,0.012) 180px,
+				rgba(255,255,255,0.012) 181px
+			);
+		pointer-events: none;
+	}
+
+	.vr-manifesto-inner {
+		position: relative; z-index: 1;
+		max-width: 1100px; margin: 0 auto;
+	}
+
+	.vr-manifesto-h {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(42px, 5.5vw, 88px);
+		letter-spacing: 0.07em; line-height: 0.92;
+		color: var(--vr-text); margin: 0 0 clamp(1.5rem, 3vh, 2.5rem);
+	}
+	.vr-manifesto-h span {
+		display: block;
+		color: rgba(148,163,184,0.22);
+	}
+	.vr-manifesto-h strong {
+		font-weight: 400;
+		color: var(--vr-text);
+	}
+
+	.vr-manifesto-body {
+		font-size: clamp(12px, 0.95vw, 14px); letter-spacing: 0.1em; line-height: 2;
+		color: rgba(148,163,184,0.55);
+		max-width: 580px; margin: 0 auto;
+	}
+
+	.vr-manifesto-rule {
+		position: absolute; left: 0; right: 0;
+		height: 1px; background: rgba(255,255,255,0.06);
+	}
+	.vr-manifesto-rule--top { top: 0; }
+	.vr-manifesto-rule--bot { bottom: 0; }
+
+	/* ════════════════════════════════════════════════════════
+	   03  PILLARS — 7 REDENEN
+	════════════════════════════════════════════════════════ */
+	.vr-pillars {
+		padding: clamp(4rem,9vh,7rem) var(--vr-pad);
+		border-bottom: 1px solid var(--vr-rule);
+	}
+
+	.vr-pillars-head {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+		margin-bottom: clamp(3.5rem,7vh,6rem);
+		padding-bottom: clamp(2.5rem,5vh,4rem);
+		border-bottom: 1px solid var(--vr-rule);
+	}
+	.vr-pillars-head-right {
+		font-size: clamp(13px, 1vw, 15px); letter-spacing: 0.07em; line-height: 1.95;
+		color: rgba(148,163,184,0.62);
+		max-width: 480px;
+		padding-top: 0.5rem;
+	}
+	.vr-pillars-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(36px, 4vw, 62px);
+		letter-spacing: 0.07em; line-height: 0.92;
+		color: var(--vr-text); margin: 0;
+	}
+
+	/* Individual pillar row */
+	.vr-pillar {
+		display: grid;
+		grid-template-columns: clamp(80px, 9vw, 130px) 1fr;
+		gap: clamp(1.5rem, 3vw, 4rem);
+		align-items: start;
+		padding: clamp(2rem,4vh,3rem) 0;
+		border-bottom: 1px solid rgba(148,163,184,0.07);
+		position: relative;
+	}
+	.vr-pillar:last-child { border-bottom: none; }
+
+	/* Green accent line on hover / reveal */
+	.vr-pillar::before {
+		content: '';
+		position: absolute; left: 0; top: 0;
+		width: 2px; height: 0;
+		background: var(--vr-green);
+		transition: height 0.5s cubic-bezier(0.22,0.61,0.36,1);
+	}
+	.vr-pillar.is-visible::before { height: 100%; }
+
+	.vr-pillar-num {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(72px, 8vw, 120px);
+		letter-spacing: -0.02em; line-height: 1;
+		color: rgba(148,163,184,0.08);
+		transition: color 0.5s ease;
+		user-select: none;
+	}
+	.vr-pillar.is-visible .vr-pillar-num { color: rgba(148,163,184,0.14); }
+
+	.vr-pillar-content { padding-top: clamp(0.8rem, 1.2vw, 1.4rem); }
+
+	.vr-pillar-label {
+		font-size: 10px; letter-spacing: 0.38em; text-transform: uppercase;
+		color: var(--vr-green); margin: 0 0 0.7rem;
+		opacity: 0; transition: opacity 0.4s ease 0.2s;
+	}
+	.vr-pillar.is-visible .vr-pillar-label { opacity: 1; }
+
+	.vr-pillar-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(24px, 2.5vw, 40px);
+		letter-spacing: 0.1em; line-height: 1.05;
+		color: var(--vr-text); margin: 0 0 0.9rem;
+	}
+
+	.vr-pillar-body {
+		font-size: clamp(12px, 0.95vw, 14px); letter-spacing: 0.06em; line-height: 1.9;
+		color: rgba(148,163,184,0.62);
+		max-width: 580px; margin: 0;
+	}
+
+	/* ════════════════════════════════════════════════════════
+	   04  VERGELIJKING
+	════════════════════════════════════════════════════════ */
+	.vr-compare {
+		padding: clamp(4rem,9vh,7rem) var(--vr-pad);
+		border-bottom: 1px solid var(--vr-rule);
+	}
+
+	.vr-compare-head {
+		margin-bottom: clamp(3rem,6vh,5rem);
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+		padding-bottom: clamp(2rem,4vh,3.5rem);
+		border-bottom: 1px solid var(--vr-rule);
+	}
+	.vr-compare-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(36px, 4vw, 62px);
+		letter-spacing: 0.07em; line-height: 0.92;
+		color: var(--vr-text); margin: 0;
+	}
+	.vr-compare-sub {
+		font-size: clamp(12px, 0.95vw, 14px); letter-spacing: 0.06em; line-height: 1.9;
+		color: rgba(148,163,184,0.55);
+		padding-top: 0.5rem;
+	}
+
+	/* Table grid */
+	.vr-compare-table {
+		display: grid;
+		grid-template-columns: 1.6fr 1fr 1fr 1.15fr;
+		border-top: 1px solid rgba(148,163,184,0.12);
+	}
+
+	/* Header row */
+	.vr-cth {
+		padding: 14px 16px 14px 0;
+		font-size: 10px; letter-spacing: 0.38em; text-transform: uppercase;
+		color: rgba(148,163,184,0.35);
+		border-bottom: 1px solid rgba(148,163,184,0.12);
+	}
+	.vr-cth:not(:first-child) { padding-left: 16px; text-align: center; }
+	.vr-cth--jdc {
+		color: var(--vr-text);
+		border-left: 1px solid rgba(155,227,106,0.25);
+		background: rgba(155,227,106,0.03);
+	}
+
+	/* Data rows */
+	.vr-ctr {
+		display: contents;
+	}
+	.vr-ctr:hover > .vr-ctd { background: rgba(148,163,184,0.03); }
+
+	.vr-ctd {
+		padding: clamp(14px,2vh,20px) 16px clamp(14px,2vh,20px) 0;
+		border-bottom: 1px solid rgba(148,163,184,0.07);
+		vertical-align: middle;
+		transition: background 0.2s;
+	}
+	.vr-ctd:not(:first-child) {
+		padding-left: 16px;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		gap: 5px;
+	}
+	.vr-ctd--jdc {
+		border-left: 1px solid rgba(155,227,106,0.25);
+		background: rgba(155,227,106,0.03);
+	}
+	.vr-ctd--jdc:hover { background: rgba(155,227,106,0.05) !important; }
+
+	.vr-ctd-feat {
+		font-size: clamp(11px, 0.9vw, 13px); letter-spacing: 0.12em;
+		color: rgba(148,163,184,0.75);
+	}
+	.vr-ctd-note {
+		font-size: 10px; letter-spacing: 0.05em;
+		color: rgba(148,163,184,0.3); margin-top: 2px;
+	}
+
+	/* Status marks */
+	.vr-mark {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 12px; letter-spacing: 0.04em;
+		display: block;
+	}
+	.vr-mark-sub {
+		font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+		display: block;
+	}
+	.vr-mark--yes   { color: var(--vr-green); }
+	.vr-mark--no    { color: rgba(148,163,184,0.22); }
+	.vr-mark--part  { color: rgba(148,163,184,0.45); }
+	.vr-mark--yes .vr-mark-sub   { color: rgba(155,227,106,0.55); }
+	.vr-mark--no .vr-mark-sub    { color: rgba(148,163,184,0.22); }
+	.vr-mark--part .vr-mark-sub  { color: rgba(148,163,184,0.35); }
+
+	/* ════════════════════════════════════════════════════════
+	   05  PRIJS-REFRAME
+	════════════════════════════════════════════════════════ */
+	.vr-price {
+		position: relative; overflow: hidden;
+		padding: clamp(5rem,11vh,9rem) var(--vr-pad);
+		border-bottom: 1px solid var(--vr-rule);
+	}
+	.vr-price::before {
+		content: '';
+		position: absolute; inset: 0;
+		background-image:
+			linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+		background-size: 72px 72px;
+		pointer-events: none;
+	}
+
+	.vr-price-inner {
+		position: relative; z-index: 1;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: clamp(3rem,6vw,8rem);
+		align-items: center;
+	}
+
+	.vr-price-left {}
+	.vr-price-quote {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(40px, 4.8vw, 74px);
+		letter-spacing: 0.07em; line-height: 0.9;
+		color: var(--vr-text); margin: 0 0 2rem;
+	}
+	.vr-price-quote-dim { color: rgba(148,163,184,0.22); }
+
+	.vr-price-body {
+		font-size: clamp(12px, 0.95vw, 14px); letter-spacing: 0.07em; line-height: 1.95;
+		color: rgba(148,163,184,0.62);
+		max-width: 420px;
+	}
+
+	.vr-price-right {}
+	.vr-price-items { list-style: none; margin: 0; padding: 0; }
+	.vr-price-item {
+		display: flex; gap: 16px;
+		padding: clamp(14px,2vh,22px) 0;
+		border-bottom: 1px solid rgba(148,163,184,0.07);
+	}
+	.vr-price-item:first-child { border-top: 1px solid rgba(148,163,184,0.07); }
+	.vr-price-item-sym {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 28px; letter-spacing: 0.05em;
+		color: var(--vr-green);
+		flex-shrink: 0; min-width: 28px;
+		padding-top: 2px;
+	}
+	.vr-price-item-text {
+		font-size: clamp(11px, 0.88vw, 13px); letter-spacing: 0.1em; line-height: 1.75;
+		color: rgba(148,163,184,0.65);
+	}
+	.vr-price-item-text strong {
+		font-weight: 400; color: var(--vr-text);
+		display: block; font-size: clamp(12px, 0.95vw, 14px);
+		margin-bottom: 2px;
+	}
+
+	/* Vertical line between columns */
+	.vr-price-vline {
+		position: absolute; left: 50%; top: clamp(5rem,11vh,9rem); bottom: clamp(5rem,11vh,9rem);
+		width: 1px;
+		background: rgba(148,163,184,0.08);
+		transform: translateX(-50%);
+	}
+
+	/* ════════════════════════════════════════════════════════
+	   06  PROJECTEN TEASER
+	════════════════════════════════════════════════════════ */
+	.vr-projects {
+		padding: clamp(4rem,9vh,7rem) var(--vr-pad);
+		border-bottom: 1px solid var(--vr-rule);
+	}
+	.vr-projects-head {
+		display: flex; align-items: flex-end; justify-content: space-between;
+		margin-bottom: clamp(2.5rem,5vh,4rem);
+		padding-bottom: clamp(2rem,4vh,3rem);
+		border-bottom: 1px solid var(--vr-rule);
+		gap: 2rem; flex-wrap: wrap;
+	}
+	.vr-projects-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(32px, 3.5vw, 56px);
+		letter-spacing: 0.07em; line-height: 0.92;
+		color: var(--vr-text); margin: 0;
+	}
+	.vr-projects-link {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(14px, 1.4vw, 20px); letter-spacing: 0.22em;
+		color: rgba(148,163,184,0.4); text-decoration: none;
+		display: inline-flex; align-items: center;
+		transition: color 0.2s;
+		white-space: nowrap;
+	}
+	.vr-projects-link span { color: var(--vr-text); margin: 0 0.1em; transition: color 0.2s; }
+	.vr-projects-link:hover { color: rgba(255,255,255,0.65); }
+	.vr-projects-link:hover span { color: #fff; }
+
+	.vr-projects-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1px;
+		background: rgba(148,163,184,0.1);
+	}
+	.vr-project-card {
+		background: #07090d;
+		padding: clamp(1.75rem,3.5vh,2.5rem) clamp(1.5rem,2.5vw,2.5rem);
+		text-decoration: none;
+		display: flex; flex-direction: column; gap: 1.1rem;
+		transition: background 0.2s;
+		position: relative; overflow: hidden;
+	}
+	.vr-project-card::after {
+		content: '';
+		position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+		background: var(--vr-green);
+		transform: scaleX(0); transform-origin: left;
+		transition: transform 0.35s cubic-bezier(0.22,0.61,0.36,1);
+	}
+	.vr-project-card:hover { background: rgba(255,255,255,0.018); }
+	.vr-project-card:hover::after { transform: scaleX(1); }
+
+	.vr-project-num {
+		font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase;
+		color: rgba(148,163,184,0.35);
+	}
+	.vr-project-name {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(20px, 2vw, 30px); letter-spacing: 0.1em;
+		color: var(--vr-text);
+	}
+	.vr-project-desc {
+		font-size: 11px; letter-spacing: 0.07em; line-height: 1.75;
+		color: rgba(148,163,184,0.52); flex: 1;
+	}
+	.vr-project-cta {
+		font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+		color: rgba(148,163,184,0.4);
+		margin-top: 0.5rem;
+		transition: color 0.2s;
+	}
+	.vr-project-card:hover .vr-project-cta { color: var(--vr-text); }
+
+	/* ════════════════════════════════════════════════════════
+	   07  FINAL CTA
+	════════════════════════════════════════════════════════ */
+	.vr-cta {
+		position: relative; overflow: hidden;
+		padding: clamp(5rem,12vh,9rem) var(--vr-pad);
+	}
+	.vr-cta::before {
+		content: '';
+		position: absolute; inset: 0;
+		background-image:
+			linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+		background-size: 72px 72px;
+		pointer-events: none;
+	}
+	.vr-cta-inner {
+		position: relative; z-index: 1;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: clamp(2rem,5vw,6rem);
+		align-items: end;
+	}
+	.vr-cta-h {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(48px, 5.5vw, 84px);
+		letter-spacing: 0.06em; line-height: 0.9;
+		color: var(--vr-text); margin: 0;
+	}
+	.vr-cta-h-dim { color: rgba(148,163,184,0.18); }
+
+	.vr-cta-right {
+		display: flex; flex-direction: column; gap: 1.75rem;
+		padding-bottom: 4px;
+	}
+	.vr-cta-body {
+		font-size: clamp(12px, 0.95vw, 14px); letter-spacing: 0.07em; line-height: 1.95;
+		color: rgba(148,163,184,0.62);
+	}
+	.vr-cta-btn {
+		display: inline-flex; align-items: center;
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(20px, 2vw, 30px); letter-spacing: 0.22em;
+		color: rgba(148,163,184,0.4); text-decoration: none;
+		transition: color 0.2s;
+	}
+	.vr-cta-btn-text { color: var(--vr-text); margin: 0 0.1em; transition: color 0.2s; }
+	.vr-cta-btn:hover { color: rgba(255,255,255,0.65); }
+	.vr-cta-btn:hover .vr-cta-btn-text { color: #fff; }
+
+	.vr-cta-meta {
+		font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+		color: rgba(148,163,184,0.28);
+		display: flex; align-items: center; gap: 10px;
+	}
+	.vr-cta-meta::before {
+		content: ''; display: block; width: 18px; height: 1px;
+		background: rgba(155,227,106,0.5); flex-shrink: 0;
+	}
+
+	/* ── RESPONSIVE ────────────────────────────────────────── */
+	@media (max-width: 1100px) {
+		.vr-compare-table { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
+	}
+
+	@media (max-width: 860px) {
+		.vr-hero-inner    { grid-template-columns: 1fr; gap: 1.75rem; }
+		.vr-hero-vline    { display: none; }
+		.vr-pillars-head  { grid-template-columns: 1fr; }
+		.vr-compare-head  { grid-template-columns: 1fr; }
+		.vr-price-inner   { grid-template-columns: 1fr; gap: 3rem; }
+		.vr-price-vline   { display: none; }
+		.vr-cta-inner     { grid-template-columns: 1fr; gap: 2.5rem; }
+		.vr-projects-grid { grid-template-columns: 1fr 1fr; }
+
+		/* Comparison table → stacked cards per column */
+		.vr-compare-table { display: none; }
+		.vr-compare-mobile { display: block; }
+	}
+
+	@media (min-width: 861px) {
+		.vr-compare-mobile { display: none; }
+	}
+
+	/* Mobile comparison cards */
+	.vr-compare-mobile { }
+	.vr-cmc-col {
+		border: 1px solid rgba(148,163,184,0.1);
+		margin-bottom: 12px;
+	}
+	.vr-cmc-col--jdc {
+		border-color: rgba(155,227,106,0.3);
+		background: rgba(155,227,106,0.02);
+	}
+	.vr-cmc-head {
+		padding: 14px 16px;
+		font-size: 10px; letter-spacing: 0.38em; text-transform: uppercase;
+		color: rgba(148,163,184,0.45);
+		border-bottom: 1px solid rgba(148,163,184,0.1);
+	}
+	.vr-cmc-col--jdc .vr-cmc-head { color: var(--vr-text); }
+	.vr-cmc-row {
+		display: flex; justify-content: space-between; align-items: center;
+		padding: 11px 16px;
+		border-bottom: 1px solid rgba(148,163,184,0.05);
+		font-size: 11px; letter-spacing: 0.08em;
+		color: rgba(148,163,184,0.6);
+	}
+	.vr-cmc-row:last-child { border-bottom: none; }
+
+	@media (max-width: 600px) {
+		.vr-page          { padding-top: 64px; }
+		.vr-h1            { font-size: 52px; }
+		.vr-projects-grid { grid-template-columns: 1fr; }
+		.vr-pillar        { grid-template-columns: 60px 1fr; gap: 1rem; }
+		.vr-compare-mobile .vr-cmc-col { margin-bottom: 8px; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.vr-fade { transition: none; }
+		.vr-line-h, .vr-line-v { transition: none; }
+		.vr-hero-hline::after, .vr-hero-vline::after { transition: none; }
+		.vr-pillar::before { transition: none; }
+		.vr-project-card::after { transition: none; }
+	}
+	</style>
+</head>
+<body>
+
+<div class="vr-page">
+
+	<!-- ══════════════════════════════════════════════════════
+	     01  HERO
+	══════════════════════════════════════════════════════ -->
+	<section class="vr-hero vr-grid">
+		<div class="vr-hero-inner">
+			<!-- Left: heading -->
+			<div>
+				<p class="vr-eyebrow">/ VERSCHIL</p>
+				<h1 class="vr-h1">
+					<div class="vr-h1-row"><span class="vr-h1-dim">[ </span><span>DE MEESTE</span></div>
+					<div class="vr-h1-row"><span>SITES</span></div>
+					<div class="vr-h1-row"><span>BESTAAN<span class="vr-h1-dim"> ]</span></span></div>
+				</h1>
+				<p class="vr-hero-sub">De jouwe moet <em>werken</em>.</p>
+			</div>
+			<!-- Right: context -->
+			<div class="vr-hero-right">
+				<p class="vr-hero-tagline">
+					Geen templates. Geen bureau-overhead.<br>
+					Geen maandelijkse kosten. Geen junior<br>
+					die het werk doet terwijl jij betaalt voor<br>
+					een senior — gewoon het echte werk.
+				</p>
+				<p class="vr-hero-meta">7 concrete redenen</p>
+			</div>
+		</div>
+		<div class="vr-hero-hline"></div>
+		<div class="vr-hero-vline"></div>
+	</section>
+
+	<!-- ══════════════════════════════════════════════════════
+	     02  MANIFESTO
+	══════════════════════════════════════════════════════ -->
+	<section class="vr-manifesto">
+		<div class="vr-manifesto-inner">
+			<h2 class="vr-manifesto-h vr-fade">
+				<span>EEN TEMPLATE IS</span>
+				<strong>EEN COMPROMIS.</strong>
+				<span>JDC MAAKT</span>
+				<strong>GEEN.</strong>
+			</h2>
+			<p class="vr-manifesto-body vr-fade">
+				Templates zijn gebouwd voor iedereen — en werken perfect voor niemand.
+				Elke pixel, elke regel code, elke interactie bij JDC is ontworpen
+				voor jouw business. Niet voor de volgende klant.
+			</p>
+		</div>
+	</section>
+
+	<!-- ══════════════════════════════════════════════════════
+	     03  DE 7 PILAREN
+	══════════════════════════════════════════════════════ -->
+	<section class="vr-pillars">
+		<div class="vr-pillars-head vr-fade">
+			<div>
+				<p class="vr-eyebrow">/ DE 7 REDENEN</p>
+				<h2 class="vr-pillars-title">WAAROM JDC<br>ANDERS IS</h2>
+			</div>
+			<p class="vr-pillars-head-right">
+				Dit zijn geen marketingclaims. Dit zijn structurele
+				voordelen die direct invloed hebben op wat jouw
+				website kost, levert, en doet na lancering.
+			</p>
+		</div>
+
+		<!-- Pillar 01 -->
+		<div class="vr-pillar vr-fade">
+			<div class="vr-pillar-num" aria-hidden="true">01</div>
+			<div class="vr-pillar-content">
+				<p class="vr-pillar-label">Custom Design</p>
+				<h3 class="vr-pillar-title">VOLLEDIG CUSTOM.<br>GEEN TEMPLATE, NOOIT.</h3>
+				<p class="vr-pillar-body">
+					Elke regel code is geschreven voor jou. Geen drag-and-drop blokken,
+					geen platform-beperkingen, geen compromissen die de builder oplegt.
+					Er bestaat geen andere website die er hetzelfde uitziet — dat is geen
+					toeval, dat is opzet.
+				</p>
+			</div>
+		</div>
+
+		<!-- Pillar 02 -->
+		<div class="vr-pillar vr-fade">
+			<div class="vr-pillar-num" aria-hidden="true">02</div>
+			<div class="vr-pillar-content">
+				<p class="vr-pillar-label">Geen Overhead</p>
+				<h3 class="vr-pillar-title">GEEN BUREAU-<br>OVERHEAD.</h3>
+				<p class="vr-pillar-body">
+					Bij een bureau doe jij de briefing met een accountmanager, die
+					het doorgeeft aan een senior, die het delegeert aan een junior.
+					Jij betaalt voor alle lagen. Bij JDC praat je altijd rechtstreeks
+					met de persoon die het bouwt. Geen tussenschakel. Nooit.
+				</p>
+			</div>
+		</div>
+
+		<!-- Pillar 03 -->
+		<div class="vr-pillar vr-fade">
+			<div class="vr-pillar-num" aria-hidden="true">03</div>
+			<div class="vr-pillar-content">
+				<p class="vr-pillar-label">Eigendom</p>
+				<h3 class="vr-pillar-title">JIJ BEZIT<br>DE CODE.</h3>
+				<p class="vr-pillar-body">
+					Bij Squarespace, Webflow en Wix huur je je eigen website.
+					Stop met betalen en alles verdwijnt. Bij JDC krijg je de volledige
+					broncode. Geen platform-lock-in, geen abonnement dat jaar na jaar
+					stijgt, geen afhankelijkheid van een derde partij.
+				</p>
+			</div>
+		</div>
+
+		<!-- Pillar 04 -->
+		<div class="vr-pillar vr-fade">
+			<div class="vr-pillar-num" aria-hidden="true">04</div>
+			<div class="vr-pillar-content">
+				<p class="vr-pillar-label">Geen Maandkosten</p>
+				<h3 class="vr-pillar-title">EENMALIG.<br>VOOR ALTIJD JOUW.</h3>
+				<p class="vr-pillar-body">
+					Squarespace kost €23/maand. Webflow €36/maand. Na drie jaar
+					heb je betaald wat een JDC-project kost — en je bezit nog steeds
+					niets. JDC is een investering, geen abonnement. Je betaalt één keer
+					voor iets dat permanent van jou is.
+				</p>
+			</div>
+		</div>
+
+		<!-- Pillar 05 -->
+		<div class="vr-pillar vr-fade">
+			<div class="vr-pillar-num" aria-hidden="true">05</div>
+			<div class="vr-pillar-content">
+				<p class="vr-pillar-label">Performance</p>
+				<h3 class="vr-pillar-title">RAZENDSNEL.<br>LIGHTHOUSE 95+.</h3>
+				<p class="vr-pillar-body">
+					Handgeschreven HTML, CSS en JavaScript — geen framework-bloat,
+					geen ongebruikte JavaScript-bundels, geen WordPress-plugin-stapel
+					die de laadtijd vernietigt. Snelheid is SEO. Snelheid is conversie.
+					Gemiddelde Squarespace-score: 40–60. JDC-score: 95–100.
+				</p>
+			</div>
+		</div>
+
+		<!-- Pillar 06 -->
+		<div class="vr-pillar vr-fade">
+			<div class="vr-pillar-num" aria-hidden="true">06</div>
+			<div class="vr-pillar-content">
+				<p class="vr-pillar-label">Snelheid</p>
+				<h3 class="vr-pillar-title">2 TOT 4 WEKEN.<br>GEEN WACHTRIJ.</h3>
+				<p class="vr-pillar-body">
+					Geen briefing-rondes, geen goedkeuringslagen, geen kwartaalplanning
+					waar jij klant #47 bent. Wat een bureau in tien weken doet, lever
+					JDC in twee tot vier. Directe communicatie = directe uitvoering.
+				</p>
+			</div>
+		</div>
+
+		<!-- Pillar 07 -->
+		<div class="vr-pillar vr-fade">
+			<div class="vr-pillar-num" aria-hidden="true">07</div>
+			<div class="vr-pillar-content">
+				<p class="vr-pillar-label">Automatisering</p>
+				<h3 class="vr-pillar-title">SITES DIE WERKEN<br>TERWIJL JIJ SLAAPT.</h3>
+				<p class="vr-pillar-body">
+					CRM-koppelingen, lead capture flows, e-mail triggers, notificaties —
+					geen losse plugins maar schone integraties ingebakken in de site.
+					Jouw website is geen digitale brochure, het is een systeem dat
+					actief bijdraagt aan je business.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- ══════════════════════════════════════════════════════
+	     04  VERGELIJKING
+	══════════════════════════════════════════════════════ -->
+	<section class="vr-compare">
+		<div class="vr-compare-head vr-fade">
+			<div>
+				<p class="vr-eyebrow">/ VERGELIJKING</p>
+				<h2 class="vr-compare-title">JDC vs.<br>DE REST</h2>
+			</div>
+			<p class="vr-compare-sub">
+				Geen meningen — gewoon feiten.<br>
+				Dit is wat je krijgt bij elk van de drie opties.
+			</p>
+		</div>
+
+		<!-- Desktop table -->
+		<div class="vr-compare-table vr-fade" role="table" aria-label="Vergelijking JDC, bureau en template">
+
+			<!-- Header row -->
+			<div class="vr-cth" role="columnheader">Kenmerk</div>
+			<div class="vr-cth" role="columnheader">Template builder</div>
+			<div class="vr-cth" role="columnheader">Bureau</div>
+			<div class="vr-cth vr-cth--jdc" role="columnheader">JDC</div>
+
+			<!-- Row 1 -->
+			<div class="vr-ctr" role="row">
+				<div class="vr-ctd" role="cell"><span class="vr-ctd-feat">Volledig custom design</span><span class="vr-ctd-note">Uniek voor jouw merk</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--no">[ ]</span><span class="vr-mark-sub vr-mark--no">Beperkt door platform</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Ja</span></div>
+				<div class="vr-ctd vr-ctd--jdc" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Altijd</span></div>
+			</div>
+
+			<!-- Row 2 -->
+			<div class="vr-ctr" role="row">
+				<div class="vr-ctd" role="cell"><span class="vr-ctd-feat">Eigengeschreven code</span><span class="vr-ctd-note">Geen builder-bloat</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--no">[ ]</span><span class="vr-mark-sub vr-mark--no">Drag-and-drop</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--part">[~]</span><span class="vr-mark-sub vr-mark--part">Soms</span></div>
+				<div class="vr-ctd vr-ctd--jdc" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Elke regel</span></div>
+			</div>
+
+			<!-- Row 3 -->
+			<div class="vr-ctr" role="row">
+				<div class="vr-ctd" role="cell"><span class="vr-ctd-feat">Jij bezit de site</span><span class="vr-ctd-note">Geen lock-in</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--no">[ ]</span><span class="vr-mark-sub vr-mark--no">Platform is eigenaar</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Ja</span></div>
+				<div class="vr-ctd vr-ctd--jdc" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Volledig</span></div>
+			</div>
+
+			<!-- Row 4 -->
+			<div class="vr-ctr" role="row">
+				<div class="vr-ctd" role="cell"><span class="vr-ctd-feat">Geen maandelijkse kosten</span><span class="vr-ctd-note">Na de investering</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--no">[ ]</span><span class="vr-mark-sub vr-mark--no">Altijd abonnement</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--part">[~]</span><span class="vr-mark-sub vr-mark--part">Retainer vaak</span></div>
+				<div class="vr-ctd vr-ctd--jdc" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Nooit</span></div>
+			</div>
+
+			<!-- Row 5 -->
+			<div class="vr-ctr" role="row">
+				<div class="vr-ctd" role="cell"><span class="vr-ctd-feat">Direct contact met de bouwer</span><span class="vr-ctd-note">Geen tussenschakel</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--no">[ ]</span><span class="vr-mark-sub vr-mark--no">Geen</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--no">[ ]</span><span class="vr-mark-sub vr-mark--no">Via accountmanager</span></div>
+				<div class="vr-ctd vr-ctd--jdc" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Altijd Jari</span></div>
+			</div>
+
+			<!-- Row 6 -->
+			<div class="vr-ctr" role="row">
+				<div class="vr-ctd" role="cell"><span class="vr-ctd-feat">Snelle doorlooptijd</span><span class="vr-ctd-note">Geen bureaucratie</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--part">[~]</span><span class="vr-mark-sub vr-mark--part">Snel maar oppervlakkig</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--no">[ ]</span><span class="vr-mark-sub vr-mark--no">8 – 14 weken</span></div>
+				<div class="vr-ctd vr-ctd--jdc" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">2 – 4 weken</span></div>
+			</div>
+
+			<!-- Row 7 -->
+			<div class="vr-ctr" role="row">
+				<div class="vr-ctd" role="cell"><span class="vr-ctd-feat">Automatisering &amp; CRM</span><span class="vr-ctd-note">Ingebakken, geen plugins</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--no">[ ]</span><span class="vr-mark-sub vr-mark--no">Basis plugins</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Ja, extra kosten</span></div>
+				<div class="vr-ctd vr-ctd--jdc" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Ingebakken</span></div>
+			</div>
+
+			<!-- Row 8 -->
+			<div class="vr-ctr" role="row">
+				<div class="vr-ctd" role="cell"><span class="vr-ctd-feat">Performance (Lighthouse)</span><span class="vr-ctd-note">Snelheid = SEO + conversie</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--part">[~]</span><span class="vr-mark-sub vr-mark--part">Score 40 – 65</span></div>
+				<div class="vr-ctd" role="cell"><span class="vr-mark vr-mark--part">[~]</span><span class="vr-mark-sub vr-mark--part">Wisselend</span></div>
+				<div class="vr-ctd vr-ctd--jdc" role="cell"><span class="vr-mark vr-mark--yes">[●]</span><span class="vr-mark-sub vr-mark--yes">Score 95 – 100</span></div>
+			</div>
+
+		</div>
+
+		<!-- Mobile stacked view -->
+		<div class="vr-compare-mobile">
+			<div class="vr-cmc-col">
+				<div class="vr-cmc-head">Template Builder</div>
+				<div class="vr-cmc-row"><span>Custom design</span><span class="vr-mark vr-mark--no">[ ]</span></div>
+				<div class="vr-cmc-row"><span>Eigengeschreven code</span><span class="vr-mark vr-mark--no">[ ]</span></div>
+				<div class="vr-cmc-row"><span>Jij bezit de site</span><span class="vr-mark vr-mark--no">[ ]</span></div>
+				<div class="vr-cmc-row"><span>Geen maandkosten</span><span class="vr-mark vr-mark--no">[ ]</span></div>
+				<div class="vr-cmc-row"><span>Direct contact</span><span class="vr-mark vr-mark--no">[ ]</span></div>
+				<div class="vr-cmc-row"><span>Snelle levering</span><span class="vr-mark vr-mark--part">[~]</span></div>
+				<div class="vr-cmc-row"><span>Automatisering</span><span class="vr-mark vr-mark--no">[ ]</span></div>
+				<div class="vr-cmc-row"><span>Performance 95+</span><span class="vr-mark vr-mark--part">[~]</span></div>
+			</div>
+			<div class="vr-cmc-col">
+				<div class="vr-cmc-head">Bureau</div>
+				<div class="vr-cmc-row"><span>Custom design</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Eigengeschreven code</span><span class="vr-mark vr-mark--part">[~]</span></div>
+				<div class="vr-cmc-row"><span>Jij bezit de site</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Geen maandkosten</span><span class="vr-mark vr-mark--part">[~]</span></div>
+				<div class="vr-cmc-row"><span>Direct contact</span><span class="vr-mark vr-mark--no">[ ]</span></div>
+				<div class="vr-cmc-row"><span>Snelle levering</span><span class="vr-mark vr-mark--no">[ ]</span></div>
+				<div class="vr-cmc-row"><span>Automatisering</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Performance 95+</span><span class="vr-mark vr-mark--part">[~]</span></div>
+			</div>
+			<div class="vr-cmc-col vr-cmc-col--jdc">
+				<div class="vr-cmc-head">JDC</div>
+				<div class="vr-cmc-row"><span>Custom design</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Eigengeschreven code</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Jij bezit de site</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Geen maandkosten</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Direct contact</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Snelle levering</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Automatisering</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+				<div class="vr-cmc-row"><span>Performance 95+</span><span class="vr-mark vr-mark--yes">[●]</span></div>
+			</div>
+		</div>
+
+	</section>
+
+	<!-- ══════════════════════════════════════════════════════
+	     05  PRIJS-REFRAME
+	══════════════════════════════════════════════════════ -->
+	<section class="vr-price vr-grid">
+		<div class="vr-price-vline" aria-hidden="true"></div>
+		<div class="vr-price-inner">
+
+			<div class="vr-price-left">
+				<h2 class="vr-price-quote vr-fade">
+					<span class="vr-price-quote-dim">EEN SLECHTE SITE</span><br>
+					KOST JE ELKE DAG<br>
+					<span class="vr-price-quote-dim">KLANTEN.</span>
+				</h2>
+				<p class="vr-price-body vr-fade">
+					De prijs van een website is niet wat je betaalt — het is wat
+					je niet verdient terwijl je concurrenten het wel serieus nemen.
+					Een investering in de juiste site betaalt zichzelf terug via
+					leads die wél converteren.
+				</p>
+			</div>
+
+			<div class="vr-price-right vr-fade">
+				<p class="vr-eyebrow" style="margin-bottom:1.5rem;">/ WAT JE KRIJGT</p>
+				<ul class="vr-price-items">
+					<li class="vr-price-item">
+						<span class="vr-price-item-sym" aria-hidden="true">+</span>
+						<span class="vr-price-item-text">
+							<strong>Een site die converteert, niet alleen bestaat</strong>
+							Structuur, copy-aanpak en CTA-plaatsing zijn gericht op één doel: bezoekers worden klanten.
+						</span>
+					</li>
+					<li class="vr-price-item">
+						<span class="vr-price-item-sym" aria-hidden="true">+</span>
+						<span class="vr-price-item-text">
+							<strong>Hogere Google-ranking door technische performance</strong>
+							Snelheid en schone code geven je een directe voorsprong op trage template-sites.
+						</span>
+					</li>
+					<li class="vr-price-item">
+						<span class="vr-price-item-sym" aria-hidden="true">+</span>
+						<span class="vr-price-item-text">
+							<strong>Automatisering die lead-opvolging wegneemt</strong>
+							Nieuwe leads worden direct opgevolgd zonder handmatig werk van jouw kant.
+						</span>
+					</li>
+					<li class="vr-price-item">
+						<span class="vr-price-item-sym" aria-hidden="true">+</span>
+						<span class="vr-price-item-text">
+							<strong>Een aanspreekpunt, voor altijd</strong>
+							Geen heronboarding bij elke aanpassing. Jari kent elke regel code — voor altijd.
+						</span>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+	</section>
+
+	<!-- ══════════════════════════════════════════════════════
+	     06  PROJECTEN TEASER
+	══════════════════════════════════════════════════════ -->
+	<section class="vr-projects">
+		<div class="vr-projects-head vr-fade">
+			<h2 class="vr-projects-title">ZIE HET IN<br>DE PRAKTIJK</h2>
+			<a class="vr-projects-link" href="./projects.html">
+				<span>[</span>&nbsp;<span class="vr-projects-link" style="color:var(--vr-text);font-family:inherit;font-size:inherit;letter-spacing:inherit;text-decoration:none;">ALLE PROJECTEN</span>&nbsp;<span>→ ]</span>
+			</a>
+		</div>
+
+		<div class="vr-projects-grid vr-fade">
+			<a class="vr-project-card" href="./project.html?p=renault-clio">
+				<span class="vr-project-num">01 / RENAULT CLIO</span>
+				<span class="vr-project-name">LIVE 3D CONFIGURATOR</span>
+				<span class="vr-project-desc">Immersieve WebGL-experience met Three.js — real-time 3D model opgebouwd in Blender, volledig handgeschreven.</span>
+				<span class="vr-project-cta">[ Bekijk project → ]</span>
+			</a>
+			<a class="vr-project-card" href="./project.html?p=heli-flights">
+				<span class="vr-project-num">02 / HELI-FLIGHTS</span>
+				<span class="vr-project-name">CINEMATIC SCROLL EXPERIENCE</span>
+				<span class="vr-project-desc">Scroll-driven cinematische animatie met een R44 helicopter — performance-first WebGL zonder enige externe library.</span>
+				<span class="vr-project-cta">[ Bekijk project → ]</span>
+			</a>
+			<a class="vr-project-card" href="./project.html?p=schrijfstijn">
+				<span class="vr-project-num">03 / SCHRIJFSTIJN</span>
+				<span class="vr-project-name">EDITORIAL BRAND SITE</span>
+				<span class="vr-project-desc">Donker editorial design voor songwriter HanzKazan — custom animaties, JetBrains Mono typografie, volledig op maat.</span>
+				<span class="vr-project-cta">[ Bekijk project → ]</span>
+			</a>
+		</div>
+	</section>
+
+	<!-- ══════════════════════════════════════════════════════
+	     07  FINAL CTA
+	══════════════════════════════════════════════════════ -->
+	<section class="vr-cta vr-grid">
+		<div class="vr-cta-inner">
+			<div>
+				<p class="vr-eyebrow">/ KLAAR?</p>
+				<h2 class="vr-cta-h vr-fade">
+					<span class="vr-cta-h-dim">[ </span>MAAK HET<br>VERSCHIL<span class="vr-cta-h-dim"> ]</span>
+				</h2>
+			</div>
+			<div class="vr-cta-right vr-fade">
+				<p class="vr-cta-body">
+					Je concurrent heeft ook een website. De vraag is door wie.
+					Stuur een aanvraag — geen verplichtingen, geen salesfunnel.
+					Gewoon een eerlijk gesprek over wat jouw site kan worden.
+				</p>
+				<a class="vr-cta-btn" href="./contact.html">
+					<span>[ </span><span class="vr-cta-btn-text">START AANVRAAG &rarr;</span><span> ]</span>
+				</a>
+				<p class="vr-cta-meta">Reactie binnen 48 uur</p>
+			</div>
+		</div>
+	</section>
+
+</div>
+
+<script>
+'use strict';
+
+/* ── Scroll-reveal: blur-fade elements ── */
+(function() {
+	var obs = new IntersectionObserver(function(entries) {
+		entries.forEach(function(e) {
+			if (e.isIntersecting) {
+				e.target.classList.add('is-visible');
+				obs.unobserve(e.target);
+			}
+		});
+	}, { threshold: 0.08, rootMargin: '0px 0px -48px 0px' });
+
+	document.querySelectorAll('.vr-fade').forEach(function(el) {
+		obs.observe(el);
+	});
+})();
+
+/* ── Scroll-reveal: pillar accent lines + numbers ── */
+(function() {
+	var obs = new IntersectionObserver(function(entries) {
+		entries.forEach(function(e) {
+			if (e.isIntersecting) {
+				e.target.classList.add('is-visible');
+				obs.unobserve(e.target);
+			}
+		});
+	}, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+
+	document.querySelectorAll('.vr-pillar').forEach(function(el) {
+		obs.observe(el);
+	});
+})();
+
+/* ── Scroll-reveal: drawn lines ── */
+(function() {
+	var obs = new IntersectionObserver(function(entries) {
+		entries.forEach(function(e) {
+			if (e.isIntersecting) {
+				e.target.classList.add('is-drawn');
+				obs.unobserve(e.target);
+			}
+		});
+	}, { threshold: 0 });
+
+	document.querySelectorAll('.vr-line-h, .vr-line-v').forEach(function(el) {
+		obs.observe(el);
+	});
+})();
+</script>
+
+</body>
+</html>
