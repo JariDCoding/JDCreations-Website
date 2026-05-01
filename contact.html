@@ -37,26 +37,21 @@
 	body { margin: 0; background: #07090d; color: #d9d9d9; font-family: 'JetBrains Mono', ui-monospace, monospace; line-height: normal; }
 
 	:root {
-		--ct-pad-x:   clamp(1.5rem, 6vw, 7rem);
-		--ct-rule:    rgba(148,163,184,0.11);
-		--ct-muted:   rgba(148,163,184,0.45);
+		--ct-pad-x: clamp(1.5rem, 6vw, 7rem);
+		--ct-rule:  rgba(148,163,184,0.09);
+		--ct-dim:   rgba(148,163,184,0.45);
 	}
 
-	/* ═══════════════════════════════════
-	   PAGE
-	═══════════════════════════════════ */
+	/* ── PAGE ─────────────────────────────────────── */
 	.ct-page { padding-top: 84px; min-height: 100dvh; }
 
-	/* ═══════════════════════════════════
-	   HERO
-	═══════════════════════════════════ */
+	/* ── HERO ─────────────────────────────────────── */
 	.ct-hero {
 		position: relative;
 		overflow: hidden;
-		padding: clamp(4rem,10vh,8rem) var(--ct-pad-x) clamp(3rem,7vh,5.5rem);
+		padding: clamp(3.5rem,8vh,6rem) var(--ct-pad-x) clamp(2.5rem,5vh,4rem);
 		border-bottom: 1px solid var(--ct-rule);
 	}
-	/* Grid texture */
 	.ct-hero::before {
 		content: '';
 		position: absolute; inset: 0;
@@ -66,134 +61,103 @@
 		background-size: 72px 72px;
 		pointer-events: none;
 	}
-	.ct-hero-inner { position: relative; z-index: 1; }
+
+	/* Two-column editorial hero layout */
+	.ct-hero-inner {
+		position: relative; z-index: 1;
+		display: grid;
+		grid-template-columns: 1fr minmax(auto, 380px);
+		gap: clamp(2rem, 5vw, 7rem);
+		align-items: end;
+	}
 
 	.ct-eyebrow {
-		font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase;
-		color: var(--ct-muted); margin: 0 0 1rem;
+		font-size: 11px; letter-spacing: 0.38em; text-transform: uppercase;
+		color: var(--ct-dim); margin: 0 0 1.25rem;
 	}
 
 	.ct-h1 {
 		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(88px, 13vw, 200px);
-		letter-spacing: 0.05em; line-height: 0.86;
+		font-size: clamp(44px, 4.8vw, 68px);
+		letter-spacing: 0.07em; line-height: 0.88;
 		color: #d9d9d9; margin: 0;
 	}
+	.ct-h1-row { display: flex; align-items: baseline; gap: 0.15em; }
+	.ct-h1-dim { color: rgba(148,163,184,0.18); }
 
-	.ct-h1-row {
-		display: flex; align-items: baseline; gap: 0.18em;
+	/* Right column of hero */
+	.ct-hero-right {
+		display: flex; flex-direction: column; gap: 1.25rem;
+		padding-bottom: 2px;
 	}
-	.ct-h1-dim { color: rgba(148,163,184,0.22); }
-
 	.ct-tagline {
-		font-size: clamp(11px, 0.9vw, 13px); letter-spacing: 0.14em; line-height: 1.9;
-		color: var(--ct-muted); margin: clamp(1.5rem,3vh,2.25rem) 0 0;
-		max-width: 520px;
+		font-size: clamp(12px, 0.95vw, 14px); letter-spacing: 0.1em; line-height: 2;
+		color: rgba(148,163,184,0.55); margin: 0;
+	}
+	.ct-hero-meta {
+		font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+		color: rgba(148,163,184,0.28);
+		display: flex; align-items: center; gap: 12px;
+	}
+	.ct-hero-meta::before {
+		content: '';
+		display: block; width: 24px; height: 1px;
+		background: rgba(148,163,184,0.2); flex-shrink: 0;
 	}
 
-	/* White line that draws in on load */
+	/* Drawing lines */
 	.ct-hero-hline {
 		position: absolute; bottom: 0; left: 0;
 		width: 100%; height: 1px;
-		background: rgba(255,255,255,0.06);
+		background: rgba(255,255,255,0.04);
 		overflow: hidden;
 	}
 	.ct-hero-hline::after {
 		content: '';
 		position: absolute; left: 0; top: 0;
 		height: 100%; width: 100%;
-		background: #fff;
-		transform: scaleX(0);
-		transform-origin: left;
+		background: rgba(255,255,255,0.55);
+		transform: scaleX(0); transform-origin: left;
 		transition: transform 1.1s cubic-bezier(0.22,0.61,0.36,1) 0.15s;
 	}
 	body.loader-gone .ct-hero-hline::after { transform: scaleX(1); }
 
-	/* Vertical accent line (right side) */
 	.ct-hero-vline {
 		position: absolute; top: 0; right: calc(var(--ct-pad-x) * 2.5);
 		width: 1px; height: 0;
-		background: #fff;
+		background: rgba(255,255,255,0.08);
 		transition: height 1s cubic-bezier(0.22,0.61,0.36,1) 0.5s;
 	}
 	body.loader-gone .ct-hero-vline { height: 100%; }
 
-	/* ═══════════════════════════════════
-	   MAIN: two-column layout
-	═══════════════════════════════════ */
+	/* ── MAIN LAYOUT: form (left) | info (right) ── */
 	.ct-main {
 		display: grid;
-		grid-template-columns: 380px 1fr;
+		grid-template-columns: 1fr 280px;
 		padding: 0 var(--ct-pad-x);
 		min-height: 60vh;
 	}
 
-	/* ── Info panel ── */
-	.ct-info {
-		border-right: 1px solid var(--ct-rule);
-		padding: clamp(3rem,7vh,5rem) clamp(1.5rem,3vw,3.5rem) clamp(3rem,7vh,5rem) 0;
-	}
-	.ct-info-inner { position: sticky; top: 104px; }
-
-	.ct-info-label {
-		font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase;
-		color: rgba(148,163,184,0.3); margin: 0 0 2rem;
-	}
-	.ct-info-h2 {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(30px, 2.4vw, 40px); letter-spacing: 0.1em; line-height: 1.05;
-		color: #d9d9d9; margin: 0 0 1.25rem;
-	}
-	.ct-info-body {
-		font-size: 11px; letter-spacing: 0.07em; line-height: 1.9;
-		color: rgba(148,163,184,0.5); margin: 0 0 2.5rem;
-	}
-
-	/* Steps */
-	.ct-steps { list-style: none; margin: 0; padding: 0; }
-	.ct-step {
-		display: flex; gap: 16px; align-items: flex-start;
-		padding: 14px 0;
-		border-top: 1px solid rgba(148,163,184,0.07);
-	}
-	.ct-step:last-child { border-bottom: 1px solid rgba(148,163,184,0.07); }
-	.ct-step-num {
-		font-size: 9px; letter-spacing: 0.28em;
-		color: rgba(148,163,184,0.22); min-width: 22px; padding-top: 1px;
-	}
-	.ct-step-text {
-		font-size: 11px; letter-spacing: 0.06em; line-height: 1.75;
-		color: rgba(148,163,184,0.45);
-	}
-
-	/* Vertical draw line on the info border */
-	.ct-info-vline {
-		position: absolute; left: 0; top: clamp(3rem,7vh,5rem);
-		width: 1px; height: 0;
-		background: rgba(255,255,255,0.15);
-	}
-
-	/* ── Form panel ── */
+	/* ── FORM PANEL ─────────────────────────────── */
 	.ct-form-panel {
-		padding: clamp(3rem,7vh,5rem) 0 clamp(3rem,7vh,5rem) clamp(2rem,4vw,5rem);
+		padding: clamp(3rem,7vh,5rem) clamp(2rem,4vw,4.5rem) clamp(3rem,7vh,5rem) 0;
+		border-right: 1px solid var(--ct-rule);
 	}
 
-	/* ── Form ── */
 	.ct-form { display: flex; flex-direction: column; }
 
 	.ct-group {
 		position: relative;
-		padding: clamp(1.5rem,3vh,2.25rem) 0;
+		padding: clamp(1.4rem,2.8vh,2rem) 0;
 		border-bottom: 1px solid rgba(148,163,184,0.07);
 	}
 	.ct-group:first-child { padding-top: 0; }
 
-	/* White line that draws across the bottom on interaction */
 	.ct-group::after {
 		content: '';
 		position: absolute; bottom: -1px; left: 0;
 		height: 1px; width: 0;
-		background: rgba(255,255,255,0.2);
+		background: rgba(255,255,255,0.18);
 		pointer-events: none;
 	}
 	.ct-group.is-live::after {
@@ -202,19 +166,19 @@
 	}
 
 	.ct-group-label {
-		display: flex; align-items: baseline; gap: 14px;
-		margin-bottom: 0.9rem;
+		display: flex; align-items: baseline; gap: 12px;
+		margin-bottom: 0.85rem;
 	}
 	.ct-group-num {
-		font-size: 9px; letter-spacing: 0.28em;
+		font-size: 11px; letter-spacing: 0.22em;
 		color: rgba(148,163,184,0.22);
 	}
 	.ct-group-name {
-		font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase;
-		color: rgba(148,163,184,0.45);
+		font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+		color: rgba(148,163,184,0.52);
 	}
 	.ct-group-opt {
-		font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase;
+		font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
 		color: rgba(148,163,184,0.22); margin-left: auto;
 	}
 
@@ -222,97 +186,92 @@
 		width: 100%;
 		background: transparent;
 		border: none;
-		border-bottom: 1px solid rgba(148,163,184,0.13);
+		border-bottom: 1px solid rgba(148,163,184,0.12);
 		color: #d9d9d9;
 		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: clamp(13px, 1vw, 14px);
-		letter-spacing: 0.07em;
+		font-size: clamp(14px, 1.1vw, 16px);
+		letter-spacing: 0.06em;
 		padding: 10px 0;
 		outline: none;
 		transition: border-color 0.2s ease;
 	}
 	.ct-input::placeholder, .ct-textarea::placeholder {
-		color: rgba(148,163,184,0.2);
+		color: rgba(148,163,184,0.3);
 	}
 	.ct-input:focus, .ct-textarea:focus {
 		border-bottom-color: rgba(148,163,184,0.4);
 	}
-	.ct-textarea { resize: none; min-height: 90px; line-height: 1.85; }
+	.ct-textarea { resize: none; min-height: 110px; line-height: 1.85; }
 
-	/* Options (checkbox / radio) */
+	/* Checkboxes / radios */
 	.ct-options { display: flex; flex-direction: column; }
-
 	.ct-option {
 		display: flex; align-items: center; gap: 16px;
-		padding: 11px 0;
-		border-bottom: 1px solid rgba(148,163,184,0.06);
+		padding: 10px 0;
+		border-bottom: 1px solid rgba(148,163,184,0.05);
 		cursor: pointer;
 	}
 	.ct-option:last-child { border-bottom: none; }
 	.ct-option input { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
 
 	.ct-mark {
-		font-size: 10px; letter-spacing: 0.05em; line-height: 1;
-		color: rgba(148,163,184,0.22); width: 28px; flex-shrink: 0;
-		transition: color 0.18s;
-		user-select: none;
+		font-size: 11px; letter-spacing: 0.04em; line-height: 1;
+		color: rgba(148,163,184,0.28); width: 30px; flex-shrink: 0;
+		transition: color 0.18s; user-select: none;
 	}
 	.ct-mark-check::before { content: '[ ]'; }
 	.ct-mark-radio::before { content: '( )'; }
 	.ct-option input:checked ~ .ct-mark-check::before { content: '[×]'; }
-	.ct-option input:checked ~ .ct-mark-radio::before { content: '(●)'; }
+	.ct-option input:checked ~ .ct-mark-radio::before  { content: '(●)'; }
 	.ct-option input:checked ~ .ct-mark { color: rgba(255,255,255,0.55); }
 
 	.ct-opt-text {
-		font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-		color: rgba(148,163,184,0.45); transition: color 0.18s;
+		font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+		color: rgba(148,163,184,0.58); transition: color 0.18s;
 	}
-	.ct-option:hover .ct-opt-text { color: rgba(217,217,217,0.75); }
+	.ct-option:hover .ct-opt-text { color: rgba(217,217,217,0.82); }
 	.ct-option input:checked ~ .ct-opt-text { color: #d9d9d9; }
 
-	/* ── Submit ── */
+	/* Submit */
 	.ct-submit-wrap {
-		padding-top: clamp(2rem,5vh,3.5rem);
+		padding-top: clamp(2rem,5vh,3rem);
 		display: flex; flex-direction: column; gap: 1.25rem;
 	}
-
 	.ct-submit {
 		display: inline-flex; align-items: center;
 		background: none; border: none; padding: 0; cursor: pointer;
 		font-family: 'Bebas Neue', sans-serif;
-		font-size: clamp(28px, 2.8vw, 44px);
+		font-size: clamp(22px, 2.4vw, 38px);
 		letter-spacing: 0.2em;
-		color: rgba(148,163,184,0.5);
+		color: rgba(148,163,184,0.4);
 		transition: color 0.2s;
 	}
 	.ct-submit-text { color: #d9d9d9; margin: 0 0.1em; transition: color 0.2s; }
-	.ct-submit:hover { color: rgba(255,255,255,0.6); }
+	.ct-submit:hover { color: rgba(255,255,255,0.65); }
 	.ct-submit:hover .ct-submit-text { color: #ffffff; }
-	.ct-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+	.ct-submit:disabled { opacity: 0.35; cursor: not-allowed; }
 
-	/* Drawing line below submit */
 	.ct-submit-line {
 		position: relative; height: 1px;
-		background: rgba(148,163,184,0.08);
+		background: rgba(148,163,184,0.07);
 	}
 	.ct-submit-line::after {
 		content: '';
 		position: absolute; left: 0; top: 0;
 		height: 100%; width: 0;
-		background: rgba(255,255,255,0.22);
+		background: rgba(255,255,255,0.2);
 		transition: width 1.4s cubic-bezier(0.22,0.61,0.36,1) 0.5s;
 	}
 	body.loader-gone .ct-submit-line::after { width: 100%; }
 
-	/* ── Success state ── */
+	/* Success state */
 	.ct-success {
-		display: none;
-		flex-direction: column; gap: 1.5rem;
+		display: none; flex-direction: column; gap: 1.5rem;
 		padding: clamp(2rem,5vh,4rem) 0;
 	}
 	.ct-success.is-visible { display: flex; }
 	.ct-success-label {
-		font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase;
+		font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase;
 		color: rgba(148,163,184,0.4);
 	}
 	.ct-success-h {
@@ -321,41 +280,78 @@
 		color: #d9d9d9; margin: 0;
 	}
 	.ct-success-body {
-		font-size: 12px; letter-spacing: 0.08em; line-height: 1.85;
+		font-size: 13px; letter-spacing: 0.07em; line-height: 1.85;
 		color: rgba(148,163,184,0.55); max-width: 440px;
 	}
 	.ct-success-back {
 		font-family: 'Bebas Neue', sans-serif;
 		font-size: 18px; letter-spacing: 0.2em;
-		color: rgba(148,163,184,0.5); text-decoration: none;
+		color: rgba(148,163,184,0.45); text-decoration: none;
 		display: inline-flex; align-items: center;
 		transition: color 0.2s;
 	}
 	.ct-success-back span { color: #d9d9d9; margin: 0 0.1em; transition: color 0.2s; }
-	.ct-success-back:hover { color: rgba(255,255,255,0.6); }
+	.ct-success-back:hover { color: rgba(255,255,255,0.65); }
 	.ct-success-back:hover span { color: #fff; }
 
-	/* ═══════════════════════════════════
-	   RESPONSIVE
-	═══════════════════════════════════ */
+	/* ── INFO SIDEBAR ────────────────────────────── */
+	.ct-info {
+		padding: clamp(3rem,7vh,5rem) 0 clamp(3rem,7vh,5rem) clamp(1.5rem,3vw,3rem);
+	}
+	.ct-info-inner { position: sticky; top: 104px; }
+
+	.ct-info-label {
+		font-size: 11px; letter-spacing: 0.38em; text-transform: uppercase;
+		color: rgba(148,163,184,0.28); margin: 0 0 1.75rem;
+	}
+	.ct-info-h2 {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(22px, 2vw, 32px); letter-spacing: 0.1em; line-height: 1.05;
+		color: #d9d9d9; margin: 0 0 0.85rem;
+	}
+	.ct-info-body {
+		font-size: 12px; letter-spacing: 0.06em; line-height: 1.9;
+		color: rgba(148,163,184,0.55); margin: 0 0 2rem;
+	}
+
+	.ct-steps { list-style: none; margin: 0; padding: 0; }
+	.ct-step {
+		display: flex; gap: 14px; align-items: flex-start;
+		padding: 11px 0;
+		border-top: 1px solid rgba(148,163,184,0.07);
+	}
+	.ct-step:last-child { border-bottom: 1px solid rgba(148,163,184,0.07); }
+	.ct-step-num {
+		font-size: 10px; letter-spacing: 0.25em;
+		color: rgba(148,163,184,0.22); min-width: 22px; flex-shrink: 0; padding-top: 1px;
+	}
+	.ct-step-text {
+		font-size: 12px; letter-spacing: 0.05em; line-height: 1.72;
+		color: rgba(148,163,184,0.55);
+	}
+
+	/* ── RESPONSIVE ──────────────────────────────── */
 	@media (max-width: 1100px) {
-		.ct-main { grid-template-columns: 300px 1fr; }
+		.ct-main { grid-template-columns: 1fr 240px; }
 	}
 	@media (max-width: 860px) {
 		.ct-main { grid-template-columns: 1fr; }
-		.ct-info {
+		.ct-form-panel {
 			border-right: none;
-			border-bottom: 1px solid var(--ct-rule);
 			padding: clamp(2.5rem,6vh,4rem) 0 clamp(2rem,4vh,3rem);
 		}
+		.ct-info {
+			border-top: 1px solid var(--ct-rule);
+			padding: clamp(2rem,5vh,3.5rem) 0;
+		}
 		.ct-info-inner { position: static; }
-		.ct-form-panel { padding-left: 0; }
 		.ct-hero-vline { display: none; }
+		.ct-hero-inner { grid-template-columns: 1fr; gap: 1.5rem; }
 	}
 	@media (max-width: 600px) {
 		.ct-page { padding-top: 64px; }
-		.ct-h1 { font-size: 76px; }
-		.ct-submit { font-size: 28px; }
+		.ct-h1 { font-size: 52px; }
+		.ct-submit { font-size: 24px; }
 		.ct-main { padding: 0 1.25rem; }
 		.ct-hero { padding-left: 1.25rem; padding-right: 1.25rem; }
 	}
@@ -368,16 +364,26 @@
 	<!-- ══════════ HERO ══════════ -->
 	<section class="ct-hero">
 		<div class="ct-hero-inner">
-			<p class="ct-eyebrow">/ AANVRAAG</p>
-			<h1 class="ct-h1">
-				<div class="ct-h1-row">
-					<span class="ct-h1-dim">[ </span><span>START&nbsp;JE</span>
-				</div>
-				<div class="ct-h1-row">
-					<span>PROJECT</span><span class="ct-h1-dim"> ]</span>
-				</div>
-			</h1>
-			<p class="ct-tagline">Voor mensen die klaar zijn om te starten.<br>Vul dit formulier in — reactie binnen 48 uur.</p>
+			<!-- Left: heading -->
+			<div>
+				<p class="ct-eyebrow">/ AANVRAAG</p>
+				<h1 class="ct-h1">
+					<div class="ct-h1-row">
+						<span class="ct-h1-dim">[ </span><span>START&nbsp;JE</span>
+					</div>
+					<div class="ct-h1-row">
+						<span>PROJECT</span><span class="ct-h1-dim"> ]</span>
+					</div>
+				</h1>
+			</div>
+			<!-- Right: context -->
+			<div class="ct-hero-right">
+				<p class="ct-tagline">
+					Voor mensen die klaar zijn om te starten.<br>
+					Vul dit formulier in — reactie binnen 48 uur.
+				</p>
+				<p class="ct-hero-meta">Reactie binnen 48 uur</p>
+			</div>
 		</div>
 		<div class="ct-hero-hline"></div>
 		<div class="ct-hero-vline"></div>
@@ -386,38 +392,7 @@
 	<!-- ══════════ MAIN ══════════ -->
 	<div class="ct-main">
 
-		<!-- Info panel -->
-		<aside class="ct-info">
-			<div class="ct-info-inner">
-				<p class="ct-info-label">WAT VOLGT NA JE AANVRAAG</p>
-				<h2 class="ct-info-h2">WAT KAN JE<br>VERWACHTEN?</h2>
-				<p class="ct-info-body">
-					Geen automatische replies.<br>
-					Geen sales funnel.<br>
-					Gewoon direct, eerlijk contact.
-				</p>
-				<ol class="ct-steps">
-					<li class="ct-step">
-						<span class="ct-step-num">01</span>
-						<span class="ct-step-text">Aanvraag ontvangen — bevestiging binnen 24 uur</span>
-					</li>
-					<li class="ct-step">
-						<span class="ct-step-num">02</span>
-						<span class="ct-step-text">Intake gesprek — 30 min. om je project te doorgronden</span>
-					</li>
-					<li class="ct-step">
-						<span class="ct-step-num">03</span>
-						<span class="ct-step-text">Voorstel op maat — aanpak, timing en investering</span>
-					</li>
-					<li class="ct-step">
-						<span class="ct-step-num">04</span>
-						<span class="ct-step-text">Akkoord — we gaan van start</span>
-					</li>
-				</ol>
-			</div>
-		</aside>
-
-		<!-- Form panel -->
+		<!-- Form panel (left — primary) -->
 		<div class="ct-form-panel">
 
 			<form class="ct-form" id="ctForm" name="aanvraag" method="POST" novalidate>
@@ -450,20 +425,10 @@
 					<input class="ct-input" type="text" name="bedrijf" placeholder="Bedrijfs- of merknaam" autocomplete="organization">
 				</div>
 
-				<!-- 04 Website / Instagram -->
+				<!-- 04 Wat heb je nodig? -->
 				<div class="ct-group">
 					<div class="ct-group-label">
 						<span class="ct-group-num">04</span>
-						<span class="ct-group-name">Website / Instagram</span>
-						<span class="ct-group-opt">Optioneel</span>
-					</div>
-					<input class="ct-input" type="text" name="website" placeholder="https:// of @jouwhandle">
-				</div>
-
-				<!-- 05 Wat heb je nodig? -->
-				<div class="ct-group">
-					<div class="ct-group-label">
-						<span class="ct-group-num">05</span>
 						<span class="ct-group-name">Wat heb je nodig?</span>
 					</div>
 					<div class="ct-options">
@@ -495,29 +460,19 @@
 					</div>
 				</div>
 
-				<!-- 06 Projectdoel -->
+				<!-- 05 Vertel me over je project -->
+				<div class="ct-group">
+					<div class="ct-group-label">
+						<span class="ct-group-num">05</span>
+						<span class="ct-group-name">Vertel me over je project</span>
+					</div>
+					<textarea class="ct-textarea" name="project" placeholder="Wat wil je bereiken? Wanneer wil je live? Referenties, specifieke wensen — alles wat helpt." rows="5"></textarea>
+				</div>
+
+				<!-- 06 Budget -->
 				<div class="ct-group">
 					<div class="ct-group-label">
 						<span class="ct-group-num">06</span>
-						<span class="ct-group-name">Projectdoel</span>
-					</div>
-					<textarea class="ct-textarea" name="projectdoel" placeholder="Wat wil je bereiken? Meer leads, sterker merk, hogere conversie..." rows="4"></textarea>
-				</div>
-
-				<!-- 07 Gewenste lanceerdatum -->
-				<div class="ct-group">
-					<div class="ct-group-label">
-						<span class="ct-group-num">07</span>
-						<span class="ct-group-name">Gewenste lanceerdatum</span>
-						<span class="ct-group-opt">Schatting</span>
-					</div>
-					<input class="ct-input" type="text" name="lanceerdatum" placeholder="bv. september 2026 of zo snel mogelijk">
-				</div>
-
-				<!-- 08 Budget -->
-				<div class="ct-group">
-					<div class="ct-group-label">
-						<span class="ct-group-num">08</span>
 						<span class="ct-group-name">Budget</span>
 					</div>
 					<div class="ct-options">
@@ -539,16 +494,6 @@
 					</div>
 				</div>
 
-				<!-- 09 Extra context -->
-				<div class="ct-group">
-					<div class="ct-group-label">
-						<span class="ct-group-num">09</span>
-						<span class="ct-group-name">Extra context</span>
-						<span class="ct-group-opt">Optioneel</span>
-					</div>
-					<textarea class="ct-textarea" name="context" placeholder="Referenties, inspiratie, specifieke wensen, deadline, alles wat helpt..." rows="4"></textarea>
-				</div>
-
 				<!-- Submit -->
 				<div class="ct-submit-wrap">
 					<button type="submit" class="ct-submit" id="ctSubmit">
@@ -559,7 +504,7 @@
 
 			</form>
 
-			<!-- Success state (hidden until form submitted) -->
+			<!-- Success state -->
 			<div class="ct-success" id="ctSuccess">
 				<p class="ct-success-label">/ AANVRAAG ONTVANGEN</p>
 				<h2 class="ct-success-h">BEDANKT.<br>WE NEMEN<br>CONTACT OP.</h2>
@@ -570,6 +515,38 @@
 			</div>
 
 		</div>
+
+		<!-- Info sidebar (right) -->
+		<aside class="ct-info">
+			<div class="ct-info-inner">
+				<p class="ct-info-label">WAT VOLGT NA JE AANVRAAG</p>
+				<h2 class="ct-info-h2">WAT KAN JE<br>VERWACHTEN?</h2>
+				<p class="ct-info-body">
+					Geen automatische replies.<br>
+					Geen sales funnel.<br>
+					Gewoon direct, eerlijk contact.
+				</p>
+				<ol class="ct-steps">
+					<li class="ct-step">
+						<span class="ct-step-num">01</span>
+						<span class="ct-step-text">Aanvraag ontvangen — bevestiging binnen 24 uur</span>
+					</li>
+					<li class="ct-step">
+						<span class="ct-step-num">02</span>
+						<span class="ct-step-text">Intake gesprek — 30 min. om je project te doorgronden</span>
+					</li>
+					<li class="ct-step">
+						<span class="ct-step-num">03</span>
+						<span class="ct-step-text">Voorstel op maat — aanpak, timing en investering</span>
+					</li>
+					<li class="ct-step">
+						<span class="ct-step-num">04</span>
+						<span class="ct-step-text">Akkoord — we gaan van start</span>
+					</li>
+				</ol>
+			</div>
+		</aside>
+
 	</div>
 
 </div>
@@ -585,12 +562,8 @@
 		var selectors = group.querySelectorAll('input[type="checkbox"], input[type="radio"]');
 
 		inputs.forEach(function(inp) {
-			inp.addEventListener('focus', function() {
-				group.classList.add('is-live');
-			});
-			inp.addEventListener('blur', function() {
-				if (!inp.value.trim()) group.classList.remove('is-live');
-			});
+			inp.addEventListener('focus', function() { group.classList.add('is-live'); });
+			inp.addEventListener('blur',  function() { if (!inp.value.trim()) group.classList.remove('is-live'); });
 			if (inp.value.trim()) group.classList.add('is-live');
 		});
 
@@ -614,20 +587,13 @@
 	form.addEventListener('submit', function(e) {
 		e.preventDefault();
 
-		/* Basic validation */
 		var naam  = form.querySelector('[name="naam"]');
 		var email = form.querySelector('[name="email"]');
-		if (!naam.value.trim() || !email.value.trim()) {
-			naam.focus();
-			return;
-		}
+		if (!naam.value.trim() || !email.value.trim()) { naam.focus(); return; }
 
-		/* Disable button while "sending" */
 		btn.disabled = true;
 		btn.querySelector('.ct-submit-text').textContent = 'VERZENDEN...';
 
-		/* Replace with your own endpoint — Netlify, Formspree, etc. */
-		/* For now: simulate a small delay then show success */
 		setTimeout(function() {
 			form.style.display = 'none';
 			success.classList.add('is-visible');
