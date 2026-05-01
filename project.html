@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, width=device-width">
+	<title>Project · JDCreations</title>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" />
+	<link rel="stylesheet" href="./base.css" />
+	<link rel="stylesheet" href="./header.css" />
+	<link rel="stylesheet" href="./transitions.css" />
+	<link rel="stylesheet" href="./footer.css" />
+	<script src="./transitions.js"></script>
+	<script src="./header.js" defer></script>
+	<script src="./footer.js" defer></script>
+
+	<script>
+		try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(e){}
+		window.scrollTo(0, 0);
+		(function() {
+			function fitMobile() {
+				const w = window.innerWidth;
+				if (w <= 600) { document.documentElement.style.zoom = Math.min(w, 430) / 430; }
+				else { document.documentElement.style.zoom = ''; }
+			}
+			fitMobile();
+			window.addEventListener('resize', fitMobile);
+		})();
+	</script>
+
+	<style>
+	html { -webkit-text-size-adjust: 100%; }
+	* { box-sizing: border-box; }
+	body { margin: 0; background: #07090d; color: #d9d9d9; line-height: normal; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+	/* ══ Page layout ══ */
+	.proj-page {
+		min-height: 100dvh;
+		padding-top: 84px; /* header height */
+	}
+
+	/* ══ Hero ══ */
+	.pj-hero {
+		position: relative;
+		overflow: hidden;
+		padding: clamp(4rem, 10vh, 8rem) clamp(1.5rem, 7vw, 7rem) clamp(3rem, 6vh, 5rem);
+		border-bottom: 1px solid rgba(148,163,184,0.12);
+	}
+	.pj-hero::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image:
+			linear-gradient(rgba(255,255,255,0.014) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,0.014) 1px, transparent 1px);
+		background-size: 72px 72px;
+		pointer-events: none;
+	}
+	.pj-hero::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--pj-bg, linear-gradient(160deg,#090d1a 0%,#07090d 100%));
+		opacity: 0.55;
+		pointer-events: none;
+	}
+	.pj-hero-inner {
+		position: relative;
+		z-index: 1;
+		max-width: 1200px;
+	}
+	.pj-back {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 10px;
+		letter-spacing: 0.32em;
+		text-transform: uppercase;
+		color: rgba(148,163,184,0.6);
+		text-decoration: none;
+		margin-bottom: clamp(2rem, 4vh, 3.5rem);
+		transition: color 0.2s ease;
+	}
+	.pj-back:hover { color: #9be36a; }
+	.pj-back-arrow { display: inline-block; transform: scaleX(-1); }
+	.pj-num {
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 10px;
+		letter-spacing: 0.38em;
+		color: rgba(148,163,184,0.45);
+		text-transform: uppercase;
+		margin-bottom: 0.75rem;
+	}
+	.pj-title {
+		font-family: 'Bebas Neue', ui-sans-serif, sans-serif;
+		font-size: clamp(64px, 9vw, 130px);
+		letter-spacing: 0.06em;
+		color: #d9d9d9;
+		line-height: 0.9;
+		margin: 0 0 0.5rem;
+	}
+	.pj-type {
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: clamp(10px, 1vw, 12px);
+		letter-spacing: 0.32em;
+		color: rgba(148,163,184,0.55);
+		text-transform: uppercase;
+		margin-top: 1rem;
+	}
+	.pj-accent-bar {
+		width: 48px;
+		height: 2px;
+		background: var(--pj-accent-color, #9be36a);
+		margin: 1.5rem 0 0;
+	}
+
+	/* ══ Body ══ */
+	.pj-body {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: clamp(3rem, 6vw, 6rem);
+		padding: clamp(3rem, 7vh, 6rem) clamp(1.5rem, 7vw, 7rem);
+		max-width: 1500px;
+		align-items: start;
+	}
+
+	/* ══ Left: description ══ */
+	.pj-desc-section { display: flex; flex-direction: column; gap: 2.5rem; }
+	.pj-section-label {
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 9px;
+		letter-spacing: 0.38em;
+		text-transform: uppercase;
+		color: rgba(148,163,184,0.45);
+		margin-bottom: 0.75rem;
+	}
+	.pj-desc {
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: clamp(13px, 1.1vw, 15px);
+		line-height: 1.8;
+		color: rgba(217,217,217,0.78);
+		margin: 0;
+	}
+
+	/* Tags */
+	.pj-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		list-style: none;
+		margin: 0; padding: 0;
+	}
+	.pj-tags li {
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 9px;
+		letter-spacing: 0.28em;
+		text-transform: uppercase;
+		color: rgba(148,163,184,0.7);
+		border: 1px solid rgba(148,163,184,0.18);
+		padding: 6px 12px;
+	}
+
+	/* URL chip */
+	.pj-url {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 11px;
+		letter-spacing: 0.2em;
+		color: rgba(148,163,184,0.55);
+		border: 1px solid rgba(148,163,184,0.18);
+		padding: 10px 16px;
+		width: fit-content;
+	}
+	.pj-url-dot {
+		width: 5px; height: 5px; border-radius: 50%;
+		background: var(--pj-accent-color, #9be36a);
+		flex-shrink: 0;
+	}
+
+	/* CTA */
+	.pj-cta-row {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+	.pj-cta-btn {
+		display: inline-flex;
+		align-items: center;
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 11px;
+		letter-spacing: 0.22em;
+		color: #d9d9d9;
+		text-decoration: none;
+		border: 1px solid rgba(148,163,184,0.28);
+		padding: 16px 22px;
+		transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+		position: relative;
+		overflow: hidden;
+	}
+	.pj-cta-btn::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--pj-accent-color, #9be36a);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.35s cubic-bezier(0.85, 0.05, 0.3, 1);
+	}
+	.pj-cta-btn:hover { color: #07090d; border-color: var(--pj-accent-color, #9be36a); }
+	.pj-cta-btn:hover::before { transform: scaleX(1); }
+	.pj-cta-btn span { position: relative; z-index: 1; }
+
+	/* ══ Right: visual mockup ══ */
+	.pj-visual { position: sticky; top: 104px; }
+	.pj-mockup {
+		background: var(--pj-bg, linear-gradient(148deg,#091628 0%,#06101e 100%));
+		border: 1px solid rgba(148,163,184,0.1);
+		aspect-ratio: 16 / 10;
+		position: relative;
+		overflow: hidden;
+	}
+	.pj-mockup::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image:
+			linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+		background-size: 48px 48px;
+	}
+	.pj-mockup-inner {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 16px;
+	}
+	.pj-mockup-title {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: clamp(28px, 4vw, 56px);
+		letter-spacing: 0.12em;
+		color: rgba(255,255,255,0.12);
+	}
+	.pj-mockup-url {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 10px;
+		letter-spacing: 0.3em;
+		color: rgba(148,163,184,0.3);
+		text-transform: uppercase;
+	}
+	.pj-mockup-accent {
+		width: 32px; height: 2px;
+		background: var(--pj-accent-color, rgba(155,227,106,0.4));
+		margin-top: 4px;
+	}
+
+	/* ══ Divider ══ */
+	.pj-divider {
+		height: 1px;
+		background: rgba(148,163,184,0.1);
+		margin: 0 clamp(1.5rem, 7vw, 7rem);
+	}
+
+	/* ══ Not found ══ */
+	.pj-notfound {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 60vh;
+		gap: 1rem;
+		text-align: center;
+		padding: 2rem;
+	}
+	.pj-notfound h1 {
+		font-family: 'Bebas Neue', sans-serif;
+		font-size: 80px;
+		color: rgba(217,217,217,0.3);
+		margin: 0;
+	}
+	.pj-notfound p {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 11px;
+		letter-spacing: 0.28em;
+		color: rgba(148,163,184,0.5);
+		text-transform: uppercase;
+	}
+
+	/* ══ Responsive ══ */
+	@media (max-width: 900px) {
+		.pj-body { grid-template-columns: 1fr; gap: 2.5rem; }
+		.pj-visual { position: static; }
+	}
+	@media (max-width: 600px) {
+		.proj-page { padding-top: 64px; }
+		.pj-title { font-size: 52px; }
+		.pj-body { padding: 2.5rem 1.25rem; }
+		.pj-hero { padding: 3rem 1.25rem 2rem; }
+	}
+	</style>
+</head>
+<body>
+
+<div class="proj-page" id="projPage">
+	<!-- Populated by JS below -->
+</div>
+
+<script>
+'use strict';
+
+const PROJECTS = [
+	{
+		num:    '/ 01',
+		title:  'HELI-FLIGHTS',
+		type:   '3D CONCEPT PAGE / IMMERSIVE BRAND EXPERIENCE',
+		desc:   '3D conceptpagina met motion en diepte, ontworpen om Heli-Flights digitaal meer beleving en onderscheid te geven. Visuele identiteit vertaald naar een immersive digitale omgeving die bezoekers direct raakt.',
+		tags:   ['Custom design', 'Motion & interaction', 'Front-end development', 'Brand-aligned system', 'Responsive build', '3D visual integration'],
+		url:    'heli-flights.be',
+		bg:     'linear-gradient(170deg,#091628 0%,#060f1e 55%,#0d1c38 100%)',
+		accent: '100,148,255',
+		slug:   'heli-flights',
+	},
+	{
+		num:    '/ 02',
+		title:  'RELOVATION',
+		type:   'EDITORIAL DESIGN / LIVE JAZZ BRAND',
+		desc:   'Branding en website voor Relovation, een live jazz band. Editorial typografie in EB Garamond, een geanimeerde concert-programme navigatie en een warme, organische kleurpalette geven de band een eigen digitale identiteit.',
+		tags:   ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Live music positioning'],
+		url:    'relovation.be',
+		bg:     'linear-gradient(170deg,#0b1810 0%,#132015 55%,#0d1a12 100%)',
+		accent: '76,106,87',
+		slug:   'relovation',
+	},
+	{
+		num:    '/ 03',
+		title:  'SCHRIJFSTIJN',
+		type:   'EDITORIAL DESIGN / DIGITAL PRESENCE',
+		desc:   'Editorial websiteconcept dat sfeer, identiteit en muzikale creativiteit vertaalt naar een verfijnde digitale presentatie die de artiest echt weerspiegelt.',
+		tags:   ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Digital positioning'],
+		url:    'schrijfstijn.be',
+		bg:     'linear-gradient(170deg,#150d06 0%,#201306 55%,#170e05 100%)',
+		accent: '210,148,70',
+		slug:   'schrijfstijn',
+	},
+	{
+		num:    '/ 04',
+		title:  'RENAULT CLIO',
+		type:   'CONCEPT PAGE / AUTOMOTIVE BRAND EXPERIENCE',
+		desc:   'Conceptpagina voor de Renault Clio met een live 3D configurator gebouwd via Three.js — het 3D model is eerst opgebouwd in Blender en daarna verwerkt in een immersive scroll experience met custom animaties. Beweging, snelheid en stijl vertaald naar een digitale productbeleving.',
+		tags:   ['Three.js / WebGL', 'Blender 3D model', 'Live 3D configurator', 'Immersive scroll', 'Automotive design', 'Brand experience'],
+		url:    'renaultclio.concept',
+		bg:     'linear-gradient(170deg,#1a0507 0%,#240a0c 55%,#1c0608 100%)',
+		accent: '220,42,32',
+		slug:   'renault-clio',
+	},
+];
+
+function render(p) {
+	const accentRGB  = p.accent;
+	const accentCSS  = `rgb(${accentRGB})`;
+	const page = document.getElementById('projPage');
+
+	// Set page title
+	document.title = p.title + ' · JDCreations';
+
+	// Set CSS vars on root
+	document.documentElement.style.setProperty('--pj-bg', p.bg);
+	document.documentElement.style.setProperty('--pj-accent-color', accentCSS);
+
+	page.innerHTML = `
+		<div class="pj-hero">
+			<div class="pj-hero-inner">
+				<a class="pj-back" href="./projects.html">
+					<span class="pj-back-arrow" aria-hidden="true">&#8594;</span>
+					<span>TERUG NAAR PROJECTS</span>
+				</a>
+				<p class="pj-num" aria-hidden="true">${p.num}</p>
+				<h1 class="pj-title">${p.title}</h1>
+				<p class="pj-type">${p.type}</p>
+				<div class="pj-accent-bar" aria-hidden="true"></div>
+			</div>
+		</div>
+
+		<div class="pj-body">
+			<div class="pj-desc-section">
+				<div>
+					<p class="pj-section-label">Over het project</p>
+					<p class="pj-desc">${p.desc}</p>
+				</div>
+
+				<div>
+					<p class="pj-section-label">Technologieën &amp; aanpak</p>
+					<ul class="pj-tags">${p.tags.map(t => `<li>${t}</li>`).join('')}</ul>
+				</div>
+
+				<div class="pj-url" aria-label="Live URL: ${p.url}">
+					<span class="pj-url-dot" aria-hidden="true"></span>
+					${p.url}
+				</div>
+
+				<div class="pj-cta-row">
+					<a class="pj-cta-btn" href="./contact.html">
+						<span>START SOORTGELIJK PROJECT &#8594;</span>
+					</a>
+					<a class="pj-cta-btn" href="./projects.html">
+						<span>&#8592; MEER PROJECTEN</span>
+					</a>
+				</div>
+			</div>
+
+			<div class="pj-visual" aria-hidden="true">
+				<div class="pj-mockup">
+					<div class="pj-mockup-inner">
+						<div class="pj-mockup-title">${p.title}</div>
+						<div class="pj-mockup-url">${p.url}</div>
+						<div class="pj-mockup-accent"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	`;
+
+	document.documentElement.classList.remove('scroll-locked');
+	document.body.classList.add('loader-gone');
+}
+
+function renderNotFound() {
+	const page = document.getElementById('projPage');
+	page.innerHTML = `
+		<div class="pj-notfound">
+			<h1>404</h1>
+			<p>Project niet gevonden</p>
+			<a class="pj-cta-btn" href="./projects.html" style="margin-top:1.5rem">
+				<span>&#8592; TERUG NAAR PROJECTS</span>
+			</a>
+		</div>
+	`;
+	document.documentElement.classList.remove('scroll-locked');
+}
+
+(function init() {
+	const slug = new URLSearchParams(location.search).get('p') || '';
+	const project = PROJECTS.find(p => p.slug === slug);
+	if (project) {
+		render(project);
+	} else {
+		renderNotFound();
+	}
+})();
+</script>
+
+</body>
+</html>

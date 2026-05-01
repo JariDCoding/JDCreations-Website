@@ -13,9 +13,14 @@
 	<link rel="stylesheet" href="./transitions.css" />
 	<script src="./transitions.js"></script>
 	<script src="./header.js" defer></script>
+	<link rel="stylesheet" href="./footer.css" />
+	<script src="./footer.js" defer></script>
 
 	<script>
 		try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(e){}
+		/* Save hash for deep-linking BEFORE clearing it to prevent scroll-jump */
+		var _initProjectSlug = '';
+		try { _initProjectSlug = location.hash.slice(1); } catch(e){}
 		try { if (location.hash) history.replaceState(null, '', location.pathname + location.search); } catch(e){}
 		window.scrollTo(0, 0);
 		document.documentElement.classList.add('scroll-locked');
@@ -483,6 +488,21 @@
 
 	/* Modal CTAs */
 	.modal-actions { display: flex; flex-direction: column; gap: 14px; }
+	.modal-btn-page {
+		display: inline-flex;
+		align-items: center;
+		align-self: flex-start;
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 10px;
+		letter-spacing: 0.28em;
+		color: #9be36a;
+		text-decoration: none;
+		border: 1px solid rgba(155,227,106,0.3);
+		padding: 10px 16px;
+		transition: background 0.25s, color 0.25s;
+		white-space: nowrap;
+	}
+	.modal-btn-page:hover { background: rgba(155,227,106,0.1); }
 	.modal-btn-start {
 		display: inline-flex;
 		align-items: center;
@@ -804,8 +824,8 @@
 				</div>
 				<div class="card-info">
 					<p class="card-num">/ 02</p>
-					<h2 class="card-name">TIMECHAMBER</h2>
-					<p class="card-type">LIVE WEBSITE / CONVERSION DESIGN</p>
+					<h2 class="card-name">RELOVATION</h2>
+					<p class="card-type">EDITORIAL DESIGN / LIVE JAZZ BRAND</p>
 				</div>
 			</div>
 		</div>
@@ -900,9 +920,10 @@
 			<p  class="modal-desc"  id="mDesc"></p>
 			<ul class="modal-tags"  id="mTags"></ul>
 			<div class="modal-actions">
-				<a class="modal-btn-start" href="/aanvraag">[ START PROJECT &rarr;]</a>
-				<a class="modal-btn-discuss" href="/aanvraag">
-					<span>[ </span><span class="ml">DISCUSS SIMILAR</span><span> &rarr;]</span>
+				<a class="modal-btn-page" id="mPageLink" href="./project.html">[ BEKIJK PROJECT PAGINA &rarr;]</a>
+				<a class="modal-btn-start" href="./contact.html">[ START SOORTGELIJK PROJECT &rarr;]</a>
+				<a class="modal-btn-discuss" href="./contact.html">
+					<span>[ </span><span class="ml">BESPREEK MET JARI</span><span> &rarr;]</span>
 				</a>
 			</div>
 			<button class="modal-close-bottom" id="modalCloseBottom" aria-label="Sluit project">✕ &nbsp;CLOSE</button>
@@ -1024,12 +1045,15 @@ function openModal(idx) {
 	document.getElementById('mDesc').textContent  = p.desc;
 	document.getElementById('mUrl').textContent   = p.url;
 	document.getElementById('mTags').innerHTML    = p.tags.map(t => `<li>${t}</li>`).join('');
+	const pageLink = document.getElementById('mPageLink');
+	if (pageLink && p.slug) pageLink.href = './project.html?p=' + p.slug;
 
 	[scrD, scrM].forEach(s => {
 		s.style.setProperty('--sc-bg',     p.bg);
 		s.style.setProperty('--sc-accent', p.accent);
 	});
 
+	if (p.slug) history.replaceState(null, '', '#' + p.slug);
 	modal.classList.add('is-ready');
 	wrap.scrollTop = 0;
 	document.body.style.overflow = 'hidden';
@@ -1037,6 +1061,7 @@ function openModal(idx) {
 }
 
 function closeModal() {
+	history.replaceState(null, '', location.pathname + location.search);
 	modal.classList.remove('is-open');
 	document.body.style.overflow = '';
 	setTimeout(() => modal.classList.remove('is-ready'), 460);
@@ -1052,9 +1077,9 @@ closeBtn.addEventListener('click',  closeModal);
 backdrop.addEventListener('click',  closeModal);
 document.getElementById('modalCloseBottom').addEventListener('click', closeModal);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
-const initHash = location.hash.slice(1);
-if (initHash) {
-	const initIdx = PROJECTS.findIndex(p => p.slug === initHash);
+const initSlug = (typeof _initProjectSlug !== 'undefined') ? _initProjectSlug : location.hash.slice(1);
+if (initSlug) {
+	const initIdx = PROJECTS.findIndex(p => p.slug === initSlug);
 	if (initIdx !== -1) requestAnimationFrame(() => openModal(initIdx));
 }
 
