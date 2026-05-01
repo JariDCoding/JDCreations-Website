@@ -47,7 +47,7 @@
 	══════════════════════════════════════════ */
 	.port-stage {
 		position: relative;
-		width: 2200px;
+		width: 1728px;
 		min-height: 1120px;
 		display: flex;
 		flex-direction: column;
@@ -179,7 +179,6 @@
 	.proj-card[data-project="1"] { left: 468px;  top: 140px; }
 	.proj-card[data-project="2"] { left: 890px;  top: 205px; }
 	.proj-card[data-project="3"] { left: 1306px; top: 155px; }
-	.proj-card[data-project="4"] { left: 1730px; top: 185px; }
 
 	/* Float — uses CSS individual `translate` property so it composes with
 	   the JS `transform` (parallax) without conflict */
@@ -227,7 +226,6 @@
 	.proj-card[data-project="1"] .card-shell { transform: rotate( 2.0deg); }
 	.proj-card[data-project="2"] .card-shell { transform: rotate(-1.6deg); }
 	.proj-card[data-project="3"] .card-shell { transform: rotate( 2.8deg); }
-	.proj-card[data-project="4"] .card-shell { transform: rotate(-2.4deg); }
 
 	.proj-card:hover .card-shell,
 	.proj-card:focus-visible .card-shell {
@@ -251,10 +249,9 @@
 	}
 	.card-preview-bg { width: 100%; height: 100%; display: block; }
 	.proj-card[data-project="0"] .card-preview-bg { background: linear-gradient(148deg, #091628 0%, #06101e 52%, #0e1d36 100%); }
-	.proj-card[data-project="1"] .card-preview-bg { background: linear-gradient(148deg, #0b0718 0%, #150c26 52%, #0a0915 100%); }
+	.proj-card[data-project="1"] .card-preview-bg { background: linear-gradient(148deg, #0b1810 0%, #122015 52%, #0d1a12 100%); }
 	.proj-card[data-project="2"] .card-preview-bg { background: linear-gradient(148deg, #150e06 0%, #201306 52%, #170f05 100%); }
 	.proj-card[data-project="3"] .card-preview-bg { background: linear-gradient(148deg, #1a0608 0%, #240b0e 52%, #1c0709 100%); }
-	.proj-card[data-project="4"] .card-preview-bg { background: linear-gradient(148deg, #0b1810 0%, #122015 52%, #0d1a12 100%); }
 
 	/* CSS website UI in preview */
 	.card-ui {
@@ -666,8 +663,7 @@
 		.proj-card[data-project="0"] .card-shell,
 		.proj-card[data-project="1"] .card-shell,
 		.proj-card[data-project="2"] .card-shell,
-		.proj-card[data-project="3"] .card-shell,
-		.proj-card[data-project="4"] .card-shell { transform: none; }
+		.proj-card[data-project="3"] .card-shell { transform: none; }
 		.ghost-num    { display: none; }
 		.constellation { display: none; }
 		.port-strip   { left: 40px; right: 40px; }
@@ -702,8 +698,7 @@
 		.proj-card[data-project="0"] .card-shell,
 		.proj-card[data-project="1"] .card-shell,
 		.proj-card[data-project="2"] .card-shell,
-		.proj-card[data-project="3"] .card-shell,
-		.proj-card[data-project="4"] .card-shell { transform: none; }
+		.proj-card[data-project="3"] .card-shell { transform: none; }
 		.ghost-num    { display: none; }
 		.constellation { display: none; }
 		.port-strip   { left: 26px; right: 26px; top: 38px; }
@@ -737,7 +732,7 @@
 
 	<div class="port-strip" aria-hidden="true">
 		<span class="port-strip-l">/ JDCREATIONS &mdash; SELECTED WORK</span>
-		<span class="port-strip-r">05 PROJECTS</span>
+		<span class="port-strip-r">04 PROJECTS</span>
 	</div>
 
 	<div class="cards-field" id="cardsField">
@@ -747,7 +742,6 @@
 			<line id="cline-0"></line>
 			<line id="cline-1"></line>
 			<line id="cline-2"></line>
-			<line id="cline-3"></line>
 		</svg>
 
 		<!-- Ghost numbers -->
@@ -755,7 +749,6 @@
 		<span class="ghost-num" style="left:420px;top:348px;"  aria-hidden="true">02</span>
 		<span class="ghost-num" style="left:842px;top:415px;"  aria-hidden="true">03</span>
 		<span class="ghost-num" style="left:1258px;top:363px;" aria-hidden="true">04</span>
-		<span class="ghost-num" style="left:1682px;top:393px;" aria-hidden="true">05</span>
 
 		<!-- Project 01 -->
 		<div class="proj-card" data-project="0" role="button" tabindex="0" aria-label="Open project: Heli-Flights">
@@ -788,7 +781,7 @@
 		</div>
 
 		<!-- Project 02 -->
-		<div class="proj-card" data-project="1" role="button" tabindex="0" aria-label="Open project: The Timechamber">
+		<div class="proj-card" data-project="1" role="button" tabindex="0" aria-label="Open project: Relovation">
 			<div class="card-shell">
 				<div class="cc cc-tl" aria-hidden="true"></div>
 				<div class="cc cc-tr" aria-hidden="true"></div>
@@ -797,7 +790,7 @@
 				<div class="card-preview">
 					<div class="card-preview-bg"></div>
 					<div class="card-ui" aria-hidden="true">
-						<div class="cu-nav" style="width:58%"></div>
+						<div class="cu-nav" style="width:70%"></div>
 						<div class="cu-hero"></div>
 						<div class="cu-lines">
 							<div class="cu-line w90"></div>
@@ -877,35 +870,6 @@
 			</div>
 		</div>
 
-		<!-- Project 05 -->
-		<div class="proj-card" data-project="4" role="button" tabindex="0" aria-label="Open project: Relovation">
-			<div class="card-shell">
-				<div class="cc cc-tl" aria-hidden="true"></div>
-				<div class="cc cc-tr" aria-hidden="true"></div>
-				<div class="cc cc-bl" aria-hidden="true"></div>
-				<div class="cc cc-br" aria-hidden="true"></div>
-				<div class="card-preview">
-					<div class="card-preview-bg"></div>
-					<div class="card-ui" aria-hidden="true">
-						<div class="cu-nav" style="width:70%"></div>
-						<div class="cu-hero"></div>
-						<div class="cu-lines">
-							<div class="cu-line w90"></div>
-							<div class="cu-line w72"></div>
-							<div class="cu-line w52"></div>
-						</div>
-					</div>
-					<div class="card-overlay" aria-hidden="true">
-						<span class="card-open-lbl">[ OPEN &rarr;]</span>
-					</div>
-				</div>
-				<div class="card-info">
-					<p class="card-num">/ 05</p>
-					<h2 class="card-name">RELOVATION</h2>
-					<p class="card-type">EDITORIAL DESIGN / LIVE JAZZ BRAND</p>
-				</div>
-			</div>
-		</div>
 
 	</div>
 
@@ -1006,16 +970,18 @@ const PROJECTS = [
 		url:    'heli-flights.be',
 		bg:     'linear-gradient(170deg,#091628 0%,#060f1e 55%,#0d1c38 100%)',
 		accent: '100,148,255',
+		slug:   'heli-flights',
 	},
 	{
 		num:    '/ 02',
-		title:  'TIMECHAMBER',
-		type:   'LIVE WEBSITE / STRUCTURED CONVERSION DESIGN',
-		desc:   'Volledig opgebouwde website met focus op structuur, positionering en een professionelere digitale presentatie. Gebouwd voor leads, autoriteit en vertrouwen.',
-		tags:   ['Lead-focused structure', 'Custom design', 'Conversion-aware layout', 'CMS-ready build', 'Responsive build', 'UX & copy hierarchy'],
-		url:    'thetimechamber.be',
-		bg:     'linear-gradient(170deg,#0b0718 0%,#140b26 55%,#0a0914 100%)',
-		accent: '148,100,255',
+		title:  'RELOVATION',
+		type:   'EDITORIAL DESIGN / LIVE JAZZ BRAND',
+		desc:   'Branding en website voor Relovation, een live jazz band. Editorial typografie in EB Garamond, een geanimeerde concert-programme navigatie en een warme, organische kleurpalette geven de band een eigen digitale identiteit.',
+		tags:   ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Live music positioning'],
+		url:    'relovation.be',
+		bg:     'linear-gradient(170deg,#0b1810 0%,#132015 55%,#0d1a12 100%)',
+		accent: '76,106,87',
+		slug:   'relovation',
 	},
 	{
 		num:    '/ 03',
@@ -1026,6 +992,7 @@ const PROJECTS = [
 		url:    'schrijfstijn.be',
 		bg:     'linear-gradient(170deg,#150d06 0%,#201306 55%,#170e05 100%)',
 		accent: '210,148,70',
+		slug:   'schrijfstijn',
 	},
 	{
 		num:    '/ 04',
@@ -1036,16 +1003,7 @@ const PROJECTS = [
 		url:    'renaultclio.concept',
 		bg:     'linear-gradient(170deg,#1a0507 0%,#240a0c 55%,#1c0608 100%)',
 		accent: '220,42,32',
-	},
-	{
-		num:    '/ 05',
-		title:  'RELOVATION',
-		type:   'EDITORIAL DESIGN / LIVE JAZZ BRAND',
-		desc:   'Branding en website voor Relovation, een live jazz band. Editorial typografie in EB Garamond, een geanimeerde concert-programme navigatie en een warme, organische kleurpalette geven de band een eigen digitale identiteit.',
-		tags:   ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Live music positioning'],
-		url:    'relovation.be',
-		bg:     'linear-gradient(170deg,#0b1810 0%,#132015 55%,#0d1a12 100%)',
-		accent: '76,106,87',
+		slug:   'renault-clio',
 	},
 ];
 
@@ -1094,15 +1052,19 @@ closeBtn.addEventListener('click',  closeModal);
 backdrop.addEventListener('click',  closeModal);
 document.getElementById('modalCloseBottom').addEventListener('click', closeModal);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
+const initHash = location.hash.slice(1);
+if (initHash) {
+	const initIdx = PROJECTS.findIndex(p => p.slug === initHash);
+	if (initIdx !== -1) requestAnimationFrame(() => openModal(initIdx));
+}
 
 /* ── Mouse parallax ── */
 (function () {
 	const cards  = Array.from(document.querySelectorAll('.proj-card'));
-	const depths = { '0': 1.0, '1': 0.62, '2': 1.45, '3': 0.85, '4': 1.2 };
+	const depths = { '0': 1.0, '1': 0.62, '2': 1.45, '3': 0.85 };
 	const line0  = document.getElementById('cline-0');
 	const line1  = document.getElementById('cline-1');
 	const line2  = document.getElementById('cline-2');
-	const line3  = document.getElementById('cline-3');
 	const field  = document.getElementById('cardsField');
 
 	let mx = 0, my = 0, cx = 0, cy = 0, raf = null, touch = false;
@@ -1122,7 +1084,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.clas
 	}
 
 	function drawConstellation() {
-		if (!line0 || !line1 || !line2 || !line3) return;
+		if (!line0 || !line1 || !line2) return;
 		const c = cards.map(cardCenter);
 		if (c.length < 4) return;
 		line0.setAttribute('x1', c[0].x); line0.setAttribute('y1', c[0].y);
@@ -1131,10 +1093,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.clas
 		line1.setAttribute('x2', c[2].x); line1.setAttribute('y2', c[2].y);
 		line2.setAttribute('x1', c[2].x); line2.setAttribute('y1', c[2].y);
 		line2.setAttribute('x2', c[3].x); line2.setAttribute('y2', c[3].y);
-		if (c.length >= 5) {
-			line3.setAttribute('x1', c[3].x); line3.setAttribute('y1', c[3].y);
-			line3.setAttribute('x2', c[4].x); line3.setAttribute('y2', c[4].y);
-		}
 	}
 
 	function tick() {

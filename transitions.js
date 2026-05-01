@@ -49,7 +49,12 @@
     el.innerHTML = `
       <span class="jdc-pt__panel jdc-pt__panel--l"></span>
       <span class="jdc-pt__panel jdc-pt__panel--r"></span>
-      <span class="jdc-pt__mark"><span class="jdc-pt__mark-dot"></span>LOADING&nbsp;NEXT</span>
+      <span class="jdc-pt__scan" aria-hidden="true"></span>
+      <div class="jdc-pt__mark" aria-hidden="true">
+        <div class="jdc-pt__brand"><span>/</span>JDC</div>
+        <div class="jdc-pt__label"><span class="jdc-pt__dot"></span>LOADING NEXT PAGE</div>
+      </div>
+      <div class="jdc-pt__bar" aria-hidden="true"><div class="jdc-pt__bar-fill"></div></div>
     `;
     document.body.appendChild(el);
     overlayCache = el;
@@ -126,7 +131,7 @@
       });
       setTimeout(() => {
         overlay.classList.remove('is-entering', 'is-revealing');
-      }, 800);
+      }, 1000);
     }
 
     // Intercept internal link clicks → play leaving curtains → navigate.
@@ -143,7 +148,7 @@
       try { sessionStorage.setItem('jdc.pt.incoming', '1'); } catch (_) {}
       getOverlay().classList.add('is-leaving');
       const target = a.href;
-      setTimeout(() => { location.href = target; }, 520);
+      setTimeout(() => { location.href = target; }, 700);
     });
 
     // Some browsers cache pages in bfcache. When restored, reset overlay
