@@ -95,7 +95,9 @@
   // recover the layout-space width that renders at full viewport.
   let pinRAF = 0;
   let lastW = 0;
+  const cta    = header.querySelector('.jdc-header__cta');
   const drawer = header.querySelector('.jdc-header__drawer');
+
   const pinHeader = () => {
     if (pinRAF) return;
     pinRAF = requestAnimationFrame(() => {
@@ -118,6 +120,20 @@
       if (drawer) {
         drawer.style.setProperty('width', px,  'important');
         drawer.style.setProperty('left',  '0', 'important');
+      }
+
+      // CSS zoom on <html> can cause the mobile media query (max-width:960px)
+      // to fire incorrectly at large physical viewports because the browser
+      // evaluates queries against the zoomed layout viewport. Enforce CTA
+      // visibility via inline style so it beats any !important CSS rule.
+      if (cta) {
+        if (w >= 961) {
+          cta.style.setProperty('display', 'inline-flex', 'important');
+          cta.style.setProperty('visibility', 'visible', 'important');
+        } else {
+          cta.style.removeProperty('display');
+          cta.style.removeProperty('visibility');
+        }
       }
     });
   };

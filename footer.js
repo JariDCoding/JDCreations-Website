@@ -3,12 +3,6 @@
   footer.className = 'jdc-footer';
   footer.setAttribute('role', 'contentinfo');
   footer.innerHTML = `
-    <div class="jdc-footer__top" aria-hidden="true">
-      <span class="jdc-footer__corner jdc-footer__corner--tl"></span>
-      <span class="jdc-footer__divline"></span>
-      <span class="jdc-footer__corner jdc-footer__corner--tr"></span>
-    </div>
-
     <div class="jdc-footer__body">
       <div class="jdc-footer__brand">
         <div class="jdc-footer__brand-wordmark" aria-label="JDCreations"><span aria-hidden="true">/</span>JDC</div>

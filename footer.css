@@ -49,36 +49,6 @@
   pointer-events: none;
 }
 
-/* ── Corner brackets (top edge) ── */
-.jdc-footer__top {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  padding: 0 var(--ft-pad-x);
-}
-.jdc-footer__corner {
-  flex-shrink: 0;
-  width: 14px;
-  height: 14px;
-  border-color: rgba(148, 163, 184, 0.35);
-  border-style: solid;
-  border-width: 0;
-}
-.jdc-footer__corner--tl {
-  border-top-width: 1px;
-  border-left-width: 1px;
-}
-.jdc-footer__corner--tr {
-  border-top-width: 1px;
-  border-right-width: 1px;
-}
-.jdc-footer__divline {
-  flex: 1;
-  height: 1px;
-  background: var(--ft-border);
-  margin: 0 8px;
-}
-
 /* ── Main body ── */
 .jdc-footer__body {
   position: relative;
