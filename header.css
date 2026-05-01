@@ -1,0 +1,533 @@
+/* =========================================================================
+   JDCreations — global header
+   Fixed, all-viewport-width, tech / IDE inspired polish (JetBrains feel).
+   Works above the existing html.scroll-locked and html { zoom } contexts
+   because it uses 100vw + forced isolation.
+   ======================================================================= */
+
+:root {
+  --jdc-h-h:        84px;
+  --jdc-h-h-mobile: 64px;
+  --jdc-h-bg:       #94a3b8;
+  --jdc-h-bg-ink:   rgba(15, 17, 21, 0.72);
+  --jdc-h-fg:       #d9d9d9;
+  --jdc-h-fg-dim:   rgba(217, 217, 217, 0.55);
+  --jdc-h-accent:   #ffffff;
+  --jdc-h-led:      #9be36a;
+  --jdc-h-rule:     rgba(7, 9, 13, 0.2);
+}
+
+/* Per-resolution height trim (request: 5px shorter at the 1920 and 2560
+   zoom steps so the bar sits tighter against the hero). */
+@media (min-width: 1920px) and (max-width: 2559px) { :root { --jdc-h-h: 79px; } }
+@media (min-width: 2560px)                         { :root { --jdc-h-h: 79px; } }
+
+/* Hide the legacy Figma top-bar — our header replaces it on every page. */
+.hero-section-item { display: none !important; }
+
+/* ==== root bar =========================================================== */
+.jdc-header,
+.jdc-header * { box-sizing: border-box; }
+
+.jdc-header {
+  /* Full-width strategy, three-layer:
+     1. `inset: 0 0 auto 0` anchors the box to both horizontal edges of
+        the initial containing block (no vw math).
+     2. `width/min-width: 100vw` is the CSS fallback in case a containing
+        block is ever shifted by a transformed ancestor.
+     3. header.js pins `width: innerWidth + 'px'` with `!important` once
+        the DOM is ready, which is the only layer that survives all of
+        Chrome / Safari's `html { zoom }` edge cases. */
+  position: fixed;
+  inset: 0 0 auto 0;
+  width: 100vw;
+  min-width: 100vw;
+  margin: 0;
+  height: var(--jdc-h-h);
+  z-index: 1000;
+  background: var(--jdc-h-bg);
+  color: var(--jdc-h-fg);
+  font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  column-gap: clamp(16px, 3vw, 40px);
+  padding: 0 clamp(18px, 2.4vw, 32px);
+
+  /* NOTE: no `transform` / `contain` here — they would create a new
+     containing block and trap the mobile drawer (position:fixed child)
+     inside the header's box instead of the viewport. */
+  border-bottom: 1px solid var(--jdc-h-rule);
+}
+
+
+.jdc-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.25) 20%,
+    rgba(255,255,255,0.45) 50%,
+    rgba(255,255,255,0.25) 80%,
+    transparent 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.jdc-header.is-scrolled {
+  background: color-mix(in oklab, var(--jdc-h-bg) 82%, #07090d 18%);
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+}
+.jdc-header.is-scrolled::after { opacity: 1; }
+
+/* ==== logo =============================================================== */
+.jdc-header__brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.jdc-header__logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400;
+  font-size: clamp(44px, 4.6vw, 64px);
+  line-height: 1;
+  letter-spacing: 0.1em;
+  color: var(--jdc-h-fg);
+  position: relative;
+  top: 2px;
+}
+
+.jdc-header__logo-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--jdc-h-accent);
+  margin-left: 4px;
+  vertical-align: baseline;
+  transform: translateY(-4px);
+  animation: jdc-blink 2.4s steps(2) infinite;
+}
+
+@keyframes jdc-blink { 0%, 40% { opacity: 1 } 50%, 100% { opacity: 0 } }
+
+.jdc-header__meta {
+  display: none;
+  flex-direction: column;
+  line-height: 1.2;
+  padding-left: 14px;
+  margin-left: 4px;
+  border-left: 1px solid var(--jdc-h-rule);
+}
+@media (min-width: 1100px) {
+  .jdc-header__meta { display: inline-flex; }
+}
+.jdc-header__meta-line-1 {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--jdc-h-fg-dim);
+  text-transform: uppercase;
+}
+.jdc-header__meta-line-2 {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--jdc-h-fg);
+}
+.jdc-header__meta-led {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--jdc-h-led);
+  box-shadow: 0 0 6px var(--jdc-h-led);
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: jdc-pulse 1.6s ease-in-out infinite;
+}
+@keyframes jdc-pulse { 0%, 100% { opacity: 1; transform: scale(1) } 50% { opacity: .55; transform: scale(.8) } }
+
+/* ==== nav ================================================================ */
+.jdc-header__nav {
+  display: none;
+  align-items: center;
+  gap: clamp(28px, 3.2vw, 56px);
+}
+@media (min-width: 961px) { .jdc-header__nav { display: inline-flex; } }
+
+.jdc-header__link {
+  position: relative;
+  color: var(--jdc-h-fg);
+  text-decoration: none;
+  font-size: clamp(14px, 1.1vw, 17px);
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+  padding: 6px 2px;
+  transition: color .2s ease, opacity .2s ease;
+}
+
+.jdc-header__link::before,
+.jdc-header__link::after {
+  color: var(--jdc-h-accent);
+  opacity: 0;
+  transition: opacity .25s ease, transform .25s ease;
+  display: inline-block;
+}
+.jdc-header__link::before { content: "["; margin-right: 0; transform: translateX(6px); }
+.jdc-header__link::after  { content: "]"; margin-left: 0;  transform: translateX(-6px); }
+
+.jdc-header__link:hover::before,
+.jdc-header__link:hover::after,
+.jdc-header__link.is-active::before,
+.jdc-header__link.is-active::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+.jdc-header__link:hover::before,
+.jdc-header__link.is-active::before { margin-right: 0.3em; }
+.jdc-header__link:hover::after,
+.jdc-header__link.is-active::after  { margin-left: 0.3em; }
+
+.jdc-header__link.is-active { color: var(--jdc-h-accent); }
+
+/* little bottom tick under active link */
+.jdc-header__link.is-active::marker { content: ""; }
+.jdc-header__link.is-active {
+  background:
+    linear-gradient(currentColor, currentColor) left 2px bottom 0/18px 1px no-repeat;
+}
+
+/* ==== cta ================================================================ */
+.jdc-header__cta {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  text-decoration: none;
+  color: var(--jdc-h-fg);
+  font-size: clamp(13px, 1vw, 15px);
+  letter-spacing: 0.18em;
+  border: 1px solid rgba(255,255,255,0.35);
+  background: transparent;
+  transition: background .25s ease, color .25s ease, border-color .25s ease;
+  white-space: nowrap;
+}
+@media (min-width: 961px) {
+  .jdc-header > .jdc-header__cta { display: inline-flex !important; }
+}
+
+.jdc-header__cta-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--jdc-h-accent);
+  border-radius: 50%;
+  transition: transform .25s ease;
+}
+.jdc-header__cta:hover {
+  background: var(--jdc-h-accent);
+  color: #07090d;
+  border-color: var(--jdc-h-accent);
+}
+.jdc-header__cta:hover .jdc-header__cta-dot { background: #07090d; transform: scale(1.15); }
+.jdc-header__cta-arrow { display: inline-block; transition: transform .25s ease; }
+.jdc-header__cta:hover .jdc-header__cta-arrow { transform: translateX(4px); }
+
+/* ==== mobile toggle ====================================================== */
+.jdc-header__toggle {
+  justify-self: end;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .2s ease, background .2s ease;
+}
+@media (min-width: 961px) { .jdc-header__toggle { display: none; } }
+
+.jdc-header__toggle:hover { border-color: var(--jdc-h-accent); }
+
+.jdc-header__toggle-bars,
+.jdc-header__toggle-bars::before,
+.jdc-header__toggle-bars::after {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: var(--jdc-h-fg);
+  transition: transform .3s ease, top .3s ease, background .2s ease, opacity .2s ease;
+}
+.jdc-header__toggle-bars { position: relative; }
+.jdc-header__toggle-bars::before,
+.jdc-header__toggle-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+.jdc-header__toggle-bars::before { top: -6px; }
+.jdc-header__toggle-bars::after  { top:  6px; }
+
+.jdc-header.is-open .jdc-header__toggle-bars              { background: transparent; }
+.jdc-header.is-open .jdc-header__toggle-bars::before      { top: 0; background: var(--jdc-h-accent); transform: rotate(45deg); }
+.jdc-header.is-open .jdc-header__toggle-bars::after       { top: 0; background: var(--jdc-h-accent); transform: rotate(-45deg); }
+
+/* ==== desktop layout =====================================================
+   Three-zone layout via flex + absolute-centered nav. The nav is taken
+   OUT of flex flow and pinned to the viewport center with
+   `left: 50%; transform: translateX(-50%)`, so its position is 100%
+   independent of the logo's and CTA's widths — they can be any size and
+   the menu stays mathematically centered on the header. The remaining
+   two flex items (brand, CTA) get `justify-content: space-between`
+   treatment: brand anchors left, CTA anchors right. This pattern is
+   stable at every desktop width (961 → 3840+) with no per-breakpoint
+   nudges. Works the same under the site's html { zoom } stack because
+   50% of the header is always viewport center. */
+@media (min-width: 961px) {
+  .jdc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    grid-template-columns: none;
+  }
+  .jdc-header__brand   { flex: 0 0 auto; order: 1; }
+  .jdc-header__cta     { flex: 0 0 auto; order: 3; }
+  .jdc-header__nav {
+    order: 2;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+  }
+  .jdc-header__toggle,
+  .jdc-header__drawer { display: none; }
+}
+
+/* ==== mobile drawer ====================================================== */
+.jdc-header__drawer {
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  height: 100dvh;
+  background: #07090d;
+  color: var(--jdc-h-fg);
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  padding: calc(var(--jdc-h-h-mobile) + 32px) 28px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  transform: translateY(-100%);
+  transition: transform .45s cubic-bezier(.22,.61,.36,1);
+  z-index: 999;
+  overflow: hidden;
+}
+.jdc-header__drawer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.jdc-header.is-open .jdc-header__drawer { transform: translateY(0); }
+
+.jdc-header__drawer-row {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  text-decoration: none;
+  color: var(--jdc-h-fg);
+  font-size: 32px;
+  letter-spacing: 0.08em;
+  font-family: 'Bebas Neue', sans-serif;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .5s ease, transform .5s ease, color .2s ease;
+  position: relative;
+  z-index: 1;
+}
+.jdc-header__drawer-row:hover { color: var(--jdc-h-accent); }
+.jdc-header__drawer-row.is-active { color: var(--jdc-h-accent); }
+.jdc-header__drawer-row.is-active::before { content: "> "; color: var(--jdc-h-accent); }
+.jdc-header__drawer-row-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--jdc-h-fg-dim);
+  min-width: 32px;
+}
+
+.jdc-header.is-open .jdc-header__drawer-row {
+  opacity: 1;
+  transform: translateY(0);
+}
+.jdc-header.is-open .jdc-header__drawer-row:nth-child(1) { transition-delay: .08s; }
+.jdc-header.is-open .jdc-header__drawer-row:nth-child(2) { transition-delay: .14s; }
+.jdc-header.is-open .jdc-header__drawer-row:nth-child(3) { transition-delay: .20s; }
+.jdc-header.is-open .jdc-header__drawer-row:nth-child(4) { transition-delay: .26s; }
+.jdc-header.is-open .jdc-header__drawer-cta              { transition-delay: .34s; }
+.jdc-header.is-open .jdc-header__drawer-foot             { transition-delay: .40s; }
+
+.jdc-header__drawer-cta {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: var(--jdc-h-fg);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  text-decoration: none;
+  align-self: flex-start;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .5s ease, transform .5s ease, background .25s ease, color .25s ease;
+  position: relative;
+  z-index: 1;
+}
+.jdc-header__drawer-cta:hover { background: var(--jdc-h-accent); color: #07090d; }
+
+.jdc-header__drawer-foot {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--jdc-h-fg-dim);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .5s ease, transform .5s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.jdc-header__drawer-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: var(--jdc-h-fg);
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 16px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.jdc-header__drawer-tagline {
+  font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  line-height: 1.5;
+  color: var(--jdc-h-fg);
+  text-align: right;
+  text-transform: uppercase;
+}
+
+@media (min-width: 961px) {
+  .jdc-header__drawer { display: none; }
+}
+
+/* ==== mobile bar tweaks ==================================================
+   Mobile header = fully opaque, effect-free layer. Every decorative
+   source that could paint a dark band/strip/overlay on top of or
+   through the header is disabled here:
+     - `backdrop-filter: blur` → lets page bg bleed through
+     - `color-mix` semi-transparent `.is-scrolled` bg
+     - `border-bottom: 1px solid rgba(7,9,13,.2)` → reads as a thin
+       black hairline at the bottom edge of the header
+     - `::after` gradient accent strip below the header
+     - drawer `::before` grid pattern
+     - `.jdc-pt` curtain-transition overlay → paints full #07090d
+       across the viewport during navigation and can linger on mobile
+       browsers where the transition ends awkwardly.
+   Header z-index bumped to 1100 so nothing else on the page can stack
+   above it. Desktop keeps all effects. */
+@media (max-width: 960px) {
+  .jdc-header,
+  .jdc-header.is-scrolled {
+    background: var(--jdc-h-bg) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom: none !important;
+    z-index: 1100;
+  }
+  .jdc-header::after          { display: none !important; }
+  .jdc-header__drawer         { z-index: 1099; }
+  .jdc-pt                     { display: none !important; }
+
+  /* Swap the 4-column grid for a dead-simple flex row on mobile — the
+     grid was leaving empty display:none tracks that confused auto
+     placement on some devices (logo ended up in an unpainted column). */
+  .jdc-header {
+    height: var(--jdc-h-h-mobile);
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    grid-template-columns: none;
+  }
+  .jdc-header__brand {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 2;
+  }
+  .jdc-header__logo {
+    display: inline-block !important;
+    font-size: 44px;
+    line-height: 1;
+    top: 0;
+    color: #ffffff;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  .jdc-header__logo-dot { display: none; }
+  .jdc-header__meta,
+  .jdc-header__nav,
+  .jdc-header__cta { display: none !important; }
+  .jdc-header__toggle {
+    flex: 0 0 auto;
+    margin-left: auto;
+    position: relative;
+    z-index: 1102;
+  }
+}
+
+/* ==== body scroll lock while drawer is open ============================== */
+html.jdc-menu-open,
+html.jdc-menu-open body {
+  overflow: hidden;
+}
+
+/* ==== reduced motion ===================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .jdc-header, .jdc-header *, .jdc-header__drawer, .jdc-header__drawer * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

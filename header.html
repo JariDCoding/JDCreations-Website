@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, width=device-width">
+  <title>JDCreations — header preview</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap" />
+  <link rel="stylesheet" href="./header.css" />
+  <script src="./header.js" defer></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0f1115;
+      color: #d9d9d9;
+      font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+      min-height: 200vh;
+    }
+    .preview-stage {
+      padding: calc(var(--jdc-header-h, 84px) + 48px) 32px 64px;
+      max-width: 720px;
+    }
+    .preview-stage h1 { font-family: 'Bebas Neue', sans-serif; letter-spacing: .08em; font-size: 48px; margin: 0 0 12px; }
+    .preview-stage p  { line-height: 1.6; opacity: .8; }
+  </style>
+</head>
+<body>
+  <main class="preview-stage">
+    <h1>HEADER PREVIEW</h1>
+    <p>Scroll to confirm the header stays fixed at the top. Resize the viewport under 960px to see the mobile drawer (tap the hamburger).</p>
+    <p style="margin-top:60vh">Bottom of page.</p>
+  </main>
+</body>
+</html>

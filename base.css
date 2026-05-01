@@ -1,0 +1,31 @@
+/* =========================================================================
+   JDCreations — shared base rules
+   Sits in front of header.css so page-level CSS can still override.
+   ======================================================================= */
+
+/* Scroll-lock class applied to <html> via inline <head> script. Released
+   by each page's own loader / transitions.js when the hero is ready. */
+html.scroll-locked,
+html.scroll-locked body {
+  overflow: hidden;
+  height: 100%;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+/* === Canvas-scaling zoom stack ==========================================
+   The site is designed on a 1728-base canvas. These breakpoints scale the
+   canvas uniformly into each physical viewport so hand-authored design-px
+   coordinates stay authoritative across widths. */
+@media (min-width: 1280px) and (max-width: 1439px) { html { zoom: 0.7407; } }
+@media (min-width: 1440px) and (max-width: 1727px) { html { zoom: 0.8333; } }
+@media (min-width: 1920px) and (max-width: 2559px) { html { zoom: 1.1111; } }
+@media (min-width: 2560px) and (max-width: 3839px) { html { zoom: 1.4815; } }
+@media (min-width: 3840px)                         { html { zoom: 2.2222; } }
+
+/* Narrower phones (<430 CSS-px) are handled by the inline <head> script's
+   dynamic html.style.zoom — no media rule here. */
+
+@media (max-width: 600px) {
+  html, body { overflow-x: hidden; max-width: 100%; }
+}

@@ -1,0 +1,2757 @@
+<!DOCTYPE html>
+<html>
+<head>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="initial-scale=1, width=device-width">
+  	<title>JDCreations</title>
+
+  	<link rel="preconnect" href="https://fonts.googleapis.com" />
+  	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400&family=JetBrains+Mono:wght@400&display=swap" />
+  	<link rel="stylesheet" href="./base.css" />
+  	<link rel="stylesheet" href="./header.css" />
+  	<link rel="stylesheet" href="./transitions.css" />
+  	<script src="./transitions.js"></script>
+  	<script src="./header.js" defer></script>
+
+  	<script>
+  		// Run BEFORE body parses so the browser never paints a scrolled frame.
+  		// 1. Disable browser scroll restoration on refresh.
+  		// 2. Strip any hash so `#over-ons` in the URL can't jump us down.
+  		// 3. Force y=0 immediately.
+  		// 4. Lock scroll on <html> until the hero animations finish.
+  		try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(e){}
+  		try { if (location.hash) history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+  		window.scrollTo(0, 0);
+  		document.documentElement.classList.add('scroll-locked');
+
+  		// Guard against arrow keys, space, page up/down, home/end while locked.
+  		// overflow:hidden blocks wheel/touch, but keyboard still fires window.scrollBy.
+  		const SCROLL_KEYS = new Set([
+  			'ArrowUp','ArrowDown','ArrowLeft','ArrowRight',
+  			'PageUp','PageDown','Home','End',' '
+  		]);
+  		window.addEventListener('keydown', (e) => {
+  			if (document.documentElement.classList.contains('scroll-locked') && SCROLL_KEYS.has(e.key)) {
+  				e.preventDefault();
+  			}
+  		}, { passive: false });
+  		// Also force scrollTop back to 0 if anything slips through.
+  		window.addEventListener('scroll', () => {
+  			if (document.documentElement.classList.contains('scroll-locked')) {
+  				window.scrollTo(0, 0);
+  			}
+  		}, { passive: true });
+
+  		// Mobile: scale the 430-wide design canvas to fit any iPhone width.
+  		// The Figma mobile hero (V6o05R9CgSBNvEzbtAw7UM / 14:49) is designed
+  		// for iPhone 14 & 15 Pro Max (430 × 916 logical px). Narrower iPhones
+  		// get a proportional html { zoom } so the same absolute-positioned
+  		// layout stays pixel-perfect on every device. Desktop clears the
+  		// inline style so the existing media-query zoom rules take over.
+  		(function() {
+  			function fitMobile() {
+  				const w = window.innerWidth;
+  				if (w <= 600) {
+  					document.documentElement.style.zoom = Math.min(w, 430) / 430;
+  				} else {
+  					document.documentElement.style.zoom = '';
+  				}
+  			}
+  			fitMobile();
+  			window.addEventListener('resize', fitMobile);
+  		})();
+
+  		// Desktop: scale the 1114-px hero canvas to exactly viewport
+  		// height, preserving composition (wordmark, CTA, taglines, and
+  		// bottom hairline all scale together). `--hero-scale` is applied
+  		// to `.hero-section` via `zoom`. At every desktop width:
+  		//   hero_physical = 1114 × hero_scale × html_zoom = innerHeight
+  		// so the bottom hairline lands on the viewport's last pixel and
+  		// nothing clips — JDCREATIONS and [ START PROJECT → ] remain
+  		// fully visible because the whole canvas is scaled, not cropped.
+  		// The loader wordmark uses the same `--hero-scale` so the
+  		// handoff to the hero wordmark stays pixel-perfect.
+  		(function() {
+  			const HERO_CANVAS_H = 1114;
+  			const root = document.documentElement;
+  			function fitHero() {
+  				if (window.innerWidth <= 600) {
+  					root.style.removeProperty('--hero-scale');
+  					root.style.removeProperty('--hero-fit-h');
+  					root.style.removeProperty('--hero-full-css');
+  					root.style.removeProperty('--hero-line-half');
+  					root.style.removeProperty('--hero-vline-x');
+  					return;
+  				}
+  				const z = parseFloat(getComputedStyle(root).zoom);
+  				const htmlZoom = (isFinite(z) && z > 0) ? z : 1;
+  				const rawScale = window.innerHeight / (HERO_CANVAS_H * htmlZoom);
+  				// Two paths:
+  				//   - viewport TALLER than canvas (raw ≥ 1 e.g. 1440×1024):
+  				//     don't scale content, stretch the section height with
+  				//     `--hero-fit-h`. Hairline at `bottom: 0` lands at viewport
+  				//     bottom; content at top:X stays where authored.
+  				//   - viewport SHORTER than canvas (raw < 1 e.g. 1920×1080,
+  				//     2560×1440): zoom the entire hero down to fit. Canvas
+  				//     height stays at 1114; `--hero-scale` shrinks it.
+  				let scale, fitH;
+  				if (rawScale >= 1) {
+  					scale = 1;
+  					fitH = window.innerHeight / htmlZoom;
+  				} else {
+  					scale = Math.max(0.5, rawScale);
+  					fitH = HERO_CANVAS_H;
+  				}
+  				root.style.setProperty('--hero-scale', scale);
+  				root.style.setProperty('--hero-fit-h', fitH + 'px');
+  				// Full-viewport line widths (compensate for hero zoom so the
+  				// visible lines span edge-to-edge physically).
+  				const fullCss = window.innerWidth / (htmlZoom * scale);
+  				root.style.setProperty('--hero-full-css', fullCss + 'px');
+  				root.style.setProperty('--hero-line-half', (fullCss / 2) + 'px');
+  				// `.line-center-v` matching `.over-ons-vline` at left:1399:
+  				// target physical x = 1399 × htmlZoom. Under hero's zoom:
+  				// line_css × scale × htmlZoom = 1399 × htmlZoom → css = 1399 / scale.
+  				root.style.setProperty('--hero-vline-x', (1399 / scale) + 'px');
+  			}
+  			fitHero();
+  			window.addEventListener('resize', fitHero);
+  			window.addEventListener('orientationchange', fitHero);
+  		})();
+  	</script>
+</head>
+<body>
+
+  	<div class="loader" id="loader">
+  		<div class="loader-grid"></div>
+  		<div class="loader-corner loader-corner-tr">[&nbsp;BUILD&nbsp;:&nbsp;2026&nbsp;]</div>
+  		<div class="loader-corner loader-corner-bl">SYS.JDC&nbsp;/&nbsp;v1.0.0</div>
+
+  		<div class="loader-wordmark" id="loader-wordmark">
+  			<span class="loader-jd">JD</span><span class="loader-creations">CREATIONS</span>
+  		</div>
+
+  		<div class="loader-ui">
+  			<div class="loader-percent-big" id="loader-percent">000<span class="loader-percent-sym">%</span></div>
+  			<div class="loader-bar-labels">
+  				<span class="loader-label-left">&gt;&nbsp;<span id="loader-status">INITIALIZING&nbsp;SYSTEM</span><span class="loader-caret">_</span></span>
+  			</div>
+  			<div class="loader-bar">
+  				<div class="loader-bar-fill" id="loader-bar-fill"></div>
+  			</div>
+  			<div class="loader-bar-meta">
+  				<span>[&nbsp;COMPILE&nbsp;]</span>
+  				<span>[&nbsp;ASSET_STREAM&nbsp;]</span>
+  				<span>[&nbsp;RENDER&nbsp;]</span>
+  			</div>
+  		</div>
+  	</div>
+
+  	<div class="hero-section">
+    		<div class="jdcreations">
+      			<span>JD</span><span class="creations">CREATIONS</span>
+    		</div>
+    		<div class="helder-in-design">HELDER IN DESIGN.<br>SLIM IN STRUCTUUR.<br>GERICHT OP RESULTAAT.</div>
+    		<div class="web-design-voor">WEB DESIGN VOOR<br>BEDRIJVEN DIE STERKER<br>EN SERIEUZER WILLEN OGEN</div>
+
+    		<div class="hero-section-child">
+    		</div>
+    		<div class="line-top-right">
+    		</div>
+    		<div class="line-top-left">
+    		</div>
+    		<div class="line-center-v">
+    		</div>
+    		<div class="line-right-v">
+    		</div>
+    		<a class="div blur-fade" href="/aanvraag">
+      			<span>[ </span>
+      			<span class="start-project">START PROJECT</span>
+      			<span class="div-arrow"> &rarr;</span>
+      			<span class="div-bracket">]</span>
+    		</a>
+    		<div class="web-design-container blur-fade">
+      			<span>WEB DESIGN </span>
+      			<span class="span">/</span>
+      			<span> TRACKING </span>
+      			<span class="span">/</span>
+      			<span> AUTOMATION</span>
+    		</div>
+    		<div class="div2">&trade; </div>
+    		<a class="arrow-down-icon blur-fade" href="#over-ons" aria-label="Scroll to next section">
+    			<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    				<path d="M18 7.5V28.5M18 28.5L28.5 18M18 28.5L7.5 18" stroke="white" stroke-width="1.46546" stroke-linecap="round" stroke-linejoin="round"/>
+    			</svg>
+    		</a>
+
+    		<div class="hero-section-item">
+    		</div>
+  	</div>
+
+  	<section class="over-ons-section" id="over-ons">
+  		<div class="over-ons-label">
+  			<span>/</span><span class="over-ons-label-sep">&nbsp;</span><span>OVER</span><span class="over-ons-label-sep">&nbsp;</span><span class="over-ons-label-jdc">JDCREATIONS</span>
+  		</div>
+  		<h2 class="over-ons-headline blur-fade">IK BOUW DIGITALE<br>SYSTEMEN DIE BEDRIJVEN<br>HELDERDER EN STERKER POSITIONEREN.</h2>
+  		<p class="over-ons-body blur-fade">Ik ben Jari, designer en builder van branded websites waarin design, UX, CRO en automation samenkomen in één helder digitaal systeem.</p>
+
+  		<img class="over-ons-portrait" src="./over-jdc-hero.png" alt="Jari — JDCreations">
+
+  		<a class="over-ons-cta blur-fade" href="#over-ons" data-line-gated>
+  			<span>[ </span><span class="over-ons-cta-text">Meer over JDC &rarr; </span><span>]</span>
+  		</a>
+  		<img class="over-ons-cta-line" src="./line-43.svg" alt="" data-scroll-draw data-reveal=".over-ons-cta">
+
+  		<div class="over-ons-vline" data-scroll-draw></div>
+  		<div class="over-ons-bline-left" data-scroll-draw data-draw-length="600"></div>
+  		<div class="over-ons-bline-right" data-scroll-draw data-draw-length="600"></div>
+  		<div class="over-ons-tline"></div>
+  	</section>
+
+  	<section class="previous-projects-section" id="previous-projects">
+  		<div class="pp-sticky-wrap">
+  		<div class="previous-projects-vline-top" data-scroll-draw data-draw-length="300" data-draw-offset="591"></div>
+  		<div class="previous-projects-label">
+  			<span>/</span><span class="previous-projects-sep">&nbsp;</span><span>Eerdere </span><span class="previous-projects-word">Projecten</span>
+  		</div>
+  		<div class="pp-carousel" id="pp-carousel">
+  			<div class="pp-slide is-active" data-index="0" style="background-image:url('./image-23.png')">
+  				<div class="pp-slide-gradient"></div>
+  				<div class="pp-slide-label">
+  					<div class="pp-slide-icon">01</div>
+  					<div class="pp-slide-info">
+  						<div class="pp-slide-title">PROJECT 01</div>
+  						<div class="pp-slide-desc">Coming soon</div>
+  					</div>
+  				</div>
+  			</div>
+  			<div class="pp-slide" data-index="1" style="background-image:url('./image-23.png')">
+  				<div class="pp-slide-gradient"></div>
+  				<div class="pp-slide-label">
+  					<div class="pp-slide-icon">02</div>
+  					<div class="pp-slide-info">
+  						<div class="pp-slide-title">PROJECT 02</div>
+  						<div class="pp-slide-desc">Coming soon</div>
+  					</div>
+  				</div>
+  			</div>
+  			<div class="pp-slide" data-index="2" style="background-image:url('./image-23.png')">
+  				<div class="pp-slide-gradient"></div>
+  				<div class="pp-slide-label">
+  					<div class="pp-slide-icon">03</div>
+  					<div class="pp-slide-info">
+  						<div class="pp-slide-title">PROJECT 03</div>
+  						<div class="pp-slide-desc">Coming soon</div>
+  					</div>
+  				</div>
+  			</div>
+  			<div class="pp-slide" data-index="3" style="background-image:url('./image-23.png')">
+  				<div class="pp-slide-gradient"></div>
+  				<div class="pp-slide-label">
+  					<div class="pp-slide-icon">04</div>
+  					<div class="pp-slide-info">
+  						<div class="pp-slide-title">PROJECT 04</div>
+  						<div class="pp-slide-desc">Coming soon</div>
+  					</div>
+  				</div>
+  			</div>
+  			<div class="pp-slide" data-index="4" style="background-image:url('./image-23.png')">
+  				<div class="pp-slide-gradient"></div>
+  				<div class="pp-slide-label">
+  					<div class="pp-slide-icon">05</div>
+  					<div class="pp-slide-info">
+  						<div class="pp-slide-title">PROJECT 05</div>
+  						<div class="pp-slide-desc">Coming soon</div>
+  					</div>
+  				</div>
+  			</div>
+  		</div>
+  		<a class="previous-projects-cta blur-fade" href="/aanvraag" data-line-gated>
+  			<span>[ </span><span class="previous-projects-cta-label">Ontdek Meer&rarr;</span><span>]</span>
+  		</a>
+  		<img class="pp-cta-line" src="./line-43.svg" alt="" data-scroll-draw data-reveal=".previous-projects-cta">
+  		<p class="previous-projects-body blur-fade">Geen massa-aanpak, maar gerichte projecten waarin design, structuur en digitale opvolging samenkomen.</p>
+
+  		<div class="pp-nav blur-fade">
+  			<div class="pp-counter"><span class="pp-counter-current">01</span><span class="pp-counter-sep"> / </span><span class="pp-counter-total">05</span></div>
+  			<div class="pp-nav-buttons">
+  				<button class="pp-nav-btn pp-nav-prev" type="button" aria-label="Previous project">
+  					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  						<path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  					</svg>
+  				</button>
+  				<button class="pp-nav-btn pp-nav-next" type="button" aria-label="Next project">
+  					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  						<path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  					</svg>
+  				</button>
+  			</div>
+  		</div>
+
+  		<div class="previous-projects-bline" data-scroll-draw data-draw-length="300"></div>
+  		<div class="previous-projects-vline-bot" data-scroll-draw data-draw-length="100" data-draw-offset="300"></div>
+
+  		<!-- Mobile-only single project image (replaces desktop carousel
+  		     on iPhone widths). Hidden on desktop via .pp-mobile-img base
+  		     rule; repositioned inside the mobile media query. -->
+  		<img class="pp-mobile-img" src="./image-23.png" alt="">
+  		<!-- Mobile-only body copy — the Figma mobile layout (node 15:83)
+  		     puts this paragraph below the project image at full width,
+  		     which is a different copy + position from the desktop carousel
+  		     body above. Hidden on desktop via .pp-mobile-body base rule. -->
+  		<p class="pp-mobile-body blur-fade">Website ontworpen met focus op<br>duidelijkheid, conversie en<br>meetbare opvolging.</p>
+  		</div>
+  	</section>
+
+  	<!-- === WERKWIJZE ======================================================= -->
+  	<section class="werkwijze-section" id="werkwijze">
+  		<div class="werkwijze-label"><span>/ Mijn </span><span class="werkwijze-label-accent">Werkwijze</span></div>
+  		<h2 class="werkwijze-headline blur-fade">Een heldere aanpak<br>in 3 stappen</h2>
+
+  		<!-- Structural lines (scroll-drawn on desktop, static on mobile) -->
+  		<div class="wz-vline-tr" data-scroll-draw data-draw-length="1571"></div>
+  		<div class="wz-hline-mid" data-scroll-draw data-draw-length="600"></div>
+  		<div class="wz-vline-mid" data-scroll-draw data-draw-length="1011" data-draw-offset="600"></div>
+  		<div class="wz-hline-bot" data-scroll-draw data-draw-length="200" data-draw-offset="425"></div>
+  		<div class="wz-vline-br" data-scroll-draw data-draw-length="200" data-draw-offset="625"></div>
+
+  		<!-- Figma decorative brackets (mobile-only, static). Match
+  		     Figma node 29:276 — 13 short accents that frame each step's
+  		     number + content cluster. All hidden on desktop via the
+  		     base .wz-fl rule; positioned inside the 430-wide canvas by
+  		     the mobile media query. -->
+  		<div class="wz-fl wz-fl-01-v"></div>
+  		<div class="wz-fl wz-fl-01-h" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-02-h-tr" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-02-v-tr" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-02-h-l" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-03-v-tr" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-03-h-tr" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-03-v-l" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-mk-h-top" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-mk-v-l" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-mk-v-mid" data-scroll-draw></div>
+  		<div class="wz-fl wz-fl-mk-h-mid"></div>
+  		<div class="wz-fl wz-fl-mk-v-r"></div>
+
+  		<!-- Mobile-only hairlines + arrow icon (Figma 29:276). Hidden on
+  		     desktop via .wz-m-line / .wz-m-arrow base rule; positioned
+  		     inside the 430-wide mobile canvas via the media query. -->
+  		<div class="wz-m-line wz-m-v1" data-scroll-draw></div>
+  		<div class="wz-m-line wz-m-h1"></div>
+  		<div class="wz-m-line wz-m-h2"></div>
+  		<div class="wz-m-line wz-m-v2" data-scroll-draw></div>
+  		<div class="wz-m-line wz-m-h3"></div>
+  		<div class="wz-m-line wz-m-v3"></div>
+  		<div class="wz-m-line wz-m-v4"></div>
+  		<div class="wz-m-line wz-m-v5"></div>
+  		<div class="wz-m-line wz-m-h4"></div>
+  		<div class="wz-m-line wz-m-v6"></div>
+  		<div class="wz-m-line wz-m-h5"></div>
+  		<div class="wz-m-line wz-m-v7"></div>
+
+  		<!-- STEP 01: ANALYSEER -->
+  		<div class="wz-step wz-step-01 blur-fade">/01 <span class="wz-step-name">ANALYSEER</span></div>
+  		<p class="wz-body wz-body-01 blur-fade">We brengen in kaart hoe uw bedrijf vandaag overkomt, waar structuur ontbreekt en wat de website strategisch moet ondersteunen.</p>
+  		<img class="wz-img wz-img-01" src="./image-27.png" alt="">
+  		<div class="wz-acc-group wz-acc-group-01">
+  			<button type="button" class="wz-acc blur-fade">
+  				<div class="wz-acc-header">
+  					<span class="wz-acc-label">Doelen &amp; Positionering</span>
+  					<svg class="wz-acc-plus" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 6v18M6 15h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  				</div>
+  				<div class="wz-acc-sep"></div>
+  				<div class="wz-acc-body"><p>We brengen uw doelen in kaart en bepalen hoe uw merk zich onderscheidt.</p></div>
+  			</button>
+  			<button type="button" class="wz-acc blur-fade">
+  				<div class="wz-acc-header">
+  					<span class="wz-acc-label">Structuur &amp; Inhoud</span>
+  					<svg class="wz-acc-plus" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 6v18M6 15h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  				</div>
+  				<div class="wz-acc-sep"></div>
+  				<div class="wz-acc-body"><p>We analyseren welke pagina's en boodschappen nodig zijn.</p></div>
+  			</button>
+  			<button type="button" class="wz-acc blur-fade">
+  				<div class="wz-acc-header">
+  					<span class="wz-acc-label">Tracking &amp; Opvolging</span>
+  					<svg class="wz-acc-plus" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 6v18M6 15h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  				</div>
+  				<div class="wz-acc-sep"></div>
+  				<div class="wz-acc-body"><p>We bepalen welke metingen ertoe doen na lancering.</p></div>
+  			</button>
+  		</div>
+
+  		<!-- STEP 02: CONCEPT -->
+  		<div class="wz-step wz-step-02 blur-fade"><span class="wz-step-name">CONCEPT</span> /02</div>
+  		<p class="wz-body wz-body-02 blur-fade">Hier vertalen we de analyse naar een eerste designrichting. Samen bekijken we of die in lijn ligt met uw merk en bouwen we daarop verder.</p>
+  		<img class="wz-img wz-img-02" src="./image-27.png" alt="">
+  		<div class="wz-acc-group wz-acc-group-02">
+  			<button type="button" class="wz-acc blur-fade">
+  				<div class="wz-acc-header">
+  					<span class="wz-acc-label">Designrichting</span>
+  					<svg class="wz-acc-plus" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 6v18M6 15h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  				</div>
+  				<div class="wz-acc-sep"></div>
+  				<div class="wz-acc-body"><p>We vertalen uw merkidentiteit naar een visueel concept.</p></div>
+  			</button>
+  			<button type="button" class="wz-acc blur-fade">
+  				<div class="wz-acc-header">
+  					<span class="wz-acc-label">Revisie &amp; afstemming</span>
+  					<svg class="wz-acc-plus" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 6v18M6 15h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  				</div>
+  				<div class="wz-acc-sep"></div>
+  				<div class="wz-acc-body"><p>Samen bespreken we het ontwerp en sturen bij tot alles klopt.</p></div>
+  			</button>
+  			<button type="button" class="wz-acc blur-fade">
+  				<div class="wz-acc-header">
+  					<span class="wz-acc-label">Basis voor de build</span>
+  					<svg class="wz-acc-plus" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 6v18M6 15h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  				</div>
+  				<div class="wz-acc-sep"></div>
+  				<div class="wz-acc-body"><p>Het design wordt voorbereid als basis voor de build.</p></div>
+  			</button>
+  		</div>
+
+  		<!-- STEP 03: AFLEVERING -->
+  		<div class="wz-step wz-step-03 blur-fade">/03 <span class="wz-step-name">OPLEVERING</span></div>
+  		<p class="wz-body wz-body-03 blur-fade">In deze fase wordt de website volledig uitgewerkt voor desktop, tablet en mobiel. Na een finale revisie wordt alles netjes opgeleverd.</p>
+  		<img class="wz-img wz-img-03" src="./mediaqueries.png" alt="">
+  		<div class="wz-acc-group wz-acc-group-03">
+  			<button type="button" class="wz-acc blur-fade">
+  				<div class="wz-acc-header">
+  					<span class="wz-acc-label">Responsive Design</span>
+  					<svg class="wz-acc-plus" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 6v18M6 15h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  				</div>
+  				<div class="wz-acc-sep"></div>
+  				<div class="wz-acc-body"><p>Uw site wordt geoptimaliseerd voor elk schermformaat.</p></div>
+  			</button>
+  			<button type="button" class="wz-acc blur-fade">
+  				<div class="wz-acc-header">
+  					<span class="wz-acc-label">Oplevering &amp; Support</span>
+  					<svg class="wz-acc-plus" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 6v18M6 15h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  				</div>
+  				<div class="wz-acc-sep"></div>
+  				<div class="wz-acc-body"><p>Na lancering blijven we beschikbaar voor updates en support.</p></div>
+  			</button>
+  		</div>
+
+  		<a class="wz-cta wz-cta-03 blur-fade" href="/aanvraag" data-line-gated>
+  			<span>[ </span><span class="wz-cta-text">Start project &rarr; </span><span>]</span>
+  		</a>
+  		<img class="wz-cta-line wz-cta-line-03" src="./line-43.svg" alt="" data-scroll-draw data-reveal=".wz-cta-03">
+
+  		<a class="wz-cta wz-cta-01 blur-fade" href="/aanvraag" data-line-gated>
+  			<span>[ </span><span class="wz-cta-text">Start project &rarr; </span><span>]</span>
+  		</a>
+  		<img class="wz-cta-line wz-cta-line-01" src="./line-43.svg" alt="" data-scroll-draw data-reveal=".wz-cta-01">
+  	</section>
+
+
+
+
+<script>
+(function(){
+  const RANDOM_CHARS = "_!X$0-+*#";
+
+  function getRandomChar(prevChar) {
+    let c;
+    do { c = RANDOM_CHARS[Math.floor(Math.random() * RANDOM_CHARS.length)]; }
+    while (c === prevChar);
+    return c;
+  }
+
+  function animateLine(el, text, speed, delay, onDone) {
+    el.textContent = "\u00A0".repeat(text.length);
+    let phase = 1;
+    let step = 0;
+    let interval = null;
+
+    function tick() {
+      if (phase === 1) {
+        const maxSteps = text.length * 2;
+        const currentLength = Math.min(step + 1, text.length);
+        const chars = [];
+        for (let i = 0; i < currentLength; i++) {
+          if (text[i] === " ") { chars.push("\u00A0"); continue; }
+          const prev = i > 0 ? chars[i - 1] : undefined;
+          chars.push(getRandomChar(prev));
+        }
+        for (let i = currentLength; i < text.length; i++) chars.push("\u00A0");
+        el.textContent = chars.join("");
+        if (step < maxSteps - 1) step++;
+        else { phase = 2; step = 0; }
+      } else {
+        const revealed = Math.floor(step / 2);
+        const chars = [];
+        for (let i = 0; i < revealed && i < text.length; i++) chars.push(text[i]);
+        if (revealed < text.length) {
+          if (text[revealed] === " ") chars.push("\u00A0");
+          else if (step % 2 === 0) chars.push("_");
+          else chars.push(getRandomChar());
+        }
+        for (let i = chars.length; i < text.length; i++) {
+          if (text[i] === " ") chars.push("\u00A0");
+          else chars.push(getRandomChar());
+        }
+        el.textContent = chars.join("");
+        if (step < text.length * 2 - 1) step++;
+        else {
+          el.textContent = text;
+          if (interval) { clearInterval(interval); interval = null; }
+          if (typeof onDone === "function") onDone();
+        }
+      }
+    }
+
+    setTimeout(() => { interval = setInterval(tick, speed); }, delay);
+  }
+
+  // Prep: clear the original text immediately so the taglines never flash
+  // their final content before the decrypt runs. Returns the prepared spans
+  // and their target text so we can animate them later on demand.
+  function prepDecrypt(selector) {
+    const el = document.querySelector(selector);
+    if (!el) return [];
+    const lines = el.innerHTML.split(/<br\s*\/?>/i).map(s => s.trim());
+    el.innerHTML = "";
+    const entries = [];
+    lines.forEach((line, i) => {
+      if (i > 0) el.appendChild(document.createElement("br"));
+      const span = document.createElement("span");
+      // Prime with non-breaking spaces so layout is stable, text is invisible
+      span.textContent = "\u00A0".repeat(line.length);
+      el.appendChild(span);
+      entries.push({ span, line });
+    });
+    return entries;
+  }
+
+  // Run prep immediately at script parse — the taglines are empty from t=0
+  const webPrep = prepDecrypt(".web-design-voor");
+  const helderPrep = prepDecrypt(".helder-in-design");
+
+  window.__startHeroDecrypt = function() {
+    const speed = 20;
+    const lineStagger = 158;
+    const totalLines = webPrep.length + helderPrep.length;
+    let doneCount = 0;
+    function onLineDone() {
+      doneCount++;
+      if (doneCount >= totalLines && typeof window.__flushBlurGate === "function") {
+        window.__flushBlurGate("hero");
+      }
+    }
+    // Guard against empty preps: if there are no lines, fire the gate immediately
+    if (totalLines === 0 && typeof window.__flushBlurGate === "function") {
+      window.__flushBlurGate("hero");
+      return;
+    }
+    webPrep.forEach((entry, i) => {
+      animateLine(entry.span, entry.line, speed, i * lineStagger, onLineDone);
+    });
+    helderPrep.forEach((entry, i) => {
+      animateLine(entry.span, entry.line, speed, 144 + i * lineStagger, onLineDone);
+    });
+  };
+
+  // === Multi-span label decrypt =========================================
+  // Labels like "/ OVER JDC" or "/ Mijn Werkwijze" split colors across
+  // child <span> elements. We animate the full text as one stream and
+  // distribute chars back to the spans each tick so colors are preserved.
+  function prepLabelDecrypt(selector) {
+    const el = document.querySelector(selector);
+    if (!el) return null;
+    // Grab every leaf text-bearing span in order
+    const spans = Array.from(el.querySelectorAll("span")).filter(s => {
+      return s.children.length === 0 && s.textContent.length > 0;
+    });
+    if (!spans.length) return null;
+    const lengths = spans.map(s => s.textContent.length);
+    const fullText = spans.map(s => s.textContent).join("");
+    // Clear text but keep width stable
+    spans.forEach(s => { s.textContent = "\u00A0".repeat(s.textContent.length); });
+    function distribute(str) {
+      let idx = 0;
+      for (let i = 0; i < spans.length; i++) {
+        spans[i].textContent = str.slice(idx, idx + lengths[i]);
+        idx += lengths[i];
+      }
+    }
+    return { el, fullText, distribute, _started: false };
+  }
+
+  function runLabelDecrypt(prep, onDone) {
+    if (!prep || prep._started) return;
+    prep._started = true;
+    const text = prep.fullText;
+    const speed = 20;
+    let phase = 1;
+    let step = 0;
+    let interval = null;
+
+    function tick() {
+      if (phase === 1) {
+        const maxSteps = text.length * 2;
+        const currentLength = Math.min(step + 1, text.length);
+        const chars = [];
+        for (let i = 0; i < currentLength; i++) {
+          const ch = text[i];
+          if (ch === " " || ch === "\u00A0") { chars.push("\u00A0"); continue; }
+          const prev = i > 0 ? chars[i - 1] : undefined;
+          chars.push(getRandomChar(prev));
+        }
+        for (let i = currentLength; i < text.length; i++) chars.push("\u00A0");
+        prep.distribute(chars.join(""));
+        if (step < maxSteps - 1) step++;
+        else { phase = 2; step = 0; }
+      } else {
+        const revealed = Math.floor(step / 2);
+        const chars = [];
+        for (let i = 0; i < revealed && i < text.length; i++) chars.push(text[i]);
+        if (revealed < text.length) {
+          const ch = text[revealed];
+          if (ch === " " || ch === "\u00A0") chars.push("\u00A0");
+          else if (step % 2 === 0) chars.push("_");
+          else chars.push(getRandomChar());
+        }
+        for (let i = chars.length; i < text.length; i++) {
+          const ch = text[i];
+          if (ch === " " || ch === "\u00A0") chars.push("\u00A0");
+          else chars.push(getRandomChar());
+        }
+        prep.distribute(chars.join(""));
+        if (step < text.length * 2 - 1) step++;
+        else {
+          prep.distribute(text);
+          if (interval) { clearInterval(interval); interval = null; }
+          if (typeof onDone === "function") onDone();
+        }
+      }
+    }
+
+    interval = setInterval(tick, speed);
+  }
+
+  // Prep the section labels immediately so they never flash their
+  // final content before the decrypt runs. Each entry carries the gate
+  // name so we can flush the corresponding blur-fade elements once the
+  // label decrypt finishes — the section reveal is GATED behind the label.
+  const labelPreps = [
+    { sel: ".over-ons-label",          gate: "over-ons",          prep: prepLabelDecrypt(".over-ons-label") },
+    { sel: ".previous-projects-label", gate: "previous-projects", prep: prepLabelDecrypt(".previous-projects-label") },
+    { sel: ".werkwijze-label",         gate: "werkwijze",         prep: prepLabelDecrypt(".werkwijze-label") },
+  ];
+
+  // Fire each label's decrypt when it scrolls into view (once). When the
+  // decrypt finishes, flush the section's blur-fade gate so any queued
+  // reveals can begin.
+  const labelObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const match = labelPreps.find(lp => lp.prep && lp.prep.el === e.target);
+      if (match) {
+        runLabelDecrypt(match.prep, () => {
+          if (typeof window.__flushBlurGate === "function") {
+            window.__flushBlurGate(match.gate);
+          }
+        });
+      }
+      labelObs.unobserve(e.target);
+    });
+  }, { rootMargin: "0px 0px -15% 0px", threshold: 0.1 });
+
+  labelPreps.forEach(lp => { if (lp.prep) labelObs.observe(lp.prep.el); });
+})();
+
+(function(){
+  // Scroll is already pinned to (0, 0) and locked by the inline head script.
+  // This IIFE just runs the loader progress animation and hands off to the hero.
+  const loader = document.getElementById("loader");
+  const wordmark = document.getElementById("loader-wordmark");
+  const fill = document.getElementById("loader-bar-fill");
+  const percentEl = document.getElementById("loader-percent");
+  const statusEl = document.getElementById("loader-status");
+
+  if (!loader) return;
+
+  // Trigger the CREATIONS reveal motion on next frame
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => loader.classList.add("revealed"));
+  });
+
+  const stages = [
+    { at: 0,  label: "INITIALIZING\u00A0SYSTEM" },
+    { at: 22, label: "LINKING\u00A0MODULES" },
+    { at: 44, label: "COMPILING\u00A0ASSETS" },
+    { at: 68, label: "STREAMING\u00A0SHADERS" },
+    { at: 88, label: "RENDER\u00A0PIPELINE" },
+    { at: 100, label: "READY" },
+  ];
+
+  function pad(n) {
+    const v = Math.floor(n);
+    return (v < 10 ? "00" : v < 100 ? "0" : "") + v;
+  }
+
+  // Preserve the <span class="loader-percent-sym">%</span> child
+  percentEl.innerHTML = '000<span class="loader-percent-sym">%</span>';
+
+  const duration = 1800;
+  const start = performance.now();
+  let lastStage = -1;
+
+  function tick(now) {
+    const elapsed = now - start;
+    const p = Math.min(100, (elapsed / duration) * 100);
+    fill.style.width = p + "%";
+    percentEl.innerHTML = pad(p) + '<span class="loader-percent-sym">%</span>';
+
+    let idx = 0;
+    for (let i = 0; i < stages.length; i++) {
+      if (p >= stages[i].at) idx = i;
+    }
+    if (idx !== lastStage) {
+      lastStage = idx;
+      statusEl.textContent = stages[idx].label;
+    }
+
+    if (p < 100) {
+      requestAnimationFrame(tick);
+    } else {
+      setTimeout(beginReveal, 220);
+    }
+  }
+
+  function beginReveal() {
+    // Fade out the UI panel, corners, grid
+    loader.classList.add("fade-ui");
+
+    // Listen for the wordmark's `top` transition to finish, then run the
+    // handoff on the exact frame it lands — no setTimeout drift, no pause.
+    function onWordmarkLanded(e) {
+      if (e.propertyName !== "top") return;
+      wordmark.removeEventListener("transitionend", onWordmarkLanded);
+
+      // Instant swap: reveal hero jdcreations + hide loader wordmark
+      // (they're pixel-identical at this instant, no flicker).
+      document.body.classList.add("loader-gone");
+      wordmark.classList.add("handoff");
+
+      // Now that the wordmark is in its final resting place, start the
+      // hero decrypt animations for the taglines.
+      if (typeof window.__startHeroDecrypt === "function") {
+        window.__startHeroDecrypt();
+      }
+
+      // Fade the loader background to transparent
+      loader.classList.add("hide");
+      setTimeout(() => { loader.style.display = "none"; }, 700);
+
+      // Release scroll lock once the LAST line has finished drawing
+      // (bottom horizontal line — 1.0s delay + 0.95s duration).
+      const bottomLine = document.querySelector(".hero-section-child");
+      if (bottomLine) {
+        const onBottomDone = (ev) => {
+          if (ev.propertyName !== "transform") return;
+          bottomLine.removeEventListener("transitionend", onBottomDone);
+          document.documentElement.classList.remove("scroll-locked");
+        };
+        bottomLine.addEventListener("transitionend", onBottomDone);
+        // Safety net — if for any reason the event doesn't fire, unlock after 3s.
+        setTimeout(() => {
+          document.documentElement.classList.remove("scroll-locked");
+        }, 3000);
+      } else {
+        document.documentElement.classList.remove("scroll-locked");
+      }
+    }
+    wordmark.addEventListener("transitionend", onWordmarkLanded);
+
+    // 360ms after fade-ui, start the wordmark slide (triggers the transition
+    // that the listener above is waiting on)
+    setTimeout(() => {
+      loader.classList.add("done");
+    }, 360);
+  }
+
+  requestAnimationFrame(tick);
+})();
+
+/* === Scroll-drawn vertical lines ======================================== */
+(function() {
+  const lines = Array.from(document.querySelectorAll("[data-scroll-draw]"));
+  if (!lines.length) return;
+
+  // Cache document-relative top + layout height for each line.
+  // IMPORTANT: we can't use getBoundingClientRect().height here — the line's
+  // own scaleY transform shrinks its rect.height, and dividing by the shrunken
+  // value makes progress overshoot to 1 and flash the full line.
+  // Responsive `html { zoom }` scales the 430-px mobile canvas to fit
+  // narrower iPhones. On Safari iOS, offsetTop can return design-space
+  // values while scrollY is in the visual/zoomed space — the ratio
+  // between them is unpredictable across WebKit versions. To sidestep
+  // this, we use getBoundingClientRect().top + scrollY for the document
+  // position: both values are always in the same viewport coordinate
+  // space, making the result zoom-proof. Hand-authored design-px
+  // literals (--draw-length / --draw-offset) are multiplied by the zoom
+  // factor so they match that same space.
+  function getLayoutZoom() {
+    const z = parseFloat(getComputedStyle(document.documentElement).zoom);
+    return (z && isFinite(z) && z > 0) ? z : 1;
+  }
+  let items = [];
+  function measure() {
+    const zoom = getLayoutZoom();
+    const scrollNow = window.scrollY;
+    // Maximum head position at full scroll — lines whose top + offset + length
+    // exceeds this can never fully draw. On short viewports (iPhone SE 667 px)
+    // the large chained offsets tuned for taller phones push bottom-of-page
+    // lines beyond the scrollable range. Clamping offset ensures every line
+    // can still complete its draw at maximum scroll.
+    const maxHead = document.documentElement.scrollHeight - window.innerHeight * 0.2;
+    items = lines.map(el => {
+      // getBoundingClientRect().top is viewport-relative; adding scrollY
+      // gives the document position in the scroll coordinate space.
+      // This works identically on every device regardless of CSS zoom.
+      const top = el.getBoundingClientRect().top + scrollNow;
+      const cs = getComputedStyle(el);
+      const cssLen = cs.getPropertyValue('--draw-length').trim();
+      const customLen = cssLen || el.dataset.drawLength;
+      // Design-px → scroll-space: multiply by zoom.
+      // Fallback (el.offsetHeight) also needs * zoom because offsetHeight
+      // may be in design-space on Safari.
+      const length = customLen ? parseFloat(customLen) * zoom : el.offsetHeight * zoom;
+      const cssOff = cs.getPropertyValue('--draw-offset').trim();
+      const customOff = cssOff || el.dataset.drawOffset;
+      let offset = customOff ? parseFloat(customOff) * zoom : 0;
+      // Clamp: ensure top + offset + length ≤ maxHead so the line can
+      // fully draw even on the shortest viewport.
+      if (top + offset + length > maxHead) {
+        offset = Math.max(0, maxHead - top - length);
+      }
+      // data-reveal couples a line to a blur-fade element: when the line
+      // starts drawing (progress > 0), the target gets .on so the text
+      // fades in at the exact scroll position where the line begins.
+      const revealSel = el.dataset.reveal;
+      const revealTarget = revealSel ? document.querySelector(revealSel) : null;
+      return { el, top, length, offset, revealTarget, revealed: false };
+    });
+  }
+
+  let ticking = false;
+  function update() {
+    // Draw head sits 20% off the bottom of the LIVE viewport (80% from the
+    // top). This is the anchor the user wants: no matter what monitor or
+    // aspect ratio, a line starts being drawn the moment its top crosses the
+    // 80%-down line of the actual visible screen. scrollY, innerHeight and
+    // item.top are all in the same "visual" coordinate space (post-zoom)
+    // so the arithmetic is consistent across every breakpoint.
+    const head = window.scrollY + window.innerHeight * 0.8;
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const drawn = head - item.top - item.offset;
+      let progress = drawn / item.length;
+      if (progress < 0) progress = 0;
+      else if (progress > 1) progress = 1;
+      item.el.style.setProperty("--draw", progress);
+      // Reveal coupled blur-fade element the instant the line starts drawing
+      if (progress > 0 && item.revealTarget && !item.revealed) {
+        item.revealTarget.classList.add('on');
+        item.revealed = true;
+      }
+    }
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", () => { measure(); onScroll(); });
+
+  measure();
+  requestAnimationFrame(update);
+  // Re-measure after fonts/images load — layout may shift and change offsetTop.
+  window.addEventListener("load", () => { measure(); requestAnimationFrame(update); });
+})();
+
+/* === Blur-fade reveal on scroll ========================================= */
+/* Gated version: blur-fade elements inside the hero or a section with a
+   decrypt label must wait for that decrypt to finish before they reveal —
+   even if they are already in the viewport. When the decrypt completes,
+   __flushBlurGate(gate) fires all queued reveals for that gate. */
+(function() {
+  const els = document.querySelectorAll(".blur-fade");
+  if (!els.length) return;
+
+  const gateOpen = {
+    "hero": false,
+    "over-ons": false,
+    "previous-projects": false,
+    "werkwijze": false
+  };
+  const gatePending = {
+    "hero": [],
+    "over-ons": [],
+    "previous-projects": [],
+    "werkwijze": []
+  };
+
+  function getGateFor(el) {
+    if (el.closest(".hero-section")) return "hero";
+    if (el.closest(".over-ons-section")) return "over-ons";
+    if (el.closest(".previous-projects-section")) return "previous-projects";
+    if (el.closest(".werkwijze-section")) return "werkwijze";
+    return null;
+  }
+
+  function revealEl(el) { el.classList.add("on"); }
+
+  window.__flushBlurGate = function(gate) {
+    if (!gate || !(gate in gateOpen) || gateOpen[gate]) return;
+    gateOpen[gate] = true;
+    const queue = gatePending[gate];
+    // Stagger the cascade slightly so multiple elements don't land on the
+    // exact same frame — keeps the reveal feeling like a sequence.
+    queue.forEach((el, i) => {
+      const delay = i * 55;
+      if (delay > 0) setTimeout(() => revealEl(el), delay);
+      else revealEl(el);
+    });
+    queue.length = 0;
+  };
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      obs.unobserve(el);
+      const gate = getGateFor(el);
+      if (gate && !gateOpen[gate]) {
+        gatePending[gate].push(el);
+        return;
+      }
+      revealEl(el);
+    });
+  }, { rootMargin: "0px 0px -50px 0px", threshold: 0.05 });
+  const isMobile = window.innerWidth <= 600;
+  els.forEach(el => {
+    // On mobile, elements with data-line-gated are revealed by the
+    // scroll-draw loop (via data-reveal) instead of by viewport entry.
+    if (isMobile && el.hasAttribute('data-line-gated')) return;
+    obs.observe(el);
+  });
+})();
+
+/* === Werkwijze accordions (single-open per group) =======================
+   Opening one accordion closes any other open accordion in the SAME group.
+   This keeps the vertical footprint of each .wz-acc-group bounded — only
+   one body is expanded at any time — which prevents the cascading
+   push-down on mobile where group-01 opened bodies would otherwise spill
+   into the step-02 title territory below.                                */
+(function() {
+  const accs = document.querySelectorAll(".wz-acc");
+  if (!accs.length) return;
+  accs.forEach(acc => {
+    acc.setAttribute("aria-expanded", "false");
+    acc.addEventListener("click", () => {
+      const willOpen = !acc.classList.contains("open");
+      if (willOpen) {
+        const group = acc.closest(".wz-acc-group");
+        if (group) {
+          group.querySelectorAll(".wz-acc.open").forEach(other => {
+            if (other !== acc) {
+              other.classList.remove("open");
+              other.setAttribute("aria-expanded", "false");
+            }
+          });
+        }
+      }
+      acc.classList.toggle("open", willOpen);
+      acc.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    });
+  });
+})();
+
+/* === Previous Projects carousel ========================================= */
+(function() {
+  const carousel = document.getElementById("pp-carousel");
+  if (!carousel) return;
+  const slides = Array.from(carousel.querySelectorAll(".pp-slide"));
+  if (!slides.length) return;
+
+  const prevBtn = document.querySelector(".pp-nav-prev");
+  const nextBtn = document.querySelector(".pp-nav-next");
+  const counterCurrent = document.querySelector(".pp-counter-current");
+
+  let activeIndex = slides.findIndex(s => s.classList.contains("is-active"));
+  if (activeIndex < 0) {
+    activeIndex = 0;
+    slides[0].classList.add("is-active");
+  }
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  function setActive(newIndex) {
+    // Wrap around
+    const n = slides.length;
+    newIndex = ((newIndex % n) + n) % n;
+    if (newIndex === activeIndex) return;
+    slides[activeIndex].classList.remove("is-active");
+    slides[newIndex].classList.add("is-active");
+    activeIndex = newIndex;
+    if (counterCurrent) counterCurrent.textContent = pad(activeIndex + 1);
+  }
+
+  slides.forEach((slide, i) => {
+    slide.addEventListener("click", () => setActive(i));
+  });
+
+  if (prevBtn) prevBtn.addEventListener("click", () => setActive(activeIndex - 1));
+  if (nextBtn) nextBtn.addEventListener("click", () => setActive(activeIndex + 1));
+
+  // Keyboard navigation when carousel area is focused / hovered
+  document.addEventListener("keydown", (e) => {
+    // Only intercept if carousel is in view
+    const rect = carousel.getBoundingClientRect();
+    const inView = rect.top < window.innerHeight && rect.bottom > 0;
+    if (!inView) return;
+    if (e.key === "ArrowLeft") { setActive(activeIndex - 1); }
+    else if (e.key === "ArrowRight") { setActive(activeIndex + 1); }
+  });
+
+  // Staggered entry animation — triggered when the scroll-drawn pp-vline
+  // actually reaches the carousel's top edge, so the slides "fall in" from
+  // the line rather than appearing whenever the carousel enters the viewport.
+  function runEntry() {
+    const stagger = window.innerWidth < 600 ? 50 : 180;
+    slides.forEach((slide, i) => {
+      setTimeout(() => slide.classList.add("is-visible"), stagger * i);
+    });
+  }
+
+  // Get the carousel's document-relative top in the scroll coordinate space.
+  // The carousel container itself has no CSS transform at measure time, so
+  // getBoundingClientRect is safe here and avoids the zoom ambiguity of
+  // the offsetParent walk.
+  function getCarouselDocTop() {
+    return carousel.getBoundingClientRect().top + window.scrollY;
+  }
+  // Read the pp-vline-top's data-draw-offset — the delay before it starts
+  // drawing. At trigger head = carouselDocTop + vlineOffset, the vline's
+  // visible bottom edge has just reached the carousel's top area (one
+  // continuous stroke) so the slides "fall in" alongside the line.
+  function getVlineOffset() {
+    const vline = document.querySelector(".previous-projects-vline-top");
+    if (!vline) return 0;
+    // Prefer CSS custom property (overridden per breakpoint via media queries)
+    // over the HTML data attribute, so mobile gets its correct smaller offset.
+    const cssVal = getComputedStyle(vline).getPropertyValue('--draw-offset').trim();
+    if (cssVal !== '') {
+      const n = parseFloat(cssVal);
+      if (isFinite(n)) return n;
+    }
+    const v = vline.dataset.drawOffset;
+    return v ? parseFloat(v) : 0;
+  }
+  // Under responsive `html { zoom }`, offsetTop-walked values are in the
+  // zoomed coordinate space but data-draw-offset is a design-px literal —
+  // multiply it by the current zoom so both summands agree.
+  function getTriggerZoom() {
+    const z = parseFloat(getComputedStyle(document.documentElement).zoom);
+    return (z && isFinite(z) && z > 0) ? z : 1;
+  }
+
+  let triggered = false;
+  let triggerHead = 0;
+  function measureTrigger() {
+    triggerHead = getCarouselDocTop() + getVlineOffset() * getTriggerZoom();
+  }
+  function checkTrigger() {
+    if (triggered) return;
+    // Match the draw-head position used by the scroll-draw loop (20% from bottom).
+    const head = window.scrollY + window.innerHeight * 0.8;
+    if (head >= triggerHead) {
+      triggered = true;
+      runEntry();
+    }
+  }
+
+  window.addEventListener("scroll", checkTrigger, { passive: true });
+  window.addEventListener("resize", () => { measureTrigger(); checkTrigger(); });
+  measureTrigger();
+  checkTrigger();
+  // Re-measure after fonts/images load — layout shift changes offsetTop.
+  window.addEventListener("load", () => { measureTrigger(); checkTrigger(); });
+})();
+</script>
+
+</body>
+
+
+</html>
+
+<style> .hero-section {
+  	width: 100%;
+  	height: 1114px;
+  	position: relative;
+  	background-color: #07090d;
+  	overflow: hidden;
+  	flex-shrink: 0;
+  	text-align: left;
+  	font-size: 26px;
+  	color: #d9d9d9;
+  	font-family: 'Bebas Neue';
+}
+.jdcreations {
+  	position: absolute;
+  	top: 874px;
+  	left: 21px;
+  	font-size: 220px;
+  	flex-shrink: 0;
+  	visibility: hidden;
+}
+body.loader-gone .jdcreations {
+  	visibility: visible;
+}
+.creations {
+  	color: #94a3b8;
+}
+.helder-in-design {
+  	position: absolute;
+  	top: 610px;
+  	left: 1382px;
+  	letter-spacing: 0.2em;
+  	flex-shrink: 0;
+}
+.web-design-voor {
+  	position: absolute;
+  	top: 132px;
+  	left: 40px;
+  	letter-spacing: 0.2em;
+  	flex-shrink: 0;
+}
+.hero-section-child {
+  	position: absolute;
+  	top: 1113px;
+  	left: 0;                                /* viewport-anchored */
+  	background-color: #fff;
+  	width: var(--hero-full-css, 1812px);    /* full viewport, zoom-compensated */
+  	height: 1px;
+  	flex-shrink: 0;
+  	transform: scaleX(0);
+  	transform-origin: left center;
+  	transition: transform 0.95s cubic-bezier(0.22, 0.61, 0.36, 1) 1.0s;
+}
+body.loader-gone .hero-section-child {
+  	transform: scaleX(1);
+}
+.line-top-right {
+  	position: absolute;
+  	top: 745px;
+  	left: var(--hero-line-half, 600px);     /* viewport-midpoint, zoom-compensated */
+  	background-color: #fff;
+  	width: var(--hero-line-half, 1118px);   /* half viewport visually */
+  	height: 1px;
+  	flex-shrink: 0;
+  	transform: scaleX(0);
+  	transform-origin: left center;
+  	transition: transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s;
+}
+body.loader-gone .line-top-right {
+  	transform: scaleX(1);
+}
+.line-top-left {
+  	position: absolute;
+  	top: 745px;
+  	left: 0;                                /* viewport-anchored */
+  	background-color: #fff;
+  	width: var(--hero-line-half, 614px);    /* half viewport visually */
+  	height: 1px;
+  	flex-shrink: 0;
+  	transform: scaleX(0);
+  	transform-origin: right center;
+  	transition: transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) 0.4s;
+}
+body.loader-gone .line-top-left {
+  	transform: scaleX(1);
+}
+.line-center-v {
+  	position: absolute;
+  	top: 745px;
+  	left: var(--hero-vline-x, 1398px);      /* aligns with .over-ons-vline x */
+  	background-color: #fff;
+  	width: 1px;
+  	height: 368px;
+  	flex-shrink: 0;
+  	transform: scaleY(0);
+  	transform-origin: top center;
+  	transition: transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1) 0.8s;
+}
+body.loader-gone .line-center-v {
+  	transform: scaleY(1);
+}
+.line-right-v {
+  	position: absolute;
+  	top: 91px;
+  	left: 600px;
+  	background-color: #fff;
+  	width: 1px;
+  	height: 654px;
+  	flex-shrink: 0;
+  	transform: scaleY(0);
+  	transform-origin: top center;
+  	transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) 0s;
+}
+body.loader-gone .line-right-v {
+  	transform: scaleY(1);
+}
+.div {
+  	position: absolute;
+  	top: 1063px;
+  	left: 1428px;
+  	letter-spacing: 0.2em;
+  	flex-shrink: 0;
+  	color: #94a3b8;
+  	text-decoration: none;
+  	white-space: nowrap;
+}
+.start-project {
+  	color: #d9d9d9;
+}
+.web-design-container {
+  	position: absolute;
+  	top: 873px;
+  	left: 45px;
+  	letter-spacing: 0.2em;
+  	flex-shrink: 0;
+  	color: #94a3b8;
+}
+.span {
+  	color: #fff;
+}
+.div2 {
+  	position: absolute;
+  	top: 896px;
+  	left: 885px;
+  	font-size: 42px;
+  	letter-spacing: 0.1em;
+  	font-family: Inter;
+  	display: inline-block;
+  	width: 27px;
+  	height: 31px;
+  	flex-shrink: 0;
+}
+.arrow-down-icon {
+  	position: absolute;
+  	top: 695px;
+  	left: 617px;
+  	width: 36px;
+  	height: 36px;
+  	flex-shrink: 0;
+  	display: block;
+}
+html {
+  	scroll-behavior: smooth;
+}
+.hero-section-item {
+  	position: absolute;
+  	top: -9px;
+  	left: 0px;
+  	background-color: #94a3b8;
+  	width: 1728px;
+  	height: 100px;
+  	flex-shrink: 0;
+}
+
+body {
+  	margin: 0;
+  	line-height: normal;
+}
+
+/* html.scroll-locked rules moved to base.css */
+
+/* === LOADER =========================================================== */
+.loader {
+  	position: fixed;
+  	inset: 0;
+  	z-index: 9999;
+  	background-color: #94a3b8;
+  	color: #07090d;
+  	font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  	overflow: hidden;
+  	transition: background-color 0.9s linear, opacity 0.45s ease;
+}
+.loader.done {
+  	background-color: transparent;
+}
+.loader.hide {
+  	opacity: 0;
+  	pointer-events: none;
+}
+
+/* Subtle grid for the IDE feel */
+.loader-grid {
+  	position: absolute;
+  	inset: 0;
+  	background-image:
+  		linear-gradient(#07090d 1px, transparent 1px),
+  		linear-gradient(90deg, #07090d 1px, transparent 1px);
+  	background-size: 88px 88px;
+  	opacity: 0.11;
+  	transition: opacity 0.6s ease;
+}
+/* Keep the grid out of the fixed header's Y-range on desktop so the
+   header strip stays clean (#94a3b8) instead of showing the raster. */
+@media (min-width: 961px) {
+  	.loader-grid { inset: var(--jdc-h-h, 84px) 0 0 0; }
+}
+.loader.fade-ui .loader-grid { opacity: 0; }
+
+/* Corner labels — version, build, node, status */
+.loader-corner {
+  	position: absolute;
+  	font-size: 11px;
+  	letter-spacing: 0.22em;
+  	text-transform: uppercase;
+  	color: #07090d;
+  	opacity: 0.85;
+  	transition: opacity 0.5s ease, transform 0.7s cubic-bezier(.7,0,.2,1);
+}
+.loader-corner-tr { top: 40px; right: 40px; }
+.loader-corner-bl { bottom: 40px; left: 40px; }
+.loader.fade-ui .loader-corner { opacity: 0; }
+.loader.fade-ui .loader-corner-tr { transform: translateY(-6px); }
+.loader.fade-ui .loader-corner-bl { transform: translateY(6px); }
+
+.loader-dot {
+  	display: inline-block;
+  	width: 8px;
+  	height: 8px;
+  	border-radius: 50%;
+  	background: #07090d;
+  	animation: loaderPulse 1.1s ease-in-out infinite;
+}
+@keyframes loaderPulse {
+  	0%, 100% { opacity: 1; transform: scale(1); }
+  	50% { opacity: 0.35; transform: scale(0.75); }
+}
+
+/* Wordmark — locked at hero's horizontal position, starts at top and slides to bottom */
+.loader-wordmark {
+  	position: fixed;
+  	left: 21px;
+  	top: 21px;
+  	font-family: 'Bebas Neue', sans-serif;
+  	font-size: 220px;
+  	line-height: 1;
+  	white-space: nowrap;
+  	color: #d9d9d9;
+  	transition: top 0.85s linear;
+  	z-index: 2;
+}
+.loader-wordmark.handoff {
+  	visibility: hidden;
+}
+.loader-jd {
+  	display: inline-block;
+}
+.loader-creations {
+  	display: inline-block;
+  	clip-path: inset(0 100% 0 0);
+  	transform: translateX(-32px);
+  	opacity: 0;
+  	transition:
+  		clip-path 1.15s cubic-bezier(.7,0,.2,1) 0.35s,
+  		transform 1.15s cubic-bezier(.7,0,.2,1) 0.35s,
+  		opacity 0.5s ease 0.35s,
+  		color 0.7s ease 0.45s;
+}
+.loader.revealed .loader-creations {
+  	clip-path: inset(0 0 0 0);
+  	transform: translateX(0);
+  	opacity: 1;
+}
+.loader.done .loader-wordmark {
+  	top: 874px;
+}
+.loader.done .loader-creations {
+  	color: #94a3b8;
+}
+
+/* UI stack anchored to bottom-right — huge percent + status + progress bar + meta */
+.loader-ui {
+  	position: absolute;
+  	right: 60px;
+  	bottom: 60px;
+  	width: 760px;
+  	max-width: calc(100vw - 120px);
+  	transition: opacity 0.45s ease, transform 0.6s cubic-bezier(.7,0,.2,1);
+}
+.loader.fade-ui .loader-ui {
+  	opacity: 0;
+  	transform: translateY(14px);
+}
+
+/* Big percent display — dominant readout */
+.loader-percent-big {
+  	font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  	font-size: 180px;
+  	line-height: 0.82;
+  	letter-spacing: -0.045em;
+  	font-weight: 400;
+  	color: #07090d;
+  	text-align: right;
+  	margin-bottom: 18px;
+  	font-variant-numeric: tabular-nums;
+}
+.loader-percent-sym {
+  	font-size: 0.5em;
+  	letter-spacing: 0;
+  	margin-left: 6px;
+  	vertical-align: 0.55em;
+  	opacity: 0.7;
+}
+
+.loader-bar-labels {
+  	display: flex;
+  	justify-content: space-between;
+  	align-items: baseline;
+  	font-size: 11px;
+  	letter-spacing: 0.22em;
+  	text-transform: uppercase;
+  	color: #07090d;
+  	margin-bottom: 14px;
+}
+.loader-label-left { display: inline-flex; align-items: baseline; }
+
+.loader-caret {
+  	display: inline-block;
+  	margin-left: 2px;
+  	animation: loaderBlink 0.85s steps(1) infinite;
+}
+@keyframes loaderBlink {
+  	0%, 49% { opacity: 1; }
+  	50%, 100% { opacity: 0; }
+}
+
+.loader-bar {
+  	position: relative;
+  	height: 6px;
+  	background: rgba(7, 9, 13, 0.22);
+  	overflow: hidden;
+}
+.loader-bar-fill {
+  	position: absolute;
+  	inset: 0 auto 0 0;
+  	width: 0%;
+  	background: #07090d;
+  	box-shadow: 0 0 14px rgba(7, 9, 13, 0.35);
+  	transition: width 120ms linear;
+}
+
+.loader-bar-meta {
+  	display: flex;
+  	justify-content: space-between;
+  	margin-top: 14px;
+  	font-size: 10px;
+  	letter-spacing: 0.25em;
+  	color: #07090d;
+  	opacity: 0.55;
+}
+
+/* === OVER JDC SECTION =================================================== */
+.over-ons-section {
+  	width: 100%;
+  	height: 1114px;
+  	position: relative;
+  	background-color: #07090d;
+  	overflow: hidden;
+  	text-align: left;
+  	color: #d9d9d9;
+  	font-family: 'Bebas Neue', sans-serif;
+}
+.over-ons-label {
+  	position: absolute;
+  	top: 352px;
+  	left: 87px;
+  	font-size: 42px;
+  	letter-spacing: 0.1em;
+  	white-space: nowrap;
+}
+.over-ons-label-sep {
+  	color: #fff;
+}
+.over-ons-label-jdc {
+  	color: #94a3b8;
+}
+.over-ons-headline {
+  	position: absolute;
+  	top: 422px;
+  	left: 87px;
+  	margin: 0;
+  	font-size: 42px;
+  	font-weight: 400;
+  	letter-spacing: 0.1em;
+  	line-height: 1.15;
+  	color: #d9d9d9;
+  	max-width: 1260px;
+}
+.over-ons-body {
+  	position: absolute;
+  	top: 706px;
+  	left: 87px;
+  	margin: 0;
+  	width: 694px;
+  	font-family: 'Inter', sans-serif;
+  	font-size: 26px;
+  	letter-spacing: 0.1em;
+  	line-height: 1.4;
+  	color: #d9d9d9;
+}
+.over-ons-portrait {
+  	position: absolute;
+  	top: 283px;
+  	left: 1196px;
+  	width: 424px;
+  	height: 516px;
+  	object-fit: cover;
+  	filter: grayscale(100%) contrast(1.05);
+  	z-index: 2;
+}
+
+/* Global opacity mask for every scroll-drawn line. At --draw=0 the
+   transform already collapses the line to zero, but sub-pixel rounding
+   can still leak a faint 1 px artefact at the transform origin. Gating
+   the line's opacity on --draw kills those stray pixels entirely:
+   opacity is clamped to [0, 1] at render, so calc(var * 1000) acts as
+   a step function — 0 when not drawing, 1 the instant the head arrives. */
+[data-scroll-draw] {
+  	opacity: calc(var(--draw, 0) * 1000);
+}
+
+.over-ons-vline {
+  	position: absolute;
+  	top: -5px;
+  	left: 1399px;
+  	width: 1px;
+  	height: 1119px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform-origin: top center;
+  	transform: scaleY(var(--draw, 0));
+  	will-change: transform;
+}
+.over-ons-bline-left {
+  	position: absolute;
+  	top: 1113px;
+  	left: 443px;
+  	width: 956px;
+  	height: 1px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform-origin: right center;
+  	transform: scaleX(var(--draw, 0));
+  	will-change: transform;
+}
+.over-ons-bline-right {
+  	position: absolute;
+  	top: 1113px;
+  	left: 1399px;
+  	width: 329px;
+  	height: 1px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform-origin: left center;
+  	transform: scaleX(var(--draw, 0));
+  	will-change: transform;
+}
+/* Top hairline at the hero↔over-ons seam. Mobile-only — hidden on desktop
+   because the hero already has its own bottom line there. Uses the same
+   loader-gone transition as .hero-section-child so it draws in as soon as
+   the loader finishes (visible in the first screen on page load), instead
+   of waiting for the user to scroll the section into view. */
+.over-ons-tline {
+  	display: none;
+  	position: absolute;
+  	top: 0;
+  	left: 0;
+  	width: 100%;
+  	height: 1px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform: scaleX(0);
+  	transform-origin: left center;
+  	transition: transform 0.95s cubic-bezier(0.22, 0.61, 0.36, 1) 1.0s;
+}
+body.loader-gone .over-ons-tline {
+  	transform: scaleX(1);
+}
+.over-ons-cta {
+  	display: none;
+  	position: absolute;
+  	font-family: 'Bebas Neue', sans-serif;
+  	font-size: 16px;
+  	letter-spacing: 0.2em;
+  	color: #94a3b8;
+  	text-decoration: none;
+  	white-space: nowrap;
+}
+.over-ons-cta-text {
+  	color: #fff;
+}
+.over-ons-cta-line {
+  	display: none;
+  	position: absolute;
+  	height: auto;
+}
+
+/* === PREVIOUS PROJECTS SECTION ========================================== */
+/* Section is taller than its visual content (1114px) so that scroll has
+   room for the bottom horizontal line to finish drawing before the next
+   section pushes in — creates the "pause on scroll" effect while the
+   line beneath the body copy completes its draw. */
+.previous-projects-section {
+  	width: 100%;
+  	height: 1900px;
+  	position: relative;
+  	background-color: #07090d;
+  	/* overflow:clip lets position:sticky below pin against the page scroll,
+  	   while still clipping children that stray outside the section bounds.
+  	   overflow:hidden would turn this section into a scroll container and
+  	   kill the sticky pin. */
+  	overflow: clip;
+  	text-align: left;
+  	color: #d9d9d9;
+  	font-family: 'Bebas Neue', sans-serif;
+}
+/* Sticky pin wrapper — 1114 tall (matches the design's viewport canvas).
+   During the 786px of extra section height (1900 − 1114), scrollY advances
+   but this wrap stays glued to viewport top:0, so the carousel/text don't
+   move while the horizontal line below "Geen massa-aanpak..." draws. After
+   the pin releases the wrap parks at the bottom of the section and scroll
+   resumes into the werkwijze section. */
+.pp-sticky-wrap {
+  	position: sticky;
+  	top: 0;
+  	width: 100%;
+  	height: 1114px;
+}
+/* Vertical line upper half — from the top of the section down to the bline
+   level (y=1087). Draws as the section enters view and finishes exactly at
+   pin start, so the line "arrives" at the horizontal right when scroll stops. */
+.previous-projects-vline-top {
+  	position: absolute;
+  	top: 0;
+  	left: 443px;
+  	width: 1px;
+  	height: 1087px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform-origin: top center;
+  	transform: scaleY(var(--draw, 0));
+  	will-change: transform;
+}
+/* Vertical line lower half — a short 27px stub on the RIGHT side (x=1595)
+   that fills the gap between the bline's right endpoint (y=1087) and the
+   sticky wrap's bottom (y=1114). Draws during the tail of the pin, after
+   the bline has completed. The chain continues with wz-vline-tr in the
+   werkwijze section once the pin releases. */
+.previous-projects-vline-bot {
+  	position: absolute;
+  	top: 1087px;
+  	left: 1595px;
+  	width: 1px;
+  	height: 27px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform-origin: top center;
+  	transform: scaleY(var(--draw, 0));
+  	will-change: transform;
+}
+.previous-projects-label {
+  	position: absolute;
+  	top: 62px;
+  	left: 1224px;
+  	font-size: 42px;
+  	letter-spacing: 0.1em;
+  	white-space: nowrap;
+  	z-index: 2;
+}
+.previous-projects-sep {
+  	color: #fff;
+}
+.previous-projects-word {
+  	color: #94a3b8;
+}
+/* Interactive carousel — 5 slides, active expands to 16:9 (917×516),
+   inactive collapse to ~61px slivers. Click to switch. */
+.pp-carousel {
+  	position: absolute;
+  	top: 264px;
+  	left: 87px;
+  	width: 1161px;
+  	height: 516px;
+  	display: flex;
+  	align-items: stretch;
+  	overflow: hidden;
+  	z-index: 2;
+}
+.pp-slide {
+  	position: relative;
+  	flex: 1 1 0%;
+  	min-width: 60px;
+  	height: 100%;
+  	background-color: #18181b;
+  	background-size: cover;
+  	background-position: center;
+  	background-repeat: no-repeat;
+  	border: 2px solid #292929;
+  	box-sizing: border-box;
+  	cursor: pointer;
+  	overflow: hidden;
+  	opacity: 0;
+  	transform: translateX(-60px);
+  	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  	will-change: flex-grow, box-shadow, border-color, opacity, transform;
+  	transition:
+  		flex-grow 0.8s cubic-bezier(0.7, 0, 0.2, 1),
+  		border-color 0.6s ease,
+  		box-shadow 0.6s ease,
+  		background-size 0.8s cubic-bezier(0.7, 0, 0.2, 1),
+  		opacity 0.7s ease,
+  		transform 0.75s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.pp-slide.is-visible {
+  	opacity: 1;
+  	transform: translateX(0);
+}
+.pp-slide.is-active {
+  	flex: 15 1 0%;
+  	border-color: #94a3b8;
+  	box-shadow: 0 24px 72px rgba(0, 0, 0, 0.55);
+  	z-index: 10;
+}
+.pp-slide-gradient {
+  	position: absolute;
+  	left: 0;
+  	right: 0;
+  	bottom: 0;
+  	height: 180px;
+  	pointer-events: none;
+  	background: linear-gradient(to top, rgba(7, 9, 13, 0.92) 0%, rgba(7, 9, 13, 0.45) 45%, rgba(7, 9, 13, 0) 100%);
+  	opacity: 0;
+  	transition: opacity 0.6s ease;
+}
+.pp-slide.is-active .pp-slide-gradient {
+  	opacity: 1;
+}
+.pp-slide-label {
+  	position: absolute;
+  	left: 0;
+  	right: 0;
+  	bottom: 24px;
+  	display: flex;
+  	align-items: center;
+  	gap: 14px;
+  	padding: 0 22px;
+  	pointer-events: none;
+}
+.pp-slide-icon {
+  	min-width: 48px;
+  	width: 48px;
+  	height: 48px;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	border-radius: 50%;
+  	background: rgba(7, 9, 13, 0.85);
+  	-webkit-backdrop-filter: blur(10px);
+  	backdrop-filter: blur(10px);
+  	border: 1.5px solid rgba(148, 163, 184, 0.45);
+  	color: #d9d9d9;
+  	font-family: 'Bebas Neue', sans-serif;
+  	font-size: 20px;
+  	letter-spacing: 0.08em;
+  	flex-shrink: 0;
+}
+.pp-slide-info {
+  	overflow: hidden;
+  	white-space: nowrap;
+  	opacity: 0;
+  	transform: translateX(20px);
+  	transition:
+  		opacity 0.6s ease 0.1s,
+  		transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 0.1s;
+}
+.pp-slide.is-active .pp-slide-info {
+  	opacity: 1;
+  	transform: translateX(0);
+}
+.pp-slide-title {
+  	font-family: 'Bebas Neue', sans-serif;
+  	font-size: 26px;
+  	letter-spacing: 0.14em;
+  	color: #ffffff;
+  	line-height: 1.05;
+}
+.pp-slide-desc {
+  	font-family: 'Inter', sans-serif;
+  	font-size: 14px;
+  	letter-spacing: 0.05em;
+  	color: #94a3b8;
+  	margin-top: 4px;
+}
+
+/* Inactive slide affordance — icon pulse + hover lift so it's obvious they're clickable */
+.pp-slide:not(.is-active):hover {
+  	border-color: #94a3b8;
+  	box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
+}
+.pp-slide:not(.is-active):hover .pp-slide-icon {
+  	background: rgba(148, 163, 184, 0.35);
+  	border-color: #d9d9d9;
+  	color: #fff;
+  	transform: scale(1.06);
+}
+.pp-slide-icon {
+  	transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+.pp-slide:not(.is-active) .pp-slide-icon {
+  	animation: ppIconPulse 2.4s ease-in-out infinite;
+}
+@keyframes ppIconPulse {
+  	0%, 100% { box-shadow: 0 0 0 0 rgba(148, 163, 184, 0.55); }
+  	50% { box-shadow: 0 0 0 10px rgba(148, 163, 184, 0); }
+}
+
+/* Nav cluster — counter + prev/next buttons, positioned right-side of CTA row */
+.pp-nav {
+  	position: absolute;
+  	top: 803px;
+  	left: 1364px;
+  	display: flex;
+  	align-items: center;
+  	gap: 28px;
+  	z-index: 3;
+}
+.pp-counter {
+  	font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  	font-size: 14px;
+  	letter-spacing: 0.18em;
+  	color: #94a3b8;
+  	font-variant-numeric: tabular-nums;
+  	min-width: 68px;
+}
+.pp-counter-current {
+  	color: #d9d9d9;
+  	transition: color 0.3s ease;
+}
+.pp-counter-sep {
+  	margin: 0 4px;
+  	opacity: 0.5;
+}
+.pp-nav-buttons {
+  	display: flex;
+  	gap: 12px;
+}
+.pp-nav-btn {
+  	width: 54px;
+  	height: 54px;
+  	border-radius: 50%;
+  	border: 1.5px solid rgba(148, 163, 184, 0.7);
+  	background: transparent;
+  	color: #d9d9d9;
+  	cursor: pointer;
+  	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	padding: 0;
+  	font: inherit;
+  	transition:
+  		background-color 0.3s ease,
+  		border-color 0.3s ease,
+  		color 0.3s ease,
+  		transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.pp-nav-btn:hover {
+  	background: #d9d9d9;
+  	border-color: #d9d9d9;
+  	color: #07090d;
+  	transform: translateY(-2px);
+}
+.pp-nav-btn:active {
+  	transform: translateY(0);
+}
+.pp-nav-btn:focus-visible {
+  	outline: 2px solid #94a3b8;
+  	outline-offset: 3px;
+}
+.previous-projects-cta {
+  	position: absolute;
+  	top: 819px;
+  	left: 118px;
+  	font-size: 26px;
+  	letter-spacing: 0.2em;
+  	color: #94a3b8;
+  	text-decoration: none;
+  	white-space: nowrap;
+  	z-index: 2;
+}
+.previous-projects-cta-label {
+  	color: #d9d9d9;
+}
+.pp-cta-line {
+  	display: none;
+  	position: absolute;
+}
+.previous-projects-body {
+  	position: absolute;
+  	top: 901px;
+  	left: 817px;
+  	margin: 0;
+  	width: 779px;
+  	font-family: 'Inter', sans-serif;
+  	font-size: 26px;
+  	letter-spacing: 0.1em;
+  	line-height: 1.4;
+  	color: #d9d9d9;
+}
+.previous-projects-bline {
+  	position: absolute;
+  	top: 1087px;
+  	left: 443px;
+  	width: 1153px;
+  	height: 1px;
+  	background-color: #fff;
+  	transform-origin: left center;
+  	transform: scaleX(var(--draw, 0));
+  	will-change: transform;
+}
+/* Mobile-only single project image. Hidden on desktop — unhidden and
+   positioned inside the @media (max-width: 600px) block. */
+.pp-mobile-img {
+  	display: none;
+}
+
+/* Mobile-only PP body copy (different text + position from the desktop
+   carousel body). Hidden on desktop; shown inside the mobile media
+   query below. */
+.pp-mobile-body {
+  	display: none;
+}
+
+/* Mobile-only Werkwijze hairlines (Figma node 29:276). Hidden on desktop —
+   the desktop composition draws its own outline via the five scroll-draw
+   lines above. Revealed on mobile via the 430-wide media query. */
+.wz-m-line {
+  	display: none;
+  	position: absolute;
+}
+.wz-cta {
+  	display: none;
+  	position: absolute;
+  	font-family: 'Bebas Neue', sans-serif;
+  	font-size: 16px;
+  	letter-spacing: 0.2em;
+  	color: #94a3b8;
+  	text-decoration: none;
+  	white-space: nowrap;
+}
+.wz-cta-text {
+  	color: #fff;
+}
+.wz-cta-line {
+  	display: none;
+  	position: absolute;
+}
+
+/* Mobile-only Figma decorative brackets (Figma node 29:276). Hidden on
+   desktop entirely; shown and positioned by the 430-wide media query.
+   These are 13 small 1-px accent lines that frame each step number and
+   content cluster to match the Figma line construction. They are
+   STATIC (no scroll-draw) so they render instantly once their section
+   enters the viewport. */
+.wz-fl {
+  	display: none;
+  	position: absolute;
+  	background: #ffffff;
+  	z-index: 2;
+}
+
+/* === WERKWIJZE SECTION =================================================== */
+.werkwijze-section {
+  	width: 100%;
+  	height: 3925px;
+  	position: relative;
+  	background-color: #07090d;
+  	overflow: hidden;
+  	text-align: left;
+  	color: #d9d9d9;
+  	font-family: 'Bebas Neue', sans-serif;
+  	font-size: 26px;
+  	letter-spacing: 0.1em;
+}
+.werkwijze-label {
+  	position: absolute;
+  	top: 172px;
+  	left: 1177px;
+  	font-size: 42px;
+  	letter-spacing: 0.1em;
+}
+.werkwijze-label-accent { color: #94a3b8; }
+.werkwijze-headline {
+  	position: absolute;
+  	top: 240px;
+  	left: 1021px;
+  	margin: 0;
+  	width: 455px;
+  	font-size: 42px;
+  	font-weight: 400;
+  	letter-spacing: 0.1em;
+  	text-align: right;
+  	line-height: 1.15;
+}
+
+/* Step numbers (big display text) */
+.wz-step {
+  	position: absolute;
+  	font-size: 220px;
+  	line-height: 1;
+  	white-space: nowrap;
+  	color: #d9d9d9;
+}
+.wz-step-01 { top: 540px; left: 35px; }
+.wz-step-02 { top: 1597px; left: 815px; }
+.wz-step-03 { top: 2792px; left: 22px; }
+.wz-step-name { color: #94a3b8; }
+
+/* Body text */
+.wz-body {
+  	position: absolute;
+  	margin: 0;
+  	width: 678px;
+  	font-family: 'Inter', sans-serif;
+  	font-size: 26px;
+  	letter-spacing: 0.1em;
+  	line-height: 1.5;
+  	color: #d9d9d9;
+}
+.wz-body-01 { top: 872px; left: 113px; }
+.wz-body-02 { top: 1953px; left: 288px; }
+.wz-body-03 { top: 3146px; left: 108px; }
+
+/* Step images */
+.wz-img {
+  	position: absolute;
+  	object-fit: cover;
+  	filter: grayscale(100%) contrast(1.05);
+}
+.wz-img-01 { top: 1121px; left: 357px; width: 540px; height: 384px; }
+.wz-img-02 { top: 2216px; left: 950px; width: 540px; height: 384px; }
+/* /03 mockup — object-fit: contain so the wide laptop+phone composite
+   (1009 × 587 ≈ 1.72 : 1) isn't cropped by the base .wz-img cover rule. */
+.wz-img-03 { top: 2962px; left: 864px; width: 836px; height: 486px; filter: none; z-index: 2; object-fit: contain; }
+
+/* Feature lists — accordion groups (clickable disclosure) */
+.wz-acc-group {
+  	position: absolute;
+  	width: 310px;
+  	z-index: 3;
+}
+.wz-acc-group-01 { top: 872px;  left: 1083px; }
+.wz-acc-group-02 { top: 2142px; left: 288px;  }
+.wz-acc-group-03 { top: 3375px; left: 108px;  }
+
+.wz-acc {
+  	display: block;
+  	width: 100%;
+  	padding: 0;
+  	margin: 0;
+  	background: transparent;
+  	border: 0;
+  	color: inherit;
+  	font: inherit;
+  	text-align: left;
+  	cursor: pointer;
+  	-webkit-tap-highlight-color: transparent;
+}
+.wz-acc + .wz-acc { margin-top: 34px; }
+.wz-acc:last-child { margin-top: 43px; }
+
+.wz-acc-header {
+  	position: relative;
+  	display: flex;
+  	align-items: center;
+  	justify-content: space-between;
+  	height: 30px;
+  	gap: 20px;
+}
+.wz-acc-label {
+  	font-family: 'Bebas Neue', sans-serif;
+  	font-size: 26px;
+  	letter-spacing: 0.1em;
+  	color: #d9d9d9;
+  	white-space: nowrap;
+  	line-height: 1;
+  	transition: color 0.3s ease;
+}
+.wz-acc-plus {
+  	flex: 0 0 auto;
+  	width: 30px;
+  	height: 30px;
+  	color: #d9d9d9;
+  	transition: transform 0.45s cubic-bezier(.16,1,.3,1), color 0.3s ease;
+}
+.wz-acc:hover .wz-acc-label,
+.wz-acc:hover .wz-acc-plus { color: #fff; }
+.wz-acc.open .wz-acc-plus { transform: rotate(45deg); }
+
+.wz-acc-sep {
+  	height: 1px;
+  	width: 306px;
+  	background-color: rgba(255, 255, 255, 0.45);
+  	margin-top: 9px;
+  	transition: background-color 0.3s ease;
+}
+.wz-acc.open .wz-acc-sep,
+.wz-acc:hover .wz-acc-sep { background-color: rgba(255, 255, 255, 0.75); }
+
+.wz-acc-body {
+  	max-height: 0;
+  	overflow: hidden;
+  	opacity: 0;
+  	transform: translateY(-4px);
+  	transition: max-height 0.5s cubic-bezier(.16,1,.3,1),
+                  opacity 0.35s ease,
+                  transform 0.5s cubic-bezier(.16,1,.3,1),
+                  margin-top 0.5s cubic-bezier(.16,1,.3,1);
+  	width: 306px;
+}
+.wz-acc.open .wz-acc-body {
+  	max-height: 180px;
+  	opacity: 1;
+  	transform: translateY(0);
+  	margin-top: 14px;
+}
+.wz-acc-body p {
+  	font-family: 'Inter', sans-serif;
+  	font-size: 16px;
+  	line-height: 1.55;
+  	color: rgba(217, 217, 217, 0.82);
+  	margin: 0;
+  	font-weight: 400;
+}
+
+/* === Scroll-drawn structural lines === */
+
+/* Top-right vertical — continues the pp-bline/pp-vline-bot chain down the right side,
+   passing next to the "/ Mijn Werkwijze" label. Starts at top=-18 to overlap the
+   seam with pp-vline-bot for visual continuity. */
+.wz-vline-tr {
+  	position: absolute;
+  	top: -18px;
+  	left: 1595px;
+  	width: 1px;
+  	height: 1571px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform-origin: top center;
+  	transform: scaleY(var(--draw, 0));
+  	will-change: transform;
+}
+/* Middle-left vertical (frames the step 02 area) */
+.wz-vline-mid {
+  	position: absolute;
+  	top: 1728px;
+  	left: 76px;
+  	width: 1px;
+  	height: 1011px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform-origin: top center;
+  	transform: scaleY(var(--draw, 0));
+  	will-change: transform;
+}
+/* Middle horizontal — drawn leftward (right to left), landing at the
+   wz-vline-mid top so the vertical can then drop down from the corner. */
+.wz-hline-mid {
+  	position: absolute;
+  	top: 1728px;
+  	left: 76px;
+  	width: 664px;
+  	height: 1px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform-origin: right center;
+  	transform: scaleX(var(--draw, 0));
+  	will-change: transform;
+}
+/* Bottom-right vertical (frames the step 03 area) — sits BEHIND the
+   macbook/phone mockup image (z-index: 0 lets wz-img-03 paint on top). */
+.wz-vline-br {
+  	position: absolute;
+  	top: 2915px;
+  	left: 1442px;
+  	width: 1px;
+  	height: 1010px;
+  	background-color: #fff;
+  	z-index: 0;
+  	transform-origin: top center;
+  	transform: scaleY(var(--draw, 0));
+  	will-change: transform;
+}
+/* Bottom horizontal — drawn leftward from the wz-vline-br top */
+.wz-hline-bot {
+  	position: absolute;
+  	top: 2914px;
+  	left: 1148px;
+  	width: 294px;
+  	height: 1px;
+  	background-color: #fff;
+  	z-index: 1;
+  	transform-origin: left center;
+  	transform: scaleX(var(--draw, 0));
+  	will-change: transform;
+}
+
+/* === Blur-fade reveal (shadcn/21st.dev blur-fade — animation only) ====
+   Applied to text + buttons that don't already have an entry animation.
+   Hidden: translated down 14px, fully transparent, blurred 8px.
+   Visible: back to natural position, opaque, no blur.
+   Uses a soft cubic-bezier ease-out (.16,1,.3,1 — "expo out") with a
+   longer 0.9s duration so the reveal glides in instead of snapping.
+   IntersectionObserver adds .on when each element enters the viewport. */
+.blur-fade {
+  	opacity: 0;
+  	transform: translateY(14px);
+  	filter: blur(8px);
+  	transition:
+  		opacity   0.9s cubic-bezier(.16,1,.3,1),
+  		transform 0.9s cubic-bezier(.16,1,.3,1),
+  		filter    0.9s cubic-bezier(.16,1,.3,1);
+  	transition-delay: 60ms;
+}
+.blur-fade.on {
+  	opacity: 1;
+  	transform: translateY(0);
+  	filter: blur(0);
+}
+
+/* === Responsive scaling =================================================
+   The 1728 x 1114 canvas is the golden source. Every other desktop
+   breakpoint scales the entire layout uniformly via CSS `zoom` on the
+   root — no reflow, no redesign, just proportional scaling of all
+   typography, spacing, padding, gaps, sizes and positions.
+   Scale factors are viewport-width / 1728:
+     1280 → 0.7407   1440 → 0.8333   [1728 base, no zoom]
+     1920 → 1.1111   2560 → 1.4815   3840 → 2.2222
+   Desktop only — no mobile/tablet breakpoints. */
+/* html { zoom } breakpoints moved to base.css */
+
+/* 16:9 viewport fit is now handled by the `.hero-section` zoom rule
+   (search for `--hero-scale`). The previous manual-reposition block that
+   lived here (shifting every hero element 150 px up at 1920 / 2560) is
+   no longer needed — the uniform zoom scales the entire 1114 canvas to
+   fit any desktop viewport. */
+
+/* Previous Projects layout fix — applied to 1920 × 1080, 2560 × 1440, AND
+   the 1440-1727 width range (MacBook Air 1440×900 etc).
+
+   The sticky wrap shrinks 1114 → 972 design px so the pinned composition
+   fits exactly inside the 16:9 viewports (972 × 1.1111 ≈ 1080 and 972 ×
+   1.4815 ≈ 1440); at 1440 it simply means the wrap is slightly shorter
+   than the viewport, which is fine. Section height drops by the same 142
+   to preserve the 786 px pin duration (1758 − 972 = 786).
+
+   Body copy "Geen massa-aanpak…" has equal whitespace X on all three
+   sides (carousel bottom, bline, left vline), AND its right edge is
+   capped at the carousel's right edge (x = 1248) per the design brief.
+
+   Constraints:
+     • body.right  ≤ 1248        (carousel right edge)
+     • body.left   = 444 + X     (equal gap from vline)
+     • body.top    = Cb + X      (equal gap from carousel bottom)
+     • body.bottom = 945 − X     (equal gap from bline at 945)
+     • body.height = 945 − Cb − 2X
+     • nav (54 tall) fits between carousel bottom and body top → X ≥ 54
+
+   With body.right = 1248 and body.left = 444 + X, the copy at X ≈ 68
+   is 736 px wide, narrower than the 779 base so it still wraps to 3
+   lines (font 26 × 1.4 line-height ≈ 109.2 px tall). Self-consistent
+   solve: 945 − Cb − 2·68 = 109.2 → Cb = 699.8 → round to 700.
+   Carousel top = 700 − 516 = 184. Body top = 700 + 68 = 768, body left
+   = 444 + 68 = 512, body width = 1248 − 512 = 736. Nav sits flush
+   under carousel (top = 700), cta aligned to the ascender baseline
+   (top = 716), matching the 16 px offset used in the base layout.
+
+   Label "/ PREVIOUS PROJECTS" moves up by 2× its own 42 px height — from
+   180 to 96 — so it reads higher in the pinned frame. */
+@media (min-width: 1900px) and (max-height: 1090px),
+       (min-width: 2560px) and (max-height: 1450px),
+       (min-width: 1440px) and (max-width: 1727px) {
+  .previous-projects-section   { height: 1758px; }
+  .pp-sticky-wrap              { height: 972px; }
+  .previous-projects-label     { top: 96px; }
+  .pp-carousel                 { top: 184px; }
+  .pp-nav                      { top: 700px; }
+  .previous-projects-cta       { top: 716px; }
+  .previous-projects-body      { top: 768px; left: 512px; width: 736px; }
+  .previous-projects-bline     { top: 945px; }
+  .previous-projects-vline-top { height: 945px; }
+  .previous-projects-vline-bot { top: 945px; height: 27px; }
+}
+
+/* === Werkwijze STEP /03 OPLEVERING — 1440 × 1024 only ==================
+   Pixel-perfect translation of the Figma oplevering redesign
+   (JDCreations / node 37:886). In Figma the step /03 block moves to a
+   left-text / right-accordion split with the mediaqueries mockup image
+   anchoring the lower half. Figma positions are authored against a
+   1440-wide canvas; the 1440-1727 viewport applies html { zoom: 0.8333 },
+   so every Figma value below is multiplied by 1.2 (= 1 / 0.8333) to
+   land pixel-exact at 1440 visual px after zoom.
+
+   Anchor: wz-step-03 stays at its base top (2792) to keep the header
+   flow undisturbed. Every other step-03 element derives its werkwijze
+   y as 2792 + (figma_y − 136) × 1.2.
+
+   The werkwijze section is extended from 3925 → 4460 px to accommodate
+   the new image footprint (image bottom at 3770.6 + 657 = 4427.6, with
+   32 px breathing room). Other steps (01, 02) and the structural lines
+   stay at their base positions. */
+@media (min-width: 1440px) and (max-width: 1727px) {
+  .werkwijze-section   { height: 4460px; }
+
+  /* /03 OPLEVERING title — Figma (22, 136) */
+  .wz-step-03          { top: 2792px; left: 26.4px; }
+
+  /* Body copy "In deze fase…" — Figma (123, 446), width 678 */
+  .wz-body-03          { top: 3164px; left: 147.6px; width: 813.6px; }
+
+  /* Mockup image — Figma child3 at (175.5, 951.5), 547.5 tall. Width
+     derived from the 1.7189 : 1 native aspect (657 × 1.7189 ≈ 1129.3). */
+  .wz-img-03           { top: 3770.6px; left: 210.6px; width: 1129.3px; height: 657px; object-fit: contain; }
+
+  /* Accordion group — moves from left (108) to right (1156.8 = Figma 964).
+     First accordion header sits at Figma (964, 543). Existing margin-top
+     between items (34) already produces the 74 px Figma gap so only the
+     top-left anchor needs updating. */
+  .wz-acc-group-03     { top: 3280.4px; left: 1156.8px; }
+}
+
+/* === MOBILE — iPhone 14 & 15 Pro Max (430 × 916 base) ==================
+   Pixel-perfect translation of the Figma mobile hero design — file
+   V6o05R9CgSBNvEzbtAw7UM, node 14:49. Every position below is in the
+   430-wide design-canvas space. Narrower iPhones (390, 375, 320) are
+   handled by the inline-script zoom in <head>, which scales the html so
+   the same layout math stays valid at every mobile width.
+
+   Figma → desktop-class mapping:
+     .hero-child            → .hero-section-item    (header bar 430×51, #94a3b8)
+     .web-design-voor       → .web-design-voor      (top-left tagline)
+     .helder-in-design      → .helder-in-design     (bottom-right tagline)
+     .hero-item             → .line-right-v         (top vline, x=274)
+     .hero-inner            → .line-top-right       (mid hline, full width y=314)
+                              .line-top-left        → hidden (single line)
+     .jdcreations           → .jdcreations          (98 px wordmark, left 24)
+     .icon (START PROJECT)  → .div                  (CTA, arrow hidden)
+     .div (™)               → .div2                 (trademark, 26 px Inter)
+     .line-icon             → .line-center-v        (bottom vline, x=68)
+     .line-div              → .hero-section-child   (bottom hline, y=435)
+     .web-design-container  → .web-design-container (services label)
+     .arrow-down-icon       → .arrow-down-icon      (25×25, bottom-left)
+
+   Loader is rescaled to match the mobile hero: wordmark shrinks 220 → 98
+   and lands on the same (24, 323) as .jdcreations, so the handoff stays
+   pixel-accurate on mobile. Loader-ui, corner labels and percent display
+   are proportionally shrunk to fit the 430-wide loader. */
+@media (max-width: 600px) {
+  /* html/body overflow-x handled in base.css */
+
+  /* --- Hero canvas + header bar (Figma node 14:49, 430 × 916) --- */
+  .hero-section        { height: 916px; font-size: 16px; overflow-x: hidden; max-width: 100%; }
+  .hero-section-item   { top: 0; left: 0; width: 100%; height: 51px; background-color: #94a3b8; }
+
+  /* --- Text blocks (16 px Bebas Neue, 0.2em letter-spacing, 150% lh) --- */
+  .web-design-voor     { top: 71px;  left: 26px; line-height: 1.5; }
+  .helder-in-design    { top: 824px; left: 229px; line-height: 1.5; }
+  .web-design-container{ top: 448px; left: 100px; }
+  .div                 { top: 292px; left: 284px; }
+  .div .div-arrow      { display: none; }
+  .div .div-bracket    { padding-left: 4px; }
+  .div2                { top: 319px; left: 406px; font-size: 26px; letter-spacing: 0.1em; }
+
+  /* --- Wordmark (98 px JDCREATIONS at left 24) --- */
+  .jdcreations         { top: 323px; left: 24px; font-size: 98px; }
+
+  /* --- Top vertical line (x=274, runs 51 → 315) --- */
+  .line-right-v        { top: 51px;  left: 274px; height: 263px; }
+
+  /* --- Mid horizontal line (full width at y=314) ---
+     Mobile uses a single full-width hline, so we stretch .line-top-right
+     across the whole 430 canvas and hide its split sibling. The transform
+     origin stays left-center so the loader-gone reveal draws L→R. */
+  .line-top-right      { top: 314px; left: 0; width: 100%; }
+  .line-top-left       { display: none; }
+
+  /* --- Bottom vertical line (x=68, runs 434 → 916) --- */
+  .line-center-v       { top: 435px; left: 68px; height: 481px; }
+
+  /* --- Bottom horizontal line (full width at y=435) --- */
+  .hero-section-child  { top: 435px; left: 0; width: 100%; }
+
+  /* --- Arrow-down icon (25 × 25, bottom-left of hero) --- */
+  .arrow-down-icon     { display: block; top: 870px; left: 21px; width: 25px; height: 25px; }
+
+  /* --- Loader — wordmark rescale + handoff to mobile jdcreations --- */
+  .loader-wordmark     { font-size: 98px; left: 24px; top: 22px; }
+  .loader.done .loader-wordmark { top: 323px; }
+
+  /* --- Loader chrome: shrink corner labels, grid, UI stack to fit 430 --- */
+  .loader-grid         { background-size: 44px 44px; }
+  .loader-corner       { font-size: 9px; letter-spacing: 0.2em; }
+  .loader-corner-tr    { top: 22px; right: 22px; }
+  .loader-corner-bl    { bottom: 22px; left: 22px; }
+
+  .loader-ui           { left: 20px; right: 20px; bottom: 30px; width: auto; max-width: none; }
+  .loader-percent-big  { font-size: 72px; margin-bottom: 12px; }
+  .loader-bar-labels   { font-size: 9px; margin-bottom: 10px; }
+  .loader-bar          { height: 4px; }
+  .loader-bar-meta     { margin-top: 10px; font-size: 9px; }
+
+  /* --- Over JDC (430 × 504, Figma node 14:67, revamped) ---
+     Figma spec:
+       label            top 63  left 26  (26 px Bebas "/ OVER JDCREATIONS")
+       headline         top 122 left 67  (16 px Bebas, 0.1em, lh 150%)
+       body (ik-ben-…)  top 246 left 15  w 275 (16 px Inter, 0.1em, lh 150%)
+       portrait         top 331 left 297 w 107 h 130
+       CTA              top 386 left 15  (16 px Bebas, 0.2em)
+       CTA underline    top 405 left 29  w 133.5
+       vline            top 0   left 362 h 503
+       bottom hline     top 503.5 left 42 w 388 (split at vline x=362) */
+  .over-ons-section    { height: 504px; overflow: visible; }
+  .over-ons-label      { top: 63px;  left: 26px; font-size: 26px; }
+  .over-ons-headline   { top: 122px; left: 67px; font-size: 16px; max-width: none; line-height: 1.5; letter-spacing: 0.1em; }
+  .over-ons-body       { top: 246px; left: 15px; width: 275px; font-size: 16px; line-height: 1.5; letter-spacing: 0.1em; }
+  .over-ons-portrait   { top: 331px; left: 297px; width: 107px; height: 130px; }
+  .over-ons-vline      { top: 0;     left: 362px; height: 503px; }
+  .over-ons-cta        { display: block; top: 386px; left: 15px; }
+  .over-ons-cta-line   { display: block; top: 405px; left: 29px; width: 133.5px; }
+  /* Bottom line runs from x=42 to x=430, crossing the vline at x=362.
+     Split into left (42 → 362 = 320 px) + right (362 → 430 = 68 px) so the
+     existing scroll-draw origins keep working. */
+  .over-ons-bline-left  { top: 503px; left: 42px;  width: 320px; --draw-length: 200; }
+  .over-ons-bline-right { top: 503px; left: 362px; width: 68px;  --draw-length: 200; }
+  /* Seam line between hero and over-ons — same 1px white hairline style
+     as the hero's inner horizontal. Draws in via loader-gone (see base
+     rule) so it's visible the moment the loader finishes, not only after
+     the user scrolls past the seam. */
+  .over-ons-tline       { display: block; top: 0; left: 0; width: 430px; }
+
+  /* ================================================================
+     PREVIOUS PROJECTS — Figma node 15:83, revised mobile layout
+     ================================================================
+     Section is 539 px tall. Carousel is shown at 356 × 158 (touch-
+     scrollable, no nav buttons). Body copy sits below the carousel,
+     CTA + underline at the bottom.
+
+     Figma spec:
+       vline-top    top 0    left 43   h 111
+       label        top 63   left 187  (26 px Bebas "/ Eerdere Projecten")
+       carousel     top 127  left 15   356 × 158
+       bline        top 205.5 left 387 w 19
+       vline-bot    top 205  left 406  h 360
+       body         top 347  left 15   w 360 (16 px Inter, 0.1em, lh 150%)
+       CTA          top 453  left 15   (16 px Bebas, 0.2em)
+       CTA line     top 471.5 left 29  w 116  */
+  .previous-projects-section   { height: 539px; overflow: visible; }
+  .pp-sticky-wrap              { position: static; height: auto; }
+
+  /* Label "/ Eerdere Projecten" — top 63 left 187 (26 px Bebas). */
+  .previous-projects-label     { top: 63px; left: 187px; font-size: 26px; }
+
+  /* Hide the desktop body copy on mobile — replaced by .pp-mobile-body. */
+  .previous-projects-body      { display: none; }
+
+  /* Show carousel on mobile at 356 × 158. */
+  .pp-carousel                 { top: 127px; left: 15px; width: 356px; height: 158px; }
+
+  /* Nav arrows — bottom-right of carousel, compact touch-friendly size.
+     Counter hidden; just the two arrow buttons, 36 px tap targets. */
+  .pp-nav                      { display: flex; top: 293px; left: 291px; gap: 0; }
+  .pp-counter                  { display: none; }
+  .pp-nav-buttons              { gap: 8px; }
+  .pp-nav-btn                  { width: 36px; height: 36px; border-width: 1px; }
+  .pp-nav-btn svg              { width: 16px; height: 16px; }
+
+  /* Scale down carousel slide internals to fit 158px height */
+  .pp-slide                    { min-width: 24px; border-width: 1px; }
+  .pp-slide-gradient           { height: 60px; }
+  .pp-slide-label              { bottom: 6px; gap: 6px; padding: 0 8px; }
+  .pp-slide-icon               { min-width: 20px; width: 20px; height: 20px; font-size: 9px; border-width: 1px; }
+  .pp-slide-title              { font-size: 10px; }
+  .pp-slide-desc               { font-size: 7px; margin-top: 2px; }
+
+  /* Hide the static mobile-only image (carousel replaces it). */
+  .pp-mobile-img               { display: none; }
+
+  /* Mobile body copy — 16 px Inter, width 360, top 347 left 15. */
+  .pp-mobile-body              { display: block; position: absolute; top: 347px; left: 15px; width: 360px; margin: 0; font-family: 'Inter', sans-serif; font-size: 16px; letter-spacing: 0.1em; line-height: 1.5; color: #d9d9d9; }
+
+  /* CTA "[ Ontdek Meer→ ]" — 16 px Bebas, top 453 left 15. */
+  .previous-projects-cta       { top: 453px; left: 15px; font-size: 16px; }
+  .pp-cta-line                 { display: block; top: 471.5px; left: 29px; width: 116px; }
+
+  /* Structural scroll-drawn lines — repositioned to the revised Figma
+     geometry. --draw-offset reset to 0 so mobile draws from the instant
+     the line crosses the 80% viewport head. */
+  .previous-projects-vline-top { top: 0; left: 43px;  height: 111px; --draw-length: 130; --draw-offset: 199; }
+  .previous-projects-bline     { top: 205.5px; left: 387px; width: 19px;  --draw-length: 80; }
+  .previous-projects-vline-bot { top: 205.5px; left: 406px; height: 359.5px; --draw-length: 380; --draw-offset: 80; }
+
+  /* ================================================================
+     WERKWIJZE — Figma node 37:931 (step 01) as origin
+     ================================================================
+     Step 01 positions taken directly from Figma. Steps 02 and 03
+     shifted +162 px from the previous layout to accommodate the
+     taller header cluster (label at y=65, headline at y=150,
+     step 01 title at y=319 vs previous y=157).
+
+     Figma step 01 (842 px frame):
+       top hline     y=2   x=68   w=338
+       right vline   y=0   x=406  h=158.5
+       left vline    y=2   x=69   h=315
+       label         y=65  x=195  26 px
+       headline      y=150 x=25   16 px  0.2em  lh 1.5
+       /01 title     y=319 x=0    68 px
+       bracket hline y=356 x=334  w=72
+       right vline   y=355 x=406  h=487
+       body          y=441 x=16   w=323  16 px Inter 0.1em lh 1.5
+       image-24      y=558 x=16   154×109
+       acc-group-01  y=664 x=196  w=192
+       CTA           y=790 x=25
+       CTA line      y=809 x=36   w=134                          */
+  .werkwijze-section           { height: 2279px; overflow: hidden; font-size: 16px; }
+
+  /* Label "/ Mijn Werkwijze" */
+  .werkwijze-label             { top: 65px; left: 195px; font-size: 26px; }
+
+  /* Sub-headline "Een heldere aanpak in 3 stappen" */
+  .werkwijze-headline          {
+  		display: block;
+  		top: 150px;
+  		left: 25px;
+  		width: auto;
+  		margin: 0;
+  		font-size: 16px;
+  		font-weight: 400;
+  		letter-spacing: 0.2em;
+  		line-height: 1.5;
+  		text-align: left;
+  		color: #d9d9d9;
+  }
+
+  /* Scroll-drawn structural lines — repositioned to match Figma 37:931.
+     Top cluster: hline at y=2 + vline-tr dropping from the corner.
+     Right rail: vline-mid runs from step bracket down past step 02.
+     Bottom J-shape: hline-bot + vline-br shifted +162. */
+  .wz-hline-mid                { top: 2px;     left: 68px;  width: 338px;  transform-origin: right center; --draw-length: 338; --draw-offset: 125; }
+  .wz-vline-tr                 { top: 0;       left: 406px; height: 159px; --draw-length: 159; --draw-offset: 127; }
+  .wz-vline-mid                { top: 357px;   left: 406px; height: 485px; --draw-length: 485; --draw-offset: 483; }
+  .wz-hline-bot                { display: none; }
+  .wz-vline-br                 { display: none; }
+
+  /* Scroll-drawn decorative brackets — every bracket now uses the --draw
+     system so it chains: each line starts only when the previous one
+     completes, creating one continuous stroke.
+
+     Chain A (right rail): hline-mid → vline-tr → fl-01-h → vline-mid
+     Chain B (step 02→03): fl-02-h-tr → fl-02-v-tr → fl-02-h-l → m-v2 → fl-03-v-tr
+     Chain E (step 03 L):  fl-03-v-l → fl-mk-h-top
+     Chain F (mockup bot): fl-mk-v-l → fl-mk-v-mid                            */
+  .wz-fl-01-v      { display: none; }
+  .wz-fl-01-h      { display: block; top: 356px; left: 346px; width: 60px; height: 1px;
+                      transform: scaleX(var(--draw, 0)); transform-origin: left center;
+                      will-change: transform; --draw-length: 60; --draw-offset: 424; }
+
+  .wz-fl-02-h-tr   { display: block; top: 875px;   left: 26px;  width: 88px;  height: 1px;
+                      transform: scaleX(var(--draw, 0)); transform-origin: right center;
+                      will-change: transform; --draw-length: 88; --draw-offset: 450; }
+  .wz-fl-02-v-tr   { display: block; top: 876px;   left: 26px;  width: 1px;   height: 426px;
+                      transform: scaleY(var(--draw, 0)); transform-origin: top center;
+                      will-change: transform; --draw-length: 426; --draw-offset: 537; }
+  .wz-fl-02-h-l    { display: block; top: 1302px;  left: 26px;  width: 114px; height: 1px;
+                      transform: scaleX(var(--draw, 0)); transform-origin: left center;
+                      will-change: transform; --draw-length: 114; --draw-offset: 537; }
+
+  .wz-fl-03-v-tr   { display: block; top: 1347px;   left: 140.5px; width: 1px;   height: 52.5px;
+                      transform: scaleY(var(--draw, 0)); transform-origin: top center;
+                      will-change: transform; --draw-length: 52; --draw-offset: 651; }
+  .wz-fl-03-h-tr   { display: block; top: 1438.5px; left: auto; right: 0; width: 64px; height: 1px;
+                      transform: scaleX(var(--draw, 0)); transform-origin: left center;
+                      will-change: transform; --draw-length: 64; --draw-offset: 612; }
+  .wz-fl-03-v-l    { display: block; top: 1676px;   left: 47px;    width: 1px;   height: 210.5px;
+                      transform: scaleY(var(--draw, 0)); transform-origin: top center;
+                      will-change: transform; --draw-length: 210; --draw-offset: 438; }
+  .wz-fl-mk-h-top  { display: block; top: 1886.5px; left: 47px;    width: 31px;  height: 1px;
+                      transform: scaleX(var(--draw, 0)); transform-origin: left center;
+                      will-change: transform; --draw-length: 31; --draw-offset: 438; }
+  .wz-fl-mk-v-l    { display: block; top: 1999px;   left: 334px;   width: 1px;   height: 11.5px;
+                      transform: scaleY(var(--draw, 0)); transform-origin: top center;
+                      will-change: transform; --draw-length: 12; }
+  .wz-fl-mk-v-mid  { display: block; top: 2010.5px; left: 334px;   width: 70px;  height: 1px;
+                      transform: scaleX(var(--draw, 0)); transform-origin: left center;
+                      will-change: transform; --draw-length: 70; }
+  .wz-fl-mk-h-mid  { display: none; }
+  .wz-fl-mk-v-r    { display: none; }
+
+  /* Step numbers — 68 px on mobile (Figma 37:931). */
+  .wz-step                     { font-size: 68px; }
+  .wz-step-01                  { top: 319px;  left: 0;    }
+  .wz-step-02                  { top: 848px;  left: 130px;}
+  .wz-step-03                  { top: 1402px; left: 0;    }
+
+  /* Step body copy — 16 px Inter, 0.1em tracking, lh 1.5 */
+  .wz-body                     { font-size: 16px; line-height: 1.5; letter-spacing: 0.1em; }
+  .wz-body-01                  { top: 441px;  left: 16px; width: 323px; }
+  .wz-body-02                  { top: 969px;  left: 42px; width: 346px; }
+  .wz-body-03                  { display: block; top: 1515px; left: 26px; width: 378px; }
+
+  /* Step images */
+  .wz-img                      { filter: none; }
+  .wz-img-01                   { top: 558px;  left: 16px;  width: 154px; height: 109px; }
+  .wz-img-02                   { top: 1191px; left: 250px; width: 154px; height: 109px; }
+  .wz-img-03                   { top: 1799px; left: 63px;  width: 326px; height: 190px; }
+
+  /* Accordion groups */
+  .wz-acc-group                { width: 192px; }
+  .wz-acc-group-01             { top: 664px;  left: 196px; }
+  .wz-acc-group-02             { top: 1106px; left: 45px;  }
+  .wz-acc-group-03             { top: 1695px; left: 215px; }
+
+  /* Accordion internals */
+  .wz-acc                      { position: relative; background-color: #07090d; z-index: 1; }
+  .wz-acc.open                 { z-index: 2; }
+  .wz-acc + .wz-acc            { margin-top: 8px; }
+  .wz-acc:last-child           { margin-top: 8px; }
+  .wz-acc-header               { height: 22px; gap: 12px; }
+  .wz-acc-label                { font-size: 16px; }
+  .wz-acc-plus                 { width: 18.5px; height: 18.5px; }
+  .wz-acc-sep                  { width: 189.5px; margin-top: 8px; }
+  .wz-acc-body                 { width: 189.5px; background-color: #07090d; }
+  .wz-acc-body p               { font-size: 12px; line-height: 1.55; }
+  .wz-acc.open .wz-acc-body    { max-height: 130px; margin-top: 10px; }
+
+  .wz-acc-group-03 .wz-acc      { background-color: rgba(7, 9, 13, 0.82); }
+  .wz-acc-group-03 .wz-acc-body { background-color: rgba(7, 9, 13, 0.82); }
+
+  /* Werkwijze CTAs — step 01 and step 03 */
+  .wz-cta                      { display: block; }
+  .wz-cta-line                 { display: block; }
+  .wz-cta-01                   { top: 790px;  left: 25px; }
+  .wz-cta-line-01              { top: 809px;  left: 36px;   width: 134px; }
+  .wz-cta-03                   { top: 1645px; left: 25px; }
+  .wz-cta-line-03              { top: 1663.5px; left: 39.5px; width: 134px; }
+
+  /* Left structural vline (Figma: x=69, y=2, h=315) — scroll-drawn via
+     clip-path (not scaleY) so the gradient text-gap stays fixed.
+     Chains from wz-hline-mid: offset=1 means it starts the instant the
+     horizontal line passes x=69 (1 design-px into its 338 px draw). */
+  .wz-m-v1                     { display: block; top: 2px; left: 69px; width: 1px; height: 315px;
+                                   background: linear-gradient(to bottom, #fff 146px, transparent 146px, transparent 198px, #fff 198px);
+                                   clip-path: inset(0 0 calc((1 - var(--draw, 0)) * 100%) 0);
+                                   will-change: clip-path;
+                                   --draw-length: 315; --draw-offset: 463; }
+  /* Step 02 bottom-right bracket vertical — scroll-drawn, chains from fl-02-h-l */
+  .wz-m-v2                     { display: block; top: 1302px; left: 140.5px; width: 1px; height: 45px; background-color: #fff;
+                                   transform: scaleY(var(--draw, 0)); transform-origin: top center;
+                                   will-change: transform; --draw-length: 45; --draw-offset: 651; }
+  /* All other mobile-only hairlines hidden */
+  .wz-m-line:not(.wz-m-v1):not(.wz-m-v2) { display: none; }
+
+  /* CTA underline — scroll-drawn L→R via --draw variable, same system as
+     structural lines. --draw-length controls scroll-px to full draw. */
+  .over-ons-cta-line,
+  .pp-cta-line,
+  .wz-cta-line {
+    transform: scaleX(var(--draw, 0));
+    transform-origin: left center;
+    will-change: transform;
+    --draw-length: 120;
+  }
+}
+
+/* Hero fits viewport height on desktop via uniform zoom. The inline
+   <head> script computes `--hero-scale` = viewport_h / (1114 × html_zoom)
+   so every element on the 1114 canvas (wordmark, CTA, service label,
+   taglines, dividers, bottom hairline) scales together to fill the
+   viewport exactly — composition stays balanced, nothing clips, and
+   the `.hero-section-child` at top:1113 lands on the viewport's last
+   visible pixel. Loader wordmark uses the same scale so the handoff
+   into `.jdcreations` is pixel-perfect at every breakpoint. */
+@media (min-width: 961px) {
+  /* Hero layout width compensates for hero-scale so its visual width is
+     exactly the viewport (otherwise horizontal lines inside get clipped
+     by the section's narrower visual bounds). Body gets overflow-x:clip
+     to absorb the resulting layout-width overflow (hero layout is wider
+     than body at 16:9 viewports, but visually fits due to hero-scale). */
+  html, body { overflow-x: clip; }
+  .hero-section {
+    width: var(--hero-full-css, 100%);
+    height: var(--hero-fit-h, 1114px);
+    zoom: var(--hero-scale, 1);
+  }
+  .hero-section-child { top: auto; bottom: 0; }
+  /* Right-side content anchored to the hero's right edge (which now
+     equals the viewport right edge thanks to --hero-full-css). Offsets
+     match the original canvas-space spacing between the text and the
+     end of the horizontal rule (helder ≈ 17 px, CTA ≈ 30 px). */
+  .hero-section .helder-in-design { left: auto; right: 17px; }
+  .hero-section .div              { left: auto; right: 30px; }
+  /* line-center-v runs from the center h-line (top:745) to the bottom
+     hairline — height = fitH − 745. At the design canvas (fitH=1114) this
+     equals 369 ≈ original 368px; on taller viewports it stretches to fill. */
+  .line-center-v { height: calc(var(--hero-fit-h, 1114px) - 745px); }
+  /* Loader wordmark scales + positions match the hero canvas so the
+     clip-to-reveal handoff lands on the same physical pixel as the
+     hero `.jdcreations` (left:21, top:874, font 220, line-height 1). */
+  .loader-wordmark {
+    left: calc(21px * var(--hero-scale, 1));
+    top:  calc(21px * var(--hero-scale, 1));
+    font-size: calc(220px * var(--hero-scale, 1));
+  }
+  .loader.done .loader-wordmark {
+    top: calc(874px * var(--hero-scale, 1));
+  }
+}
+
+/* 1440 x 900 (MacBook Air class): JDCREATIONS stays at its base
+   top:874, and the CTA's baseline is pulled down to match — Bebas 220
+   ascent (~190 w/ normal line-height) vs Bebas 26 (~22.5) gives the
+   167 px offset between the two `top` values. */
+@media (min-width: 1440px) and (max-width: 1727px) and (max-height: 910px) {
+  .div { top: 1041px; }
+}
+
+/* Tall-viewport bottom-anchor (e.g. 1440×1024 where hero fitH > 1114px).
+   Offsets = original canvas distance from bottom (1114px):
+     jdcreations:          1114 − 874  = 240px
+     web-design-container: 1114 − 873  = 241px
+     div2 (™):             1114 − 896  = 218px
+     div (START PROJECT):  1114 − 1063 =  51px
+   At normal-height viewports (fitH = 1114) these resolve to the original
+   top values, so there is no visual change there. */
+@media (min-width: 961px) and (min-height: 911px) {
+  .jdcreations          { top: calc(var(--hero-fit-h, 1114px) - 240px); }
+  .web-design-container { top: calc(var(--hero-fit-h, 1114px) - 241px); }
+  .div2                 { top: calc(var(--hero-fit-h, 1114px) - 218px); }
+  .div                  { top: calc(var(--hero-fit-h, 1114px) -  51px); }
+}
+
+</style>
+
