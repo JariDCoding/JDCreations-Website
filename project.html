@@ -19,7 +19,7 @@
 	<meta name="twitter:title" content="Project — JDCreations">
 	<meta name="twitter:description" content="Een custom webproject van JDCreations — volledig op maat, handgeschreven code.">
 	<meta name="twitter:image" content="https://www.jdcreations.be/og-image.png">
-	<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+	<link rel="icon" type="image/png" href="./favicon.png">
 
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -321,6 +321,28 @@
 		animation: pj-bar-grow 1s cubic-bezier(0.65,0,0.35,1) 0.7s forwards;
 	}
 
+	/* ── Video player ── */
+	.pj-video-wrap {
+		position: relative;
+		width: 100%;
+		background: #000;
+		border: 1px solid rgba(148,163,184,0.1);
+		overflow: hidden;
+	}
+	.pj-video-wrap video {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+	.pj-video-label {
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 9px;
+		letter-spacing: 0.38em;
+		text-transform: uppercase;
+		color: rgba(148,163,184,0.4);
+		margin: 0 0 0.85rem;
+	}
+
 	/* ── 404 ── */
 	.pj-notfound {
 		display: flex; flex-direction: column; align-items: center;
@@ -398,6 +420,7 @@ const PROJECTS = [
 		tags:  ['Three.js / WebGL', 'Blender 3D model', 'Live 3D configurator', 'Immersive scroll', 'Automotive design', 'Brand experience'],
 		url:   'renaultclio.concept',
 		link:  null,
+		video: './renault-clio-lp.mp4',
 		bg:    'linear-gradient(170deg,#1a0507 0%,#240a0c 55%,#1c0608 100%)',
 		accent:'220,42,32',
 		slug:  'renault-clio',
@@ -520,13 +543,19 @@ function render(p) {
 				'</div>' +
 			'</div>' +
 
-			'<div class="pj-visual" aria-hidden="true">' +
-				'<div class="pj-mockup">' +
-					'<div class="pj-mockup-inner">' +
-						'<div class="pj-mockup-name">' + p.title + '</div>' +
-						'<div class="pj-mockup-bar"></div>' +
-					'</div>' +
-				'</div>' +
+			'<div class="pj-visual">' +
+				(p.video
+					? '<p class="pj-video-label">Preview</p>' +
+					  '<div class="pj-video-wrap">' +
+					  '<video src="' + p.video + '" controls preload="metadata" playsinline></video>' +
+					  '</div>'
+					: '<div class="pj-mockup" aria-hidden="true">' +
+					  '<div class="pj-mockup-inner">' +
+					  '<div class="pj-mockup-name">' + p.title + '</div>' +
+					  '<div class="pj-mockup-bar"></div>' +
+					  '</div>' +
+					  '</div>'
+				) +
 			'</div>' +
 		'</div>';
 
@@ -536,7 +565,7 @@ function render(p) {
 
 	/* Mockup corner brackets — white, matching index.html line aesthetic */
 	var mockup = page.querySelector('.pj-mockup');
-	cornerBrackets(mockup, 'rgba(255,255,255,0.15)', 14, 10, 0.65);
+	if (mockup) cornerBrackets(mockup, 'rgba(255,255,255,0.15)', 14, 10, 0.65);
 
 	requestAnimationFrame(function() {
 		observeSections();

@@ -20,7 +20,7 @@
 	<meta name="twitter:title" content="Custom Website Voorbeelden — Portfolio | JDCreations">
 	<meta name="twitter:description" content="Custom websites op maat — geen template in zicht. Bekijk het portfolio van JDCreations.">
 	<meta name="twitter:image" content="https://www.jdcreations.be/og-image.png">
-	<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+	<link rel="icon" type="image/png" href="./favicon.png">
 
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -369,311 +369,6 @@
 	}
 
 	/* ══════════════════════════════════════════
-	   MODAL
-	══════════════════════════════════════════ */
-	.proj-modal {
-		display: none;
-		position: fixed;
-		inset: 0;
-		z-index: 900;
-		align-items: center;
-		justify-content: center;
-		opacity: 0;
-		transition: opacity 0.45s ease;
-	}
-	.proj-modal.is-ready  { display: flex; }
-	.proj-modal.is-open   { opacity: 1; }
-
-	.modal-backdrop {
-		position: absolute;
-		inset: 0;
-		background: rgba(3,5,9,0.95);
-		backdrop-filter: blur(20px);
-		-webkit-backdrop-filter: blur(20px);
-	}
-
-	.modal-close {
-		position: fixed;
-		top: 40px; right: 56px;
-		z-index: 902;
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		background: rgba(7,9,13,0.75);
-		border: 1px solid rgba(255,255,255,0.14);
-		color: rgba(217,217,217,0.62);
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 10px;
-		letter-spacing: 0.2em;
-		padding: 11px 20px;
-		cursor: pointer;
-		transition: color 0.25s, border-color 0.25s, background 0.25s;
-		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
-	}
-	.modal-close:hover { color: #d9d9d9; border-color: rgba(255,255,255,0.32); background: rgba(20,24,32,0.9); }
-	.modal-close-x { font-size: 14px; line-height: 1; }
-
-	/* Bottom close (mobile only) */
-	.modal-close-bottom {
-		display: none;
-		margin-top: 32px;
-		align-self: flex-start;
-		background: transparent;
-		border: 1px solid rgba(255,255,255,0.13);
-		color: rgba(217,217,217,0.5);
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 10px;
-		letter-spacing: 0.2em;
-		padding: 11px 20px;
-		cursor: pointer;
-		transition: color 0.25s, border-color 0.25s;
-	}
-	.modal-close-bottom:hover { color: #d9d9d9; border-color: rgba(255,255,255,0.3); }
-
-	.modal-wrap {
-		position: relative;
-		z-index: 901;
-		width: min(1340px, 92vw);
-		max-height: 88vh;
-		overflow-y: auto;
-		scrollbar-width: none;
-		display: grid;
-		grid-template-columns: 1fr 1.12fr;
-		gap: 72px;
-		transform: translateY(32px);
-		transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-	}
-	.modal-wrap::-webkit-scrollbar { display: none; }
-	.proj-modal.is-open .modal-wrap { transform: translateY(0); }
-
-	/* Info column */
-	.modal-info {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		padding: 88px 0;
-	}
-	.modal-num {
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 11px;
-		letter-spacing: 0.26em;
-		color: rgba(148,163,184,0.42);
-		margin-bottom: 22px;
-	}
-	.modal-title {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: 110px;
-		line-height: 0.88;
-		letter-spacing: 0.02em;
-		color: #d9d9d9;
-		margin: 0 0 26px;
-	}
-	.modal-type {
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 10px;
-		letter-spacing: 0.2em;
-		color: rgba(148,163,184,0.42);
-		padding-bottom: 34px;
-		margin-bottom: 34px;
-		border-bottom: 1px solid rgba(255,255,255,0.07);
-	}
-	.modal-desc {
-		font-family: 'Inter', sans-serif;
-		font-size: 18px;
-		letter-spacing: 0.04em;
-		line-height: 1.72;
-		color: rgba(217,217,217,0.7);
-		margin-bottom: 34px;
-	}
-	.modal-tags {
-		list-style: none;
-		padding: 0;
-		margin: 0 0 48px;
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 9px 22px;
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 10px;
-		letter-spacing: 0.14em;
-		color: rgba(148,163,184,0.5);
-	}
-	.modal-tags li::before { content: '— '; color: #94a3b8; }
-
-	/* Modal CTAs */
-	.modal-actions { display: flex; flex-direction: column; gap: 14px; }
-	.modal-btn-page {
-		display: inline-flex;
-		align-items: center;
-		align-self: flex-start;
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 10px;
-		letter-spacing: 0.28em;
-		color: #9be36a;
-		text-decoration: none;
-		border: 1px solid rgba(155,227,106,0.3);
-		padding: 10px 16px;
-		transition: background 0.25s, color 0.25s;
-		white-space: nowrap;
-	}
-	.modal-btn-page:hover { background: rgba(155,227,106,0.1); }
-	.modal-btn-start {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		align-self: flex-start;
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: 20px;
-		letter-spacing: 0.24em;
-		color: #07090d;
-		background: #d9d9d9;
-		text-decoration: none;
-		padding: 13px 30px;
-		transition: background 0.25s;
-		white-space: nowrap;
-	}
-	.modal-btn-start:hover { background: #fff; }
-	.modal-btn-discuss {
-		font-family: 'Bebas Neue', sans-serif;
-		font-size: 18px;
-		letter-spacing: 0.22em;
-		color: #94a3b8;
-		text-decoration: none;
-		transition: color 0.25s;
-	}
-	.modal-btn-discuss .ml { color: #d9d9d9; }
-	.modal-btn-discuss:hover, .modal-btn-discuss:hover .ml { color: #fff; }
-
-	/* Devices column */
-	.modal-devices {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 88px 0;
-	}
-	.devices-stage {
-		position: relative;
-		width: 100%;
-		max-width: 580px;
-	}
-
-	/* Desktop mockup */
-	.dev-desktop {
-		width: 100%;
-		background: #0d1019;
-		border: 1px solid rgba(255,255,255,0.1);
-		box-shadow: 0 44px 110px rgba(0,0,0,0.72);
-	}
-	.dev-bar {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		padding: 9px 14px;
-		background: #0a0d15;
-		border-bottom: 1px solid rgba(255,255,255,0.055);
-		flex-shrink: 0;
-	}
-	.dev-dots { display: flex; gap: 5px; }
-	.dev-dot  { width: 8px; height: 8px; border-radius: 50%; }
-	.dev-dot-r { background: rgba(255,96,85,0.55); }
-	.dev-dot-y { background: rgba(255,192,5,0.45); }
-	.dev-dot-g { background: rgba(48,206,68,0.45); }
-	.dev-url {
-		flex: 1;
-		max-width: 180px;
-		height: 18px;
-		background: rgba(255,255,255,0.04);
-		border: 1px solid rgba(255,255,255,0.05);
-		border-radius: 2px;
-		display: flex;
-		align-items: center;
-		padding: 0 8px;
-		font-family: 'JetBrains Mono', monospace;
-		font-size: 7.5px;
-		letter-spacing: 0.1em;
-		color: rgba(148,163,184,0.38);
-		white-space: nowrap;
-		overflow: hidden;
-	}
-	.dev-screen-d {
-		width: 100%;
-		aspect-ratio: 16/10;
-		position: relative;
-		overflow: hidden;
-	}
-
-	/* Mobile mockup */
-	.dev-mobile {
-		position: absolute;
-		right: -52px;
-		bottom: -28px;
-		width: 130px;
-		background: #0d1019;
-		border: 1px solid rgba(255,255,255,0.14);
-		border-radius: 22px;
-		overflow: hidden;
-		box-shadow: 0 22px 64px rgba(0,0,0,0.72);
-	}
-	.dev-island {
-		width: 38px; height: 11px;
-		background: #0a0d15;
-		border-radius: 6px;
-		margin: 9px auto 5px;
-		flex-shrink: 0;
-	}
-	.dev-screen-m {
-		width: 100%;
-		aspect-ratio: 9/19.5;
-		position: relative;
-		overflow: hidden;
-		margin-bottom: 8px;
-	}
-
-	/* Screen backgrounds set via JS custom property */
-	.dev-screen-d,
-	.dev-screen-m {
-		background: var(--sc-bg, linear-gradient(170deg, #09101f 0%, #060d1a 100%));
-	}
-
-	/* CSS UI inside screens */
-	.screen-ui {
-		position: absolute;
-		inset: 0;
-		padding: 8px 8px 6px;
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
-	.su-nav {
-		height: 5px;
-		background: rgba(var(--sc-accent, 255,255,255), 0.1);
-		width: 70%;
-		border-radius: 1px;
-		flex-shrink: 0;
-	}
-	.su-hero {
-		flex: 0 0 36%;
-		background: rgba(var(--sc-accent, 255,255,255), 0.045);
-		position: relative;
-		flex-shrink: 0;
-	}
-	.su-hero::before {
-		content: '';
-		position: absolute;
-		left: 9px; top: 50%;
-		transform: translateY(-50%);
-		width: 52%; height: 3.5px;
-		background: rgba(var(--sc-accent, 255,255,255), 0.14);
-		box-shadow: 0 8px 0 rgba(var(--sc-accent, 255,255,255), 0.07);
-	}
-	.su-body { display: flex; flex-direction: column; gap: 4px; }
-	.su-line { height: 2.5px; border-radius: 1px; background: rgba(255,255,255,0.052); }
-	.su-line.l90 { width: 90%; }
-	.su-line.l75 { width: 75%; }
-	.su-line.l55 { width: 55%; }
-	.su-line.l38 { width: 38%; }
-
-	/* ══════════════════════════════════════════
 	   TABLET  601 – 1279 px
 	══════════════════════════════════════════ */
 	@media (min-width: 601px) and (max-width: 1279px) {
@@ -702,12 +397,6 @@
 		.constellation { display: none; }
 		.port-strip   { left: 40px; right: 40px; }
 		.port-bottom  { position: relative; bottom: auto; left: auto; right: auto; padding: 0 40px 40px; }
-		.modal-wrap   { grid-template-columns: 1fr; gap: 40px; width: min(720px, 94vw); }
-		.modal-info   { padding: 24px 0; }
-		.modal-devices { padding: 0 0 40px; }
-		.modal-title  { font-size: clamp(52px, 8vw, 90px); }
-		.modal-close  { top: 20px; right: 20px; }
-		.dev-mobile   { right: -18px; bottom: -10px; width: 100px; }
 	}
 
 	/* ══════════════════════════════════════════
@@ -737,15 +426,6 @@
 		.constellation { display: none; }
 		.port-strip   { left: 26px; right: 26px; top: 38px; }
 		.port-bottom  { display: none; }
-		.modal-wrap   { grid-template-columns: 1fr; gap: 0; width: 100%; max-height: 94vh; padding: 0; }
-		.modal-info   { padding: 56px 24px 24px; }
-		.modal-devices { padding: 0 24px 40px; }
-		.modal-title  { font-size: clamp(42px, 12vw, 64px); }
-		.modal-desc   { font-size: 15px; }
-		.modal-close  { top: 12px; right: 12px; padding: 8px 14px; font-size: 10px; }
-		.modal-close-bottom { display: inline-block; }
-		.modal-btn-start { align-self: stretch; justify-content: center; }
-		.dev-mobile   { display: none; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
@@ -914,83 +594,6 @@
 
 </main>
 
-<!-- ══════════════════════════════════════════
-     MODAL
-══════════════════════════════════════════ -->
-<div class="proj-modal" id="projModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-	<div class="modal-backdrop" id="modalBackdrop"></div>
-	<button class="modal-close" id="modalClose" aria-label="Sluit project">
-		<span class="modal-close-x" aria-hidden="true">✕</span>
-		<span>CLOSE</span>
-	</button>
-
-	<div class="modal-wrap">
-
-		<!-- Left: info -->
-		<div class="modal-info">
-			<p  class="modal-num"   id="mNum"></p>
-			<h2 class="modal-title" id="modalTitle"></h2>
-			<p  class="modal-type"  id="mType"></p>
-			<p  class="modal-desc"  id="mDesc"></p>
-			<ul class="modal-tags"  id="mTags"></ul>
-			<div class="modal-actions">
-				<a class="modal-btn-page" id="mPageLink" href="./project.html">[ BEKIJK PROJECT PAGINA &rarr;]</a>
-				<a class="modal-btn-start" href="./contact.html">[ START SOORTGELIJK PROJECT &rarr;]</a>
-				<a class="modal-btn-discuss" href="./contact.html">
-					<span>[ </span><span class="ml">BESPREEK MET JARI</span><span> &rarr;]</span>
-				</a>
-			</div>
-			<button class="modal-close-bottom" id="modalCloseBottom" aria-label="Sluit project">✕ &nbsp;CLOSE</button>
-		</div>
-
-		<!-- Right: devices -->
-		<div class="modal-devices">
-			<div class="devices-stage">
-
-				<div class="dev-desktop">
-					<div class="dev-bar">
-						<div class="dev-dots">
-							<span class="dev-dot dev-dot-r"></span>
-							<span class="dev-dot dev-dot-y"></span>
-							<span class="dev-dot dev-dot-g"></span>
-						</div>
-						<div class="dev-url" id="mUrl"></div>
-					</div>
-					<div class="dev-screen-d" id="scrD">
-						<div class="screen-ui">
-							<div class="su-nav"></div>
-							<div class="su-hero"></div>
-							<div class="su-body">
-								<div class="su-line l90"></div>
-								<div class="su-line l75"></div>
-								<div class="su-line l55"></div>
-								<div class="su-line l38"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="dev-mobile">
-					<div class="dev-island"></div>
-					<div class="dev-screen-m" id="scrM">
-						<div class="screen-ui">
-							<div class="su-nav" style="width:56%;height:4px"></div>
-							<div class="su-hero" style="flex:0 0 32%"></div>
-							<div class="su-body">
-								<div class="su-line l90"></div>
-								<div class="su-line l75"></div>
-								<div class="su-line l55"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-
-	</div>
-</div>
-
 <script>
 'use strict';
 
@@ -1042,53 +645,14 @@ const PROJECTS = [
 	},
 ];
 
-/* ── DOM refs ── */
-const modal    = document.getElementById('projModal');
-const backdrop = document.getElementById('modalBackdrop');
-const closeBtn = document.getElementById('modalClose');
-const wrap     = modal.querySelector('.modal-wrap');
-const scrD     = document.getElementById('scrD');
-const scrM     = document.getElementById('scrM');
-
-/* ── Modal open / close ── */
-function openModal(idx) {
-	const p = PROJECTS[idx];
-	document.getElementById('mNum').textContent   = p.num;
-	document.getElementById('modalTitle').textContent = p.title;
-	document.getElementById('mType').textContent  = p.type;
-	document.getElementById('mDesc').textContent  = p.desc;
-	document.getElementById('mUrl').textContent   = p.url;
-	document.getElementById('mTags').innerHTML    = p.tags.map(t => `<li>${t}</li>`).join('');
-	const pageLink = document.getElementById('mPageLink');
-	if (pageLink && p.slug) pageLink.href = './project.html?p=' + p.slug;
-
-	[scrD, scrM].forEach(s => {
-		s.style.setProperty('--sc-bg',     p.bg);
-		s.style.setProperty('--sc-accent', p.accent);
-	});
-
-	modal.classList.add('is-ready');
-	wrap.scrollTop = 0;
-	document.body.style.overflow = 'hidden';
-	requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add('is-open')));
-}
-
-function closeModal() {
-	modal.classList.remove('is-open');
-	document.body.style.overflow = '';
-	setTimeout(() => modal.classList.remove('is-ready'), 460);
-}
-
+/* ── Navigate directly to project page ── */
 document.querySelectorAll('.proj-card').forEach(card => {
-	card.addEventListener('click', () => openModal(+card.dataset.project));
+	const slug = PROJECTS[+card.dataset.project].slug;
+	card.addEventListener('click', () => { location.href = './project.html?p=' + slug; });
 	card.addEventListener('keydown', e => {
-		if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(+card.dataset.project); }
+		if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.href = './project.html?p=' + slug; }
 	});
 });
-closeBtn.addEventListener('click',  closeModal);
-backdrop.addEventListener('click',  closeModal);
-document.getElementById('modalCloseBottom').addEventListener('click', closeModal);
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
 
 /* ── Mouse parallax ── */
 (function () {
