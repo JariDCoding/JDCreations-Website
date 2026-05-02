@@ -1,5 +1,44 @@
 User-agent: *
 Allow: /
+Allow: /*.css
+Allow: /*.js
+Allow: /*.svg
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.webp
 Disallow: /success.html
+
+User-agent: Googlebot
+Allow: /
+Allow: /*.css
+Allow: /*.js
+Allow: /*.svg
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.webp
+Disallow: /success.html
+
+User-agent: Bingbot
+Allow: /
+Allow: /*.css
+Allow: /*.js
+Allow: /*.svg
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.webp
+Disallow: /success.html
+Crawl-delay: 2
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
 
 Sitemap: https://www.jdcreations.be/sitemap.xml
