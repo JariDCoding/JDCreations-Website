@@ -86,16 +86,25 @@
   		// layout stays pixel-perfect on every device. Desktop clears the
   		// inline style so the existing media-query zoom rules take over.
   		(function() {
-  			function fitMobile() {
+  			// --mobile-vhpx: actual visible height in CSS px, used by the
+  			// hero height clamp below. Prefers visualViewport (accounts for
+  			// Instagram / Facebook in-app browser bottom chrome and iOS
+  			// address-bar state) and falls back to innerHeight.
+  			function setMobileVars() {
   				const w = window.innerWidth;
+  				const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  				document.documentElement.style.setProperty('--mobile-vhpx', vh + 'px');
   				if (w <= 600) {
   					document.documentElement.style.zoom = Math.min(w, 430) / 430;
   				} else {
   					document.documentElement.style.zoom = '';
   				}
   			}
-  			fitMobile();
-  			window.addEventListener('resize', fitMobile);
+  			setMobileVars();
+  			window.addEventListener('resize', setMobileVars);
+  			if (window.visualViewport) {
+  				window.visualViewport.addEventListener('resize', setMobileVars);
+  			}
   		})();
 
   		// Desktop: scale the 1114-px hero canvas to exactly viewport
@@ -837,6 +846,15 @@
   // space, making the result zoom-proof. Hand-authored design-px
   // literals (--draw-length / --draw-offset) are multiplied by the zoom
   // factor so they match that same space.
+
+  // Use visualViewport.height where available — it reflects the ACTUAL
+  // visible area and accounts for iOS address-bar resize, Instagram / Facebook
+  // in-app browser chrome (bottom nav bar), and keyboard appearance.
+  // Falls back to innerHeight on browsers that don't support the API.
+  function liveVH() {
+    return window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  }
+
   function getLayoutZoom() {
     const z = parseFloat(getComputedStyle(document.documentElement).zoom);
     return (z && isFinite(z) && z > 0) ? z : 1;
@@ -850,7 +868,7 @@
     // the large chained offsets tuned for taller phones push bottom-of-page
     // lines beyond the scrollable range. Clamping offset ensures every line
     // can still complete its draw at maximum scroll.
-    const maxHead = document.documentElement.scrollHeight - window.innerHeight * 0.2;
+    const maxHead = document.documentElement.scrollHeight - liveVH() * 0.2;
     items = lines.map(el => {
       // getBoundingClientRect().top is viewport-relative; adding scrollY
       // gives the document position in the scroll coordinate space.
@@ -883,12 +901,11 @@
   let ticking = false;
   function update() {
     // Draw head sits 20% off the bottom of the LIVE viewport (80% from the
-    // top). This is the anchor the user wants: no matter what monitor or
-    // aspect ratio, a line starts being drawn the moment its top crosses the
-    // 80%-down line of the actual visible screen. scrollY, innerHeight and
-    // item.top are all in the same "visual" coordinate space (post-zoom)
-    // so the arithmetic is consistent across every breakpoint.
-    const head = window.scrollY + window.innerHeight * 0.8;
+    // top). liveVH() uses visualViewport.height so the trigger reflects the
+    // actual visible area — correct on iOS when the address bar is shown,
+    // and in Instagram / Facebook in-app browsers where the bottom chrome
+    // would otherwise shift the perceived drawing point.
+    const head = window.scrollY + liveVH() * 0.8;
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       const drawn = head - item.top - item.offset;
@@ -914,6 +931,11 @@
 
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", () => { measure(); onScroll(); });
+  // visualViewport fires 'resize' when the iOS address bar shows/hides and
+  // when the keyboard opens — both change the true visible height.
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => { measure(); onScroll(); });
+  }
 
   measure();
   requestAnimationFrame(update);
@@ -979,7 +1001,10 @@
       }
       revealEl(el);
     });
-  }, { rootMargin: "0px 0px -50px 0px", threshold: 0.05 });
+  // -20% matches the scroll-draw head (80% from viewport top = 20% from
+  // bottom), so buttons and images reveal at the exact same moment the
+  // adjacent line begins drawing — visually in sync on every screen size.
+  }, { rootMargin: "0px 0px -20% 0px", threshold: 0.05 });
   const isMobile = window.innerWidth <= 600;
   els.forEach(el => {
     // On mobile, elements with data-line-gated are revealed by the
@@ -1116,7 +1141,9 @@
   function checkTrigger() {
     if (triggered) return;
     // Match the draw-head position used by the scroll-draw loop (20% from bottom).
-    const head = window.scrollY + window.innerHeight * 0.8;
+    // visualViewport.height gives the real visible area in in-app browsers.
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const head = window.scrollY + vh * 0.8;
     if (head >= triggerHead) {
       triggered = true;
       runEntry();
