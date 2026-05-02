@@ -420,7 +420,7 @@ const PROJECTS = [
 		tags:  ['Three.js / WebGL', 'Blender 3D model', 'Live 3D configurator', 'Immersive scroll', 'Automotive design', 'Brand experience'],
 		url:   'renaultclio.concept',
 		link:  null,
-		video: null, /* update to hosted URL once uploaded to Cloudflare R2/Stream */
+		video: './renault-clio-lp.mp4',
 		bg:    'linear-gradient(170deg,#1a0507 0%,#240a0c 55%,#1c0608 100%)',
 		accent:'220,42,32',
 		slug:  'renault-clio',
@@ -547,7 +547,7 @@ function render(p) {
 				(p.video
 					? '<p class="pj-video-label">Preview</p>' +
 					  '<div class="pj-video-wrap">' +
-					  '<video src="' + p.video + '" controls preload="metadata" playsinline></video>' +
+					  '<video src="' + p.video + '" controls autoplay muted loop playsinline></video>' +
 					  '</div>'
 					: '<div class="pj-mockup" aria-hidden="true">' +
 					  '<div class="pj-mockup-inner">' +
