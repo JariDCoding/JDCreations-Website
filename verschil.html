@@ -62,7 +62,7 @@
 		z-index: 1;
 	}
 
-	/* ── Full-page vertical spine (draws on load) ── */
+	/* ── Full-page vertical spine (scroll-draw) ── */
 	.vr-spine {
 		position: absolute;
 		left: var(--pad);
@@ -71,17 +71,18 @@
 		background: rgba(255,255,255,0.05);
 		pointer-events: none;
 		overflow: hidden;
+		--draw-length: 3800;
 	}
 	.vr-spine::after {
 		content: '';
 		position: absolute; top: 0; left: 0;
-		width: 100%; height: 0;
+		width: 100%; height: 100%;
 		background: rgba(255,255,255,0.28);
-		transition: height 2.8s cubic-bezier(0.22,0.61,0.36,1) 0.6s;
+		transform: scaleY(var(--draw, 0));
+		transform-origin: top center;
 	}
-	body.loader-gone .vr-spine::after { height: 100%; }
 
-	/* Right spine — mirrors the left at the same distance from the right edge */
+	/* Right spine */
 	.vr-spine-r {
 		position: absolute;
 		right: var(--pad);
@@ -90,34 +91,32 @@
 		background: rgba(255,255,255,0.05);
 		pointer-events: none;
 		overflow: hidden;
+		--draw-length: 4200;
 	}
 	.vr-spine-r::after {
 		content: '';
 		position: absolute; top: 0; left: 0;
-		width: 100%; height: 0;
+		width: 100%; height: 100%;
 		background: rgba(255,255,255,0.18);
-		transition: height 2.8s cubic-bezier(0.22,0.61,0.36,1) 0.85s;
+		transform: scaleY(var(--draw, 0));
+		transform-origin: top center;
 	}
-	body.loader-gone .vr-spine-r::after { height: 100%; }
 
-	/* ── Drawn horizontal section-separator ── */
+	/* ── Drawn horizontal section-separator (scroll-draw) ── */
 	.vr-hline {
 		position: relative; z-index: 1;
 		height: 1px;
 		background: rgba(255,255,255,0.04);
-		overflow: hidden;
+		--draw-length: 380;
 	}
 	.vr-hline::after {
 		content: '';
 		position: absolute; top: 0; left: 0;
-		height: 100%; width: 0;
+		height: 100%; width: 100%;
 		background: rgba(255,255,255,0.28);
-		transition: width 1.2s cubic-bezier(0.22,0.61,0.36,1);
+		transform: scaleX(var(--draw, 0));
+		transform-origin: left center;
 	}
-	.vr-hline.is-drawn::after { width: 100%; }
-
-	/* First hline draws on page load */
-	body.loader-gone .vr-hline--load::after { width: 100%; }
 
 	/* ── Scroll-reveal ── */
 	.vr-fade {
@@ -130,7 +129,9 @@
 
 	@media (prefers-reduced-motion: reduce) {
 		.vr-fade { transition: none; opacity: 1; transform: none; }
-		.vr-spine::after, .vr-spine-r::after, .vr-hline::after { transition: none; }
+		[data-scroll-draw] { --draw: 1 !important; }
+		.vr-spine::after, .vr-spine-r::after { transform: scaleY(1); }
+		.vr-hline::after { transform: scaleX(1); }
 	}
 
 	/* ── Section eyebrow ── */
@@ -569,8 +570,8 @@
 <div class="vr-page">
 
 	<!-- Spine lines running the full page height -->
-	<div class="vr-spine"   aria-hidden="true"></div>
-	<div class="vr-spine-r" aria-hidden="true"></div>
+	<div class="vr-spine"   aria-hidden="true" data-scroll-draw></div>
+	<div class="vr-spine-r" aria-hidden="true" data-scroll-draw></div>
 
 	<!-- ══ HERO ══════════════════════════════════════════ -->
 	<section class="vr-hero">
@@ -580,15 +581,15 @@
 			<div>
 				<p class="vr-eyebrow">/ VERSCHIL</p>
 				<h1 class="vr-h1">
-					<span class="vr-h1-dim">[ </span>DE MEESTE<br>SITES BESTAAN.<br><span class="vr-h1-dim">]</span>
+					<span class="vr-h1-dim">[ </span>NIET ZOMAAR<br>EEN WEBSITE.<br><span class="vr-h1-dim">]</span>
 				</h1>
-				<p class="vr-hero-sub">De jouwe moet <em>werken</em>.</p>
+				<p class="vr-hero-sub">Een die <em>klanten binnenbrengt</em>.</p>
 			</div>
 			<div class="vr-hero-right">
 				<p class="vr-tagline">
-					Geen templates. Geen bureau-overhead.<br>
-					Geen maandkosten. Jij praat altijd<br>
-					direct met de bouwer.
+					Geen templates. Geen bureaulagen.<br>
+					Geen maandabonnement. Jij praat altijd<br>
+					rechtstreeks met de bouwer.
 				</p>
 				<p class="vr-hero-meta">5 concrete redenen</p>
 			</div>
@@ -611,62 +612,62 @@
 			</p>
 		</div>
 
-		<div class="vr-hline" aria-hidden="true"></div>
+		<div class="vr-hline" aria-hidden="true" data-scroll-draw></div>
 
 		<div class="vr-row vr-fade">
 			<span class="vr-row-num">01</span>
 			<div class="vr-row-content">
-				<h3 class="vr-row-title">VOLLEDIG CUSTOM. GEEN TEMPLATE, NOOIT.</h3>
-				<p class="vr-row-body">Elke regel code geschreven voor jou. Er bestaat geen andere site die er hetzelfde uitziet.</p>
+				<h3 class="vr-row-title">VOLLEDIG CUSTOM. GEBOUWD VOOR JOU.</h3>
+				<p class="vr-row-body">Geen drag-and-drop, geen platform-limieten. Elke pixel met opzet — voor jouw merk, niemand anders.</p>
 			</div>
 			<span class="vr-row-tag">Custom Design</span>
 		</div>
 
-		<div class="vr-hline" aria-hidden="true"></div>
+		<div class="vr-hline" aria-hidden="true" data-scroll-draw></div>
 
 		<div class="vr-row vr-fade">
 			<span class="vr-row-num">02</span>
 			<div class="vr-row-content">
-				<h3 class="vr-row-title">GEEN BUREAU-OVERHEAD.</h3>
-				<p class="vr-row-body">Jij praat altijd rechtstreeks met de persoon die het bouwt. Geen tussenschakels, geen verborgen kosten.</p>
+				<h3 class="vr-row-title">DIRECT MET DE BOUWER. ALTIJD.</h3>
+				<p class="vr-row-body">Bij een bureau betaal je voor accountmanagers, seniors, juniors. Bij JDC praat je met Jari — de enige die het bouwt.</p>
 			</div>
 			<span class="vr-row-tag">Direct contact</span>
 		</div>
 
-		<div class="vr-hline" aria-hidden="true"></div>
+		<div class="vr-hline" aria-hidden="true" data-scroll-draw></div>
 
 		<div class="vr-row vr-fade">
 			<span class="vr-row-num">03</span>
 			<div class="vr-row-content">
-				<h3 class="vr-row-title">RAZENDSNEL. LAADT VOOR DE CONCURRENTIE.</h3>
-				<p class="vr-row-body">Handgeschreven code zonder plugin-stapel. Sneller laden = hogere Google-positie = meer klanten.</p>
+				<h3 class="vr-row-title">SNELLER DAN JE CONCURRENT.</h3>
+				<p class="vr-row-body">Handgeschreven code zonder plugin-rommel. Sneller laden = hogere Google-positie = meer klanten die blijven.</p>
 			</div>
 			<span class="vr-row-tag">Performance</span>
 		</div>
 
-		<div class="vr-hline" aria-hidden="true"></div>
+		<div class="vr-hline" aria-hidden="true" data-scroll-draw></div>
 
 		<div class="vr-row vr-fade">
 			<span class="vr-row-num">04</span>
 			<div class="vr-row-content">
-				<h3 class="vr-row-title">2 TOT 4 WEKEN. GEEN WACHTRIJ.</h3>
-				<p class="vr-row-body">Geen kwartaalplanning, geen wachtrij. Wat een bureau in 10 weken doet, levert JDC in 2 tot 4.</p>
+				<h3 class="vr-row-title">LIVE IN 2 TOT 4 WEKEN.</h3>
+				<p class="vr-row-body">Geen wachtrij, geen kwartaalplanning. Wat een bureau in 10 weken doet, staat bij JDC live in 2 tot 4.</p>
 			</div>
 			<span class="vr-row-tag">Snelheid</span>
 		</div>
 
-		<div class="vr-hline" aria-hidden="true"></div>
+		<div class="vr-hline" aria-hidden="true" data-scroll-draw></div>
 
 		<div class="vr-row vr-fade">
 			<span class="vr-row-num">05</span>
 			<div class="vr-row-content">
-				<h3 class="vr-row-title">SITES DIE WERKEN TERWIJL JIJ SLAAPT.</h3>
-				<p class="vr-row-body">CRM-koppelingen, lead flows, e-mail triggers — ingebakken. Jouw site doet actief werk voor jou.</p>
+				<h3 class="vr-row-title">JOUW SITE WERKT OOK OM 3 UUR 'S NACHTS.</h3>
+				<p class="vr-row-body">CRM-koppelingen, lead flows, e-mail triggers — ingebakken, geen extra tools. Leads worden opgevolgd terwijl jij slaapt.</p>
 			</div>
 			<span class="vr-row-tag">Automatisering</span>
 		</div>
 
-		<div class="vr-hline" aria-hidden="true"></div>
+		<div class="vr-hline" aria-hidden="true" data-scroll-draw></div>
 	</section>
 
 	<!-- ══ VERGELIJKING ══════════════════════════════════ -->
@@ -677,8 +678,8 @@
 				<h2 class="vr-compare-h2">JDC<br>VS. DE REST</h2>
 			</div>
 			<p class="vr-compare-sub">
-				Geen meningen — gewoon feiten.<br>
-				Dit is wat je krijgt bij elk van de drie opties.
+				Geen meningen, geen marketingpraatjes.<br>
+				Gewoon wat je krijgt bij elke optie.
 			</p>
 		</div>
 
@@ -759,40 +760,41 @@
 		</div>
 	</section>
 
-	<div class="vr-hline" aria-hidden="true"></div>
+	<div class="vr-hline" aria-hidden="true" data-scroll-draw></div>
 
 	<!-- ══ PRIJS-REFRAME ═════════════════════════════════ -->
 	<section class="vr-price">
 		<div class="vr-price-inner">
 			<div class="vr-fade">
 				<h2 class="vr-price-q">
-					<span class="vr-price-q-dim">EEN SLECHTE SITE</span><br>
-					KOST JE ELKE DAG<br>
-					<span class="vr-price-q-dim">KLANTEN.</span>
+					<span class="vr-price-q-dim">GOEDKOOP IS</span><br>
+					DUURKOOP.<br>
+					<span class="vr-price-q-dim">DAT KOST JE KLANTEN.</span>
 				</h2>
 				<p class="vr-price-body">
-					De prijs van een website is niet wat je betaalt —
-					het is wat je misloopt terwijl je concurrenten het wél serieus nemen.
+					Een slechte website verliest bezoekers in 3 seconden.
+					De echte kost is niet wat je betaalt — het is wat je mist
+					terwijl je concurrent wél indruk maakt.
 				</p>
 			</div>
 			<ul class="vr-price-list vr-fade">
 				<li class="vr-price-item">
 					<span class="vr-price-sym" aria-hidden="true">+</span>
-					<span class="vr-price-text"><strong>Converteert — niet alleen bestaat</strong>Bezoekers worden klanten. Niet toevallig, maar door opzet.</span>
+					<span class="vr-price-text"><strong>Bezoekers worden klanten</strong>Structuur, copy en CTA's gericht op één doel. Niet gebouwd om mooi te zijn — gebouwd om te converteren.</span>
 				</li>
 				<li class="vr-price-item">
 					<span class="vr-price-sym" aria-hidden="true">+</span>
-					<span class="vr-price-text"><strong>Hogere Google-positie</strong>Snelle, schone code = directe voorsprong op template-sites.</span>
+					<span class="vr-price-text"><strong>Vindbaar door Google, direct</strong>Schone code en snelle laadtijden geven je een voorsprong op elke trage template-concurrent.</span>
 				</li>
 				<li class="vr-price-item">
 					<span class="vr-price-sym" aria-hidden="true">+</span>
-					<span class="vr-price-text"><strong>Leads opgevolgd zonder handmatig werk</strong>Automatisering bakt erin. Geen losse tools, geen extra abonnement.</span>
+					<span class="vr-price-text"><strong>Geen lead die door de mazen valt</strong>Automatische opvolging ingebakken in de site zelf. Geen extra tools, geen losse abonnementen.</span>
 				</li>
 			</ul>
 		</div>
 	</section>
 
-	<div class="vr-hline" aria-hidden="true"></div>
+	<div class="vr-hline" aria-hidden="true" data-scroll-draw></div>
 
 	<!-- ══ PROJECTEN ═════════════════════════════════════ -->
 	<section class="vr-projects">
@@ -824,7 +826,7 @@
 		</div>
 	</section>
 
-	<div class="vr-hline" aria-hidden="true"></div>
+	<div class="vr-hline" aria-hidden="true" data-scroll-draw></div>
 
 	<!-- ══ FINAL CTA ══════════════════════════════════════ -->
 	<section class="vr-cta">
@@ -837,8 +839,8 @@
 			</div>
 			<div class="vr-cta-right vr-fade">
 				<p class="vr-cta-body">
-					Je concurrent heeft ook een website. De vraag is door wie.<br>
-					Stuur een aanvraag — geen verplichtingen, gewoon een eerlijk gesprek.
+					Je concurrent heeft ook een website. De vraag is welke.<br>
+					Stuur een aanvraag — geen verplichtingen, geen verkooppraatje.
 				</p>
 				<a class="vr-cta-btn" href="./contact.html">
 					<span>[</span> <span>START AANVRAAG &rarr;</span> <span>]</span>
@@ -863,14 +865,63 @@
 	document.querySelectorAll('.vr-fade').forEach(function(el) { obs.observe(el); });
 })();
 
-/* ── Scroll-reveal: drawn lines ── */
+/* ── Scroll-draw engine (mirrors index.html) ── */
 (function() {
-	var obs = new IntersectionObserver(function(entries) {
-		entries.forEach(function(e) {
-			if (e.isIntersecting) { e.target.classList.add('is-drawn'); obs.unobserve(e.target); }
+	function getZoom() {
+		var z = parseFloat(getComputedStyle(document.documentElement).zoom);
+		return (z && isFinite(z) && z > 0) ? z : 1;
+	}
+
+	var lines = Array.from(document.querySelectorAll('[data-scroll-draw]'));
+	if (!lines.length) return;
+
+	var items = [];
+	function measure() {
+		var zoom = getZoom();
+		var scrollNow = window.scrollY;
+		var maxHead = document.documentElement.scrollHeight - window.innerHeight * 0.2;
+		items = lines.map(function(el) {
+			var top = el.getBoundingClientRect().top + scrollNow;
+			var cs = getComputedStyle(el);
+			var cssLen = cs.getPropertyValue('--draw-length').trim();
+			var customLen = cssLen || el.dataset.drawLength;
+			var length = customLen ? parseFloat(customLen) * zoom : el.offsetHeight * zoom;
+			var cssOff = cs.getPropertyValue('--draw-offset').trim();
+			var customOff = cssOff || el.dataset.drawOffset;
+			var offset = customOff ? parseFloat(customOff) * zoom : 0;
+			if (top + offset + length > maxHead) {
+				offset = Math.max(0, maxHead - top - length);
+			}
+			return { el: el, top: top, length: length, offset: offset };
 		});
-	}, { threshold: 0 });
-	document.querySelectorAll('.vr-hline:not(.vr-hline--load)').forEach(function(el) { obs.observe(el); });
+	}
+
+	var ticking = false;
+	function update() {
+		var head = window.scrollY + window.innerHeight * 0.8;
+		for (var i = 0; i < items.length; i++) {
+			var item = items[i];
+			var drawn = head - item.top - item.offset;
+			var progress = drawn / item.length;
+			if (progress < 0) progress = 0;
+			if (progress > 1) progress = 1;
+			item.el.style.setProperty('--draw', progress);
+		}
+		ticking = false;
+	}
+
+	function onScroll() {
+		if (!ticking) {
+			ticking = true;
+			requestAnimationFrame(update);
+		}
+	}
+
+	measure();
+	requestAnimationFrame(update);
+	window.addEventListener('scroll', onScroll, { passive: true });
+	window.addEventListener('resize', function() { measure(); onScroll(); }, { passive: true });
+	window.addEventListener('load', function() { measure(); onScroll(); });
 })();
 </script>
 
