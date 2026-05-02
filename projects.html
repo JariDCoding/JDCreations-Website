@@ -67,7 +67,7 @@
 	.port-stage {
 		position: relative;
 		width: 1728px;
-		min-height: 2200px;
+		min-height: 1960px;
 		display: flex;
 		flex-direction: column;
 		overflow-x: clip;
@@ -185,7 +185,7 @@
 	/* ── Project card ── */
 	.proj-card {
 		position: absolute;
-		width: 780px;
+		width: 680px;
 		cursor: pointer;
 		z-index: 2;
 		transform-style: preserve-3d;
@@ -194,11 +194,11 @@
 	}
 
 	/* Positions — top values account for fixed header (~84px) + max float upward (~24px) */
-	.proj-card[data-project="0"] { left: 42px;   top: 200px; }
-	.proj-card[data-project="1"] { left: 888px;  top: 120px; }
-	.proj-card[data-project="2"] { left: 42px;   top: 840px; }
-	.proj-card[data-project="3"] { left: 888px;  top: 760px; }
-	.proj-card[data-project="4"] { left: 474px;  top: 1460px; }
+	.proj-card[data-project="0"] { left: 80px;   top: 180px; }
+	.proj-card[data-project="1"] { left: 968px;  top: 100px; }
+	.proj-card[data-project="2"] { left: 80px;   top: 780px; }
+	.proj-card[data-project="3"] { left: 968px;  top: 700px; }
+	.proj-card[data-project="4"] { left: 524px;  top: 1360px; }
 
 	/* Float — uses CSS individual `translate` property so it composes with
 	   the JS `transform` (parallax) without conflict */
@@ -317,7 +317,7 @@
 	}
 	.card-name {
 		font-family: 'Bebas Neue', sans-serif;
-		font-size: 42px;
+		font-size: 36px;
 		line-height: 0.95;
 		letter-spacing: 0.04em;
 		color: #d9d9d9;
@@ -441,11 +441,11 @@
 		</svg>
 
 		<!-- Ghost numbers -->
-		<span class="ghost-num" style="left:0px;top:420px;"    aria-hidden="true">01</span>
-		<span class="ghost-num" style="left:800px;top:350px;"  aria-hidden="true">02</span>
-		<span class="ghost-num" style="left:0px;top:1060px;"   aria-hidden="true">03</span>
-		<span class="ghost-num" style="left:800px;top:990px;"  aria-hidden="true">04</span>
-		<span class="ghost-num" style="left:380px;top:1680px;" aria-hidden="true">05</span>
+		<span class="ghost-num" style="left:0px;top:380px;"    aria-hidden="true">01</span>
+		<span class="ghost-num" style="left:850px;top:300px;"  aria-hidden="true">02</span>
+		<span class="ghost-num" style="left:0px;top:975px;"    aria-hidden="true">03</span>
+		<span class="ghost-num" style="left:850px;top:895px;"  aria-hidden="true">04</span>
+		<span class="ghost-num" style="left:400px;top:1550px;" aria-hidden="true">05</span>
 
 		<!-- Project 01 -->
 		<div class="proj-card" data-project="0" role="button" tabindex="0" aria-label="Open project: Heli-Flights">
