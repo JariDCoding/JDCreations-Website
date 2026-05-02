@@ -272,6 +272,29 @@
 	.pj-btn--secondary:hover .pj-bt { color: #ffffff; }
 	.pj-btn--secondary:hover .pj-br { color: rgba(255,255,255,0.4); }
 
+	/* ── Live site link — smaller, monospace, secondary weight ──
+	   Sits above START PROJECT in the button list. JetBrains Mono at 10px
+	   signals "metadata / reference" vs the primary Bebas Neue CTAs.
+	   ↗ arrow communicates external-link affordance (opens in new tab).
+	   Matches the border-row rhythm of .pj-btn but is visually subordinate. */
+	.pj-live-btn {
+		display: flex; align-items: center; gap: 10px;
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
+		color: rgba(148,163,184,0.55);
+		text-decoration: none;
+		padding: 11px 0;
+		border-top:    1px solid rgba(148,163,184,0.1);
+		border-bottom: 1px solid rgba(148,163,184,0.1);
+		transition: color 0.2s ease, padding-left 0.22s cubic-bezier(0.22,0.61,0.36,1);
+	}
+	.pj-live-btn:hover {
+		color: rgba(217,217,217,0.82);
+		padding-left: 6px;
+	}
+	.pj-live-arr { font-size: 12px; opacity: 0.65; transition: opacity 0.2s; }
+	.pj-live-btn:hover .pj-live-arr { opacity: 1; }
+
 	/* Underline that draws after the buttons */
 	.pj-btn-underline {
 		position: relative; margin-top: 1.75rem;
@@ -380,7 +403,7 @@ const PROJECTS = [
 		num:   '/ 01',
 		title: 'HELI-FLIGHTS',
 		type:  '3D CONCEPT PAGE / IMMERSIVE BRAND EXPERIENCE',
-		desc:  '3D conceptpagina met motion en diepte, ontworpen om Heli-Flights digitaal meer beleving en onderscheid te geven. Visuele identiteit vertaald naar een immersive digitale omgeving die bezoekers direct raakt.',
+		desc:  'Heli-Flights biedt ervaringen die mensen hun hele leven bijblijven — de website moest dat meteen uitstralen. We ontwierpen een immersive 3D-conceptpagina die bezoekers van de eerste seconde meeneemt: scroll-driven animaties, cinematische diepte en beweging die de sensatie van een helichtvlucht al voor de boeking laat voelen. Een digitale aanwezigheid zo indrukwekkend als de vlucht zelf.',
 		tags:  ['Custom design', 'Motion & interaction', 'Front-end development', 'Brand-aligned system', 'Responsive build', '3D visual integration'],
 		url:   'heli-flights.be',
 		link:  'https://heli-flights.be',
@@ -393,7 +416,7 @@ const PROJECTS = [
 		num:   '/ 02',
 		title: 'RELOVATION',
 		type:  'EDITORIAL DESIGN / LIVE JAZZ BRAND',
-		desc:  'Branding en website voor Relovation, een live jazz band. Editorial typografie in EB Garamond, een geanimeerde concert-programme navigatie en een warme, organische kleurpalette geven de band een eigen digitale identiteit.',
+		desc:  'Relovation speelt live jazzmuziek die zalen tot leven brengt — de website moest datzelfde gevoel vastleggen. We bouwden een editorial site met karakter: warme typografie, een geanimeerde concertprogramma-navigatie en een organisch kleurpalet dat de energie van de band ademhaalt. Bezoekers voelen de sfeer al voor ze in de zaal zitten.',
 		tags:  ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Live music positioning'],
 		url:   'relovation.be',
 		link:  'https://relovation.be',
@@ -405,7 +428,7 @@ const PROJECTS = [
 		num:   '/ 03',
 		title: 'SCHRIJFSTIJN',
 		type:  'EDITORIAL DESIGN / DIGITAL PRESENCE',
-		desc:  'Editorial websiteconcept dat sfeer, identiteit en muzikale creativiteit vertaalt naar een verfijnde digitale presentatie die de artiest echt weerspiegelt.',
+		desc:  'Schrijfstijn schrijft nummers die mensen raken — de website moest hetzelfde doen. We vertaalden de artistieke identiteit van HanzKazan naar een donker editorial concept: gedurfde typografie, subtiele animaties en een sfeer die uitnodigt om te blijven. Geen productpagina, maar een beleving die de artiest echt weerspiegelt en fans doet terugkomen.',
 		tags:  ['Editorial layout', 'Brand identity', 'Custom typography', 'Motion design', 'Responsive build', 'Digital positioning'],
 		url:   'schrijfstijn.be',
 		link:  'https://schrijfstijn.be',
@@ -418,7 +441,7 @@ const PROJECTS = [
 		num:   '/ 04',
 		title: 'RENAULT CLIO',
 		type:  'CONCEPT PAGE / AUTOMOTIVE BRAND EXPERIENCE',
-		desc:  'Conceptpagina voor de Renault Clio met een live 3D configurator gebouwd via Three.js — het 3D model is eerst opgebouwd in Blender en daarna verwerkt in een immersive scroll experience met custom animaties. Beweging, snelheid en stijl vertaald naar een digitale productbeleving.',
+		desc:  'Autorijden is emotie — en die begint lang voor de proefrit. Voor dit Renault Clio-conceptproject bouwden we een immersive productervaring die de grens tussen digitaal en fysiek vervaagt: een live 3D-configurator via Three.js, een gedetailleerd Blender-model en scroll-driven animaties die snelheid en stijl het scherm in brengen. Zo wordt een website het sterkste verkoopargument.',
 		tags:  ['Three.js / WebGL', 'Blender 3D model', 'Live 3D configurator', 'Immersive scroll', 'Automotive design', 'Brand experience'],
 		url:   'renaultclio.concept',
 		link:  null,
@@ -431,7 +454,7 @@ const PROJECTS = [
 		num:   '/ 05',
 		title: 'SUNCLASSY',
 		type:  'BRAND IDENTITY / LIFESTYLE WEBSITE',
-		desc:  'Brand identity en website voor SUNCLASSY, een zonnebrillen merk. Strak, zomers design met een heldere visuele taal die het merk positioneert als premium lifestyle accessoire.',
+		desc:  'SUNCLASSY verkoopt geen zonnebrillen — het verkoopt een gevoel van stijl en zelfvertrouwen. De website moest die premium lifestyle sfeer meteen neerzetten. We creëerden een strak, zomers design met een heldere visuele taal: elk element versterkt het merk als kwaliteitsalternatief voor klanten die stijl serieus nemen. Van eerste blik tot aankoop — alles klopt.',
 		tags:  ['Brand identity', 'Editorial layout', 'Lifestyle positioning', 'Custom design', 'Responsive build', 'Visual system'],
 		url:   'sunclassy.be',
 		link:  null,
@@ -512,8 +535,9 @@ function render(p) {
 	document.documentElement.style.setProperty('--pj-bg', p.bg);
 
 	var visitBtn = p.link
-		? '<a class="pj-btn pj-btn--primary" href="' + p.link + '" target="_blank" rel="noopener noreferrer">' +
-		  '<span class="pj-br">[ </span><span class="pj-bt">BEZOEK LIVE LINK &rarr;</span><span class="pj-br"> ]</span>' +
+		? '<a class="pj-live-btn" href="' + p.link + '" target="_blank" rel="noopener noreferrer" aria-label="Bezoek ' + p.url + ' (opent in nieuw tabblad)">' +
+		  '<span class="pj-live-arr" aria-hidden="true">&#8599;</span>' +
+		  '<span>' + p.url + '</span>' +
 		  '</a>'
 		: '';
 
