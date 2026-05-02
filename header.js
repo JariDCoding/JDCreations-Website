@@ -28,8 +28,8 @@
     <a class="jdc-header__brand" href="./index.html" aria-label="JDCreations home">
       <span class="jdc-header__logo">JD<span class="jdc-header__logo-dot" aria-hidden="true"></span></span>
       <span class="jdc-header__meta" aria-hidden="true">
-        <span class="jdc-header__meta-line-1">/ STUDIO · 2026</span>
-        <span class="jdc-header__meta-line-2"><span class="jdc-header__meta-led"></span>ONLINE &nbsp;·&nbsp; v1.0.0</span>
+        <span class="jdc-header__meta-line-1">/ CREATIONS · 2026</span>
+        <span class="jdc-header__meta-line-2"><span class="jdc-header__meta-led"></span>ONLINE &nbsp;·&nbsp; v3.7.8</span>
       </span>
     </a>
 

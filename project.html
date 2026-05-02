@@ -59,7 +59,7 @@
 	.pj-hero {
 		position: relative;
 		overflow: hidden;
-		padding: clamp(3.5rem, 9vh, 7rem) clamp(1.5rem, 7vw, 7rem) clamp(3rem, 6vh, 5rem);
+		padding: clamp(1.5rem, 3vh, 2.5rem) clamp(1.5rem, 7vw, 7rem) clamp(1.25rem, 2.5vh, 2rem);
 		border-bottom: 1px solid rgba(148,163,184,0.12);
 	}
 	.pj-hero::before {
@@ -89,7 +89,7 @@
 		font-family: 'JetBrains Mono', ui-monospace, monospace;
 		font-size: 9px; letter-spacing: 0.38em; text-transform: uppercase;
 		color: rgba(148,163,184,0.5); text-decoration: none;
-		margin-bottom: clamp(2rem, 4vh, 3.5rem);
+		margin-bottom: clamp(0.75rem, 2vh, 1.5rem);
 		transition: color 0.2s ease;
 	}
 	.pj-back:hover { color: #ffffff; }
@@ -108,7 +108,7 @@
 
 	.pj-h1 {
 		font-family: 'Bebas Neue', ui-sans-serif, sans-serif;
-		font-size: clamp(68px, 9vw, 132px);
+		font-size: clamp(48px, 6vw, 88px);
 		letter-spacing: 0.05em; color: #d9d9d9;
 		line-height: 0.9; margin: 0;
 	}
@@ -189,10 +189,10 @@
 	═══════════════════════════ */
 	.pj-body {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: clamp(3rem, 6vw, 6rem);
-		padding: clamp(3rem, 7vh, 6rem) clamp(1.5rem, 7vw, 7rem);
-		max-width: 1500px;
+		grid-template-columns: 1fr 1.6fr;
+		gap: clamp(2rem, 4vw, 4rem);
+		padding: clamp(2rem, 4vh, 3.5rem) clamp(1.5rem, 5vw, 5rem);
+		max-width: 1600px;
 		align-items: start;
 	}
 
@@ -384,6 +384,7 @@ const PROJECTS = [
 		tags:  ['Custom design', 'Motion & interaction', 'Front-end development', 'Brand-aligned system', 'Responsive build', '3D visual integration'],
 		url:   'heli-flights.be',
 		link:  'https://heli-flights.be',
+		video: './heli-flights-lp.mp4',
 		bg:    'linear-gradient(170deg,#091628 0%,#060f1e 55%,#0d1c38 100%)',
 		accent:'100,148,255',
 		slug:  'heli-flights',
@@ -424,6 +425,18 @@ const PROJECTS = [
 		bg:    'linear-gradient(170deg,#1a0507 0%,#240a0c 55%,#1c0608 100%)',
 		accent:'220,42,32',
 		slug:  'renault-clio',
+	},
+	{
+		num:   '/ 05',
+		title: 'SUNCLASSY',
+		type:  'BRAND IDENTITY / LIFESTYLE WEBSITE',
+		desc:  'Brand identity en website voor SUNCLASSY, een zonnebrillen merk. Strak, zomers design met een heldere visuele taal die het merk positioneert als premium lifestyle accessoire.',
+		tags:  ['Brand identity', 'Editorial layout', 'Lifestyle positioning', 'Custom design', 'Responsive build', 'Visual system'],
+		url:   'sunclassy.be',
+		link:  null,
+		bg:    'linear-gradient(170deg,#070f09 0%,#0c1a0e 55%,#091209 100%)',
+		accent:'120,200,80',
+		slug:  'sunclassy',
 	},
 ];
 

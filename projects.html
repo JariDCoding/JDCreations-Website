@@ -67,7 +67,7 @@
 	.port-stage {
 		position: relative;
 		width: 1728px;
-		min-height: 1120px;
+		min-height: 2200px;
 		display: flex;
 		flex-direction: column;
 		overflow-x: clip;
@@ -185,7 +185,7 @@
 	/* ── Project card ── */
 	.proj-card {
 		position: absolute;
-		width: 390px;
+		width: 780px;
 		cursor: pointer;
 		z-index: 2;
 		transform-style: preserve-3d;
@@ -194,10 +194,11 @@
 	}
 
 	/* Positions — top values account for fixed header (~84px) + max float upward (~24px) */
-	.proj-card[data-project="0"] { left: 42px;   top: 190px; }
-	.proj-card[data-project="1"] { left: 468px;  top: 140px; }
-	.proj-card[data-project="2"] { left: 890px;  top: 205px; }
-	.proj-card[data-project="3"] { left: 1306px; top: 155px; }
+	.proj-card[data-project="0"] { left: 42px;   top: 200px; }
+	.proj-card[data-project="1"] { left: 888px;  top: 120px; }
+	.proj-card[data-project="2"] { left: 42px;   top: 840px; }
+	.proj-card[data-project="3"] { left: 888px;  top: 760px; }
+	.proj-card[data-project="4"] { left: 474px;  top: 1460px; }
 
 	/* Float — uses CSS individual `translate` property so it composes with
 	   the JS `transform` (parallax) without conflict */
@@ -245,6 +246,7 @@
 	.proj-card[data-project="1"] .card-shell { transform: rotate( 2.0deg); }
 	.proj-card[data-project="2"] .card-shell { transform: rotate(-1.6deg); }
 	.proj-card[data-project="3"] .card-shell { transform: rotate( 2.8deg); }
+	.proj-card[data-project="4"] .card-shell { transform: rotate(-1.6deg); }
 
 	.proj-card:hover .card-shell,
 	.proj-card:focus-visible .card-shell {
@@ -263,7 +265,7 @@
 	.card-preview {
 		position: relative;
 		width: 100%;
-		aspect-ratio: 4/3;
+		aspect-ratio: 16/9;
 		overflow: hidden;
 	}
 	.card-preview-img {
@@ -369,7 +371,8 @@
 		.proj-card[data-project="0"] .card-shell,
 		.proj-card[data-project="1"] .card-shell,
 		.proj-card[data-project="2"] .card-shell,
-		.proj-card[data-project="3"] .card-shell { transform: none; }
+		.proj-card[data-project="3"] .card-shell,
+		.proj-card[data-project="4"] .card-shell { transform: none; }
 		.ghost-num    { display: none; }
 		.constellation { display: none; }
 		.port-strip   { left: 40px; right: 40px; }
@@ -398,7 +401,8 @@
 		.proj-card[data-project="0"] .card-shell,
 		.proj-card[data-project="1"] .card-shell,
 		.proj-card[data-project="2"] .card-shell,
-		.proj-card[data-project="3"] .card-shell { transform: none; }
+		.proj-card[data-project="3"] .card-shell,
+		.proj-card[data-project="4"] .card-shell { transform: none; }
 		.ghost-num    { display: none; }
 		.constellation { display: none; }
 		.port-strip   { left: 26px; right: 26px; top: 38px; }
@@ -423,7 +427,7 @@
 
 	<div class="port-strip" aria-hidden="true">
 		<span class="port-strip-l">/ JDCREATIONS &mdash; SELECTED WORK</span>
-		<span class="port-strip-r">04 PROJECTS</span>
+		<span class="port-strip-r">05 PROJECTS</span>
 	</div>
 
 	<div class="cards-field" id="cardsField">
@@ -433,13 +437,15 @@
 			<line id="cline-0"></line>
 			<line id="cline-1"></line>
 			<line id="cline-2"></line>
+			<line id="cline-3"></line>
 		</svg>
 
 		<!-- Ghost numbers -->
-		<span class="ghost-num" style="left:0px;top:400px;"    aria-hidden="true">01</span>
-		<span class="ghost-num" style="left:420px;top:348px;"  aria-hidden="true">02</span>
-		<span class="ghost-num" style="left:842px;top:415px;"  aria-hidden="true">03</span>
-		<span class="ghost-num" style="left:1258px;top:363px;" aria-hidden="true">04</span>
+		<span class="ghost-num" style="left:0px;top:420px;"    aria-hidden="true">01</span>
+		<span class="ghost-num" style="left:800px;top:350px;"  aria-hidden="true">02</span>
+		<span class="ghost-num" style="left:0px;top:1060px;"   aria-hidden="true">03</span>
+		<span class="ghost-num" style="left:800px;top:990px;"  aria-hidden="true">04</span>
+		<span class="ghost-num" style="left:380px;top:1680px;" aria-hidden="true">05</span>
 
 		<!-- Project 01 -->
 		<div class="proj-card" data-project="0" role="button" tabindex="0" aria-label="Open project: Heli-Flights">
@@ -525,6 +531,26 @@
 			</div>
 		</div>
 
+		<!-- Project 05 -->
+		<div class="proj-card" data-project="4" role="button" tabindex="0" aria-label="Open project: SUNCLASSY">
+			<div class="card-shell">
+				<div class="cc cc-tl" aria-hidden="true"></div>
+				<div class="cc cc-tr" aria-hidden="true"></div>
+				<div class="cc cc-bl" aria-hidden="true"></div>
+				<div class="cc cc-br" aria-hidden="true"></div>
+				<div class="card-preview">
+					<img class="card-preview-img" src="./pp-sunclassy.png" alt="SUNCLASSY preview" loading="lazy">
+					<div class="card-overlay" aria-hidden="true">
+						<span class="card-open-lbl">[ OPEN &rarr;]</span>
+					</div>
+				</div>
+				<div class="card-info">
+					<p class="card-num">/ 05</p>
+					<h2 class="card-name">SUNCLASSY</h2>
+					<p class="card-type">BRAND IDENTITY / LIFESTYLE WEBSITE</p>
+				</div>
+			</div>
+		</div>
 
 	</div>
 
@@ -584,6 +610,17 @@ const PROJECTS = [
 		accent: '220,42,32',
 		slug:   'renault-clio',
 	},
+	{
+		num:    '/ 05',
+		title:  'SUNCLASSY',
+		type:   'BRAND IDENTITY / LIFESTYLE WEBSITE',
+		desc:   'Brand identity en website voor SUNCLASSY, een zonnebrillen merk. Strak, zomers design met een heldere visuele taal die het merk positioneert als premium lifestyle accessoire.',
+		tags:   ['Brand identity', 'Editorial layout', 'Lifestyle positioning', 'Custom design', 'Responsive build', 'Visual system'],
+		url:    'sunclassy.be',
+		bg:     'linear-gradient(170deg,#070f09 0%,#0c1a0e 55%,#091209 100%)',
+		accent: '120,200,80',
+		slug:   'sunclassy',
+	},
 ];
 
 /* ── Navigate directly to project page ── */
@@ -598,10 +635,11 @@ document.querySelectorAll('.proj-card').forEach(card => {
 /* ── Mouse parallax ── */
 (function () {
 	const cards  = Array.from(document.querySelectorAll('.proj-card'));
-	const depths = { '0': 1.0, '1': 0.62, '2': 1.45, '3': 0.85 };
+	const depths = { '0': 1.0, '1': 0.62, '2': 1.45, '3': 0.85, '4': 1.1 };
 	const line0  = document.getElementById('cline-0');
 	const line1  = document.getElementById('cline-1');
 	const line2  = document.getElementById('cline-2');
+	const line3  = document.getElementById('cline-3');
 	const field  = document.getElementById('cardsField');
 
 	let mx = 0, my = 0, cx = 0, cy = 0, raf = null, touch = false;
@@ -623,13 +661,15 @@ document.querySelectorAll('.proj-card').forEach(card => {
 	function drawConstellation() {
 		if (!line0 || !line1 || !line2) return;
 		const c = cards.map(cardCenter);
-		if (c.length < 4) return;
+		if (c.length < 5) return;
 		line0.setAttribute('x1', c[0].x); line0.setAttribute('y1', c[0].y);
 		line0.setAttribute('x2', c[1].x); line0.setAttribute('y2', c[1].y);
 		line1.setAttribute('x1', c[1].x); line1.setAttribute('y1', c[1].y);
 		line1.setAttribute('x2', c[2].x); line1.setAttribute('y2', c[2].y);
 		line2.setAttribute('x1', c[2].x); line2.setAttribute('y1', c[2].y);
 		line2.setAttribute('x2', c[3].x); line2.setAttribute('y2', c[3].y);
+		line3.setAttribute('x1', c[3].x); line3.setAttribute('y1', c[3].y);
+		line3.setAttribute('x2', c[4].x); line3.setAttribute('y2', c[4].y);
 	}
 
 	function tick() {
