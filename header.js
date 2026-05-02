@@ -1,12 +1,19 @@
 (function () {
-  const path = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  const current = path === '' ? 'index.html' : path;
+  // Cloudflare Pages (and similar hosts) often drop the .html extension,
+  // serving over.html at /over. Normalise by appending .html to any path
+  // segment that has no dot — then matching always works regardless of
+  // whether the browser URL shows the extension or not.
+  let seg = (location.pathname.split('/').pop() || '').toLowerCase();
+  if (!seg)              seg = 'index.html';
+  else if (!seg.includes('.')) seg = seg + '.html';
+  const current = seg;
 
   const LINKS = [
     { label: 'HOME',     href: './index.html',    match: ['index.html'] },
     { label: 'OVER JDC', href: './over.html',     match: ['over.html'] },
     { label: 'VERSCHIL', href: './verschil.html', match: ['verschil.html'] },
-    { label: 'PROJECTS', href: './projects.html', match: ['projects.html'] },
+    // project.html (single project view) also highlights PROJECTS
+    { label: 'PROJECTS', href: './projects.html', match: ['projects.html', 'project.html'] },
     { label: 'CONTACT',  href: './contact.html',  match: ['contact.html'] },
   ];
 
